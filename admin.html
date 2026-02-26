@@ -7,27 +7,64 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        
+        /* 顶部 */
         header { background: #8A9A5B; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 18px; }
         .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
         
+        /* 统计 */
         .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: white; }
         .stat { text-align: center; padding: 15px; background: #f8f8f8; border-radius: 8px; }
         .stat-num { font-size: 24px; font-weight: bold; color: #8A9A5B; }
         .stat-label { font-size: 12px; color: #666; }
         
-        .tabs { display: flex; gap: 10px; padding: 15px; background: white; }
-        .tab { flex: 1; padding: 12px; border: none; border-radius: 10px 10px 0 0; cursor: pointer; font-size: 14px; }
-        .tab.active { background: #8A9A5B; color: white; }
-        .tab.inactive { background: #ddd; color: #333; }
+        /* 导航 */
+        .nav { display: flex; background: white; padding: 10px 15px; gap: 10px; }
+        .nav-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; background: #f0f0f0; color: #333; }
+        .nav-btn.active { background: #8A9A5B; color: white; }
         
         .content { padding: 15px; }
-        .btn { background: #8A9A5B; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-bottom: 10px; }
-        .btn-danger { background: #f44336; }
         
+        /* 卡片 */
         .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .card-title { font-weight: bold; font-size: 16px; }
         .card-info { color: #666; font-size: 13px; margin-top: 5px; }
+        
+        .btn { background: #8A9A5B; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 5px; }
+        .btn-danger { background: #ef5350; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        
+        /* 模态框 */
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        .modal-content input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+        
+        .empty { text-align: center; padding: 30px; color: #999; }
+        
+        /* Toast 提示 */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 10px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { background: #4CAF50; }
+        .toast.error { background: #f44336; }
+        .toast.warn { background: #ff9800; }
+        
+        /* 悬浮按钮 */
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #8A9A5B; color: white; border: none; font-size: 32px; cursor: pointer; box-shadow: 0 4px 15px rgba(138,154,91,0.4); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; z-index: 100; }
+        .fab:hover { transform: scale(1.1); }
+        
+        /* 确认弹窗 */
+        .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+        .confirm-overlay.show { display: flex; }
+        .confirm-box { background: white; padding: 24px; border-radius: 16px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .confirm-icon { font-size: 48px; margin-bottom: 15px; }
+        .confirm-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }
+        .confirm-desc { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .confirm-btns { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; }
+        .confirm-btn.cancel { background: #f0f0f0; color: #666; }
+        .confirm-btn.danger { background: #ef5350; color: white; }
     </style>
 </head>
 <body>
@@ -36,6 +73,7 @@
         <button class="logout" onclick="logout()">登出</button>
     </header>
     
+    <!-- 统计 -->
     <div class="stats">
         <div class="stat"><div class="stat-num" id="statProperties">0</div><div class="stat-label">房源</div></div>
         <div class="stat"><div class="stat-num" id="statCleaners">0</div><div class="stat-label">清潔工</div></div>
@@ -43,43 +81,106 @@
         <div class="stat"><div class="stat-num" id="statOrders">0</div><div class="stat-label">訂單</div></div>
     </div>
     
-    <div class="tabs">
-        <button class="tab active" id="tabCleaners" onclick="switchTab('cleaners')">👷 清潔工</button>
-        <button class="tab inactive" id="tabHosts" onclick="switchTab('hosts')">🏠 房東</button>
-        <button class="tab inactive" id="tabOrders" onclick="switchTab('orders')">📋 訂單</button>
+    <!-- 导航 -->
+    <div class="nav">
+        <button class="nav-btn active" id="navCleaners" onclick="showPage('cleaners')">👷 清潔工</button>
+        <button class="nav-btn" id="navHosts" onclick="showPage('hosts')">🏠 房東</button>
+        <button class="nav-btn" id="navOrders" onclick="showPage('orders')">📋 訂單</button>
     </div>
     
-    <div id="cleanersPanel" class="content">
-        <button class="btn" onclick="showAddCleaner()">➕ 添加清潔工</button>
+    <!-- 清洁工 -->
+    <div id="pageCleaners" class="content">
         <div id="cleanersList"></div>
+        <button class="fab" onclick="showAddCleaner()">+</button>
     </div>
     
-    <div id="hostsPanel" class="content" style="display:none">
-        <button class="btn" onclick="showAddHost()">➕ 添加房東</button>
+    <!-- 房東 -->
+    <div id="pageHosts" class="content" style="display:none">
         <div id="hostsList"></div>
+        <button class="fab" onclick="showAddHost()">+</button>
     </div>
     
-    <div id="ordersPanel" class="content" style="display:none">
+    <!-- 訂單 -->
+    <div id="pageOrders" class="content" style="display:none">
         <div id="ordersList"></div>
     </div>
     
+    <!-- 添加清洁工 Modal -->
+    <div class="modal" id="modalCleaner">
+        <div class="modal-content">
+            <h3>👷 添加清潔工</h3>
+            <input type="text" id="cleanerName" placeholder="姓名">
+            <input type="text" id="cleanerPhone" placeholder="電話">
+            <button class="btn" onclick="addCleaner()">添加</button>
+            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <!-- 添加房東 Modal -->
+    <div class="modal" id="modalHost">
+        <div class="modal-content">
+            <h3>🏠 添加房東</h3>
+            <input type="text" id="hostName" placeholder="姓名">
+            <input type="text" id="hostPhone" placeholder="電話">
+            <button class="btn" onclick="addHost()">添加</button>
+            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <!-- 确认弹窗 -->
+    <div id="confirmModal" class="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title" id="confirmTitle">確認刪除</div>
+            <div class="confirm-desc" id="confirmDesc">確定要刪除嗎？</div>
+            <div class="confirm-btns">
+                <button class="confirm-btn cancel" onclick="closeConfirm()">取消</button>
+                <button class="confirm-btn danger" id="confirmBtn">刪除</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        const API = 'http://127.0.0.1:5000/api';
+        function showConfirm(title, desc, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmDesc').textContent = desc;
+            document.getElementById('confirmBtn').onclick = function() {
+                closeConfirm();
+                onConfirm();
+            };
+            document.getElementById('confirmModal').classList.add('show');
+        }
+        
+        function closeConfirm() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+        
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast ' + type;
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
         
         function logout() {
-            localStorage.clear();
             location.href = 'index.html';
         }
         
-        function switchTab(tab) {
-            ['cleaners', 'hosts', 'orders'].forEach(t => {
-                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).className = 
-                    tab === t ? 'tab active' : 'tab inactive';
-                document.getElementById(t + 'Panel').style.display = tab === t ? 'block' : 'none';
-            });
+        function showPage(page) {
+            document.getElementById('navCleaners').className = page === 'cleaners' ? 'nav-btn active' : 'nav-btn';
+            document.getElementById('navHosts').className = page === 'hosts' ? 'nav-btn active' : 'nav-btn';
+            document.getElementById('navOrders').className = page === 'orders' ? 'nav-btn active' : 'nav-btn';
+            document.getElementById('pageCleaners').style.display = page === 'cleaners' ? 'block' : 'none';
+            document.getElementById('pageHosts').style.display = page === 'hosts' ? 'block' : 'none';
+            document.getElementById('pageOrders').style.display = page === 'orders' ? 'block' : 'none';
         }
         
-        async function loadStats() {
+        async function loadData() {
             const [stats, cleaners, hosts, orders] = await Promise.all([
                 fetch(API + '/stats').then(r => r.json()),
                 fetch(API + '/cleaners').then(r => r.json()),
@@ -89,72 +190,98 @@
             
             document.getElementById('statProperties').textContent = stats.properties;
             document.getElementById('statCleaners').textContent = stats.available_cleaners;
-            document.getElementById('statHosts').textContent = hosts.data.length;
-            document.getElementById('statOrders').textContent = orders.data.length;
+            document.getElementById('statHosts').textContent = hosts.data?.length || 0;
+            document.getElementById('statOrders').textContent = orders.data?.length || 0;
             
-            document.getElementById('cleanersList').innerHTML = cleaners.data.slice(0, 20).map(c => `
+            // 清洁工列表
+            document.getElementById('cleanersList').innerHTML = (cleaners.data || []).map(c => `
                 <div class="card">
                     <div class="card-title">${c.name}</div>
-                    <div class="card-info">📞 ${c.phone} | ⭐ ${c.rating} | 總訂單: ${c.total_jobs}</div>
-                    <button class="btn btn-danger" onclick="deleteCleaner(${c.id})">刪除</button>
+                    <div class="card-info">📞 ${c.phone || '-'} | ⭐ ${c.rating} | 總訂單: ${c.total_jobs}<div class="card-info">🔑</div>
+                     Code: ${c.code}</div>
+                    <div class="card-actions"><button class="btn btn-danger" onclick="deleteCleaner(${c.id})">🗑️ 刪除</button></div>
                 </div>
-            `).join('');
+            `).join('') || '<div class="empty">暫無清潔工</div>';
             
-            document.getElementById('hostsList').innerHTML = hosts.data.slice(0, 20).map(h => `
+            // 房東列表
+            document.getElementById('hostsList').innerHTML = (hosts.data || []).map(h => `
                 <div class="card">
                     <div class="card-title">${h.name}</div>
-                    <div class="card-info">📞 ${h.phone} | Code: ${h.code}</div>
-                    <button class="btn btn-danger" onclick="deleteHost(${h.id})">刪除</button>
+                    <div class="card-info">📞 ${h.phone}</div>
+                    <div class="card-info">🔑 Code: ${h.code}</div>
+                    <div class="card-actions"><button class="btn btn-danger" onclick="deleteHost(${h.id})">🗑️ 刪除</button></div>
                 </div>
-            `).join('');
+            `).join('') || '<div class="empty">暫無房東</div>';
             
-            document.getElementById('ordersList').innerHTML = orders.data.slice(0, 20).map(o => `
+            // 訂單列表
+            document.getElementById('ordersList').innerHTML = (orders.data || []).slice(0, 20).map(o => `
                 <div class="card">
                     <div class="card-title">${o.property_name || '未知'} - $${o.price}</div>
-                    <div class="card-info">${o.host_name} | ${o.checkout_time} | ${o.status}</div>
+                    <div class="card-info">🏠 ${o.host_name} | 📅 ${o.checkout_time}</div>
+                    <div class="card-info">狀態: ${o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成'}</div>
                 </div>
-            `).join('');
-        }
-        
-        async function deleteCleaner(id) {
-            if (confirm('確定刪除?')) {
-                await fetch(API + '/cleaners/' + id, { method: 'DELETE' });
-                loadStats();
-            }
-        }
-        
-        async function deleteHost(id) {
-            if (confirm('確定刪除?')) {
-                await fetch(API + '/hosts/' + id, { method: 'DELETE' });
-                loadStats();
-            }
+            `).join('') || '<div class="empty">暫無訂單</div>';
         }
         
         function showAddCleaner() {
-            const name = prompt('姓名:');
-            const phone = prompt('電話:');
-            if (name && phone) {
-                fetch(API + '/cleaners/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone })
-                }).then(() => loadStats());
-            }
+            document.getElementById('modalCleaner').classList.add('active');
         }
         
         function showAddHost() {
-            const name = prompt('姓名:');
-            const phone = prompt('電話:');
-            if (name && phone) {
-                fetch(API + '/hosts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone })
-                }).then(() => loadStats());
-            }
+            document.getElementById('modalHost').classList.add('active');
         }
         
-        loadStats();
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+        
+        async function addCleaner() {
+            const name = document.getElementById('cleanerName').value;
+            const phone = document.getElementById('cleanerPhone').value;
+            if (!name) { showToast('請輸入姓名', 'warn'); return; }
+            
+            await fetch(API + '/cleaners/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+            
+            closeModal();
+            loadData();
+            showToast('添加成功');
+        }
+        
+        async function addHost() {
+            const name = document.getElementById('hostName').value;
+            const phone = document.getElementById('hostPhone').value;
+            if (!name || !phone) { showToast('請輸入姓名和電話', 'warn'); return; }
+            
+            await fetch(API + '/hosts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+            
+            closeModal();
+            loadData();
+            showToast('添加成功');
+        }
+        
+        async function deleteCleaner(id) {
+            showConfirm('確認刪除', '確定要刪除這個清潔工嗎？', async () => {
+                await fetch(API + '/cleaners/' + id, { method: 'DELETE' });
+                loadData();
+            });
+        }
+        
+        async function deleteHost(id) {
+            showConfirm('確認刪除', '確定要刪除這個房東嗎？', async () => {
+                await fetch(API + '/hosts/' + id, { method: 'DELETE' });
+                loadData();
+            });
+        }
+        
+        loadData();
     </script>
 </body>
 </html>

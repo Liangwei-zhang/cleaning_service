@@ -20,6 +20,8 @@
         .btn { background: #8A9A5B; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; margin: 5px; }
         .btn-success { background: #4CAF50; }
         
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        
         .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .card-title { font-weight: bold; font-size: 16px; }
         .card-info { color: #666; font-size: 13px; margin-top: 5px; }
@@ -31,6 +33,30 @@
         .badge.completed { background: #9E9E9E; color: white; }
         
         .empty { text-align: center; padding: 30px; color: #999; }
+        
+        /* 模态框样式 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .modal-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 8px; color: #333; }
+        .modal-desc { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        .modal-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
+        .modal-input:focus { border-color: #8A9A5B; }
+        .modal-btns { display: flex; gap: 10px; }
+        .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; font-weight: 500; }
+        .modal-btn.cancel { background: #f0f0f0; color: #666; }
+        .modal-btn.confirm { background: #8A9A5B; color: white; }
+        .modal-btn.confirm:hover { background: #7a8a4c; }
+        
+        /* 完成确认模态框 */
+        .modal-success .modal-title { color: #4CAF50; }
+        
+        /* Toast 提示 */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 10px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { background: #4CAF50; }
+        .toast.error { background: #f44336; }
+        .toast.warn { background: #ff9800; }
     </style>
 </head>
 <body>
@@ -55,12 +81,47 @@
         <div id="myHistory"></div>
     </div>
     
+    <!-- 驗證碼模態框 -->
+    <div id="verifyModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">🔐 輸入驗證碼</div>
+            <div class="modal-desc">請輸入房東提供的驗證碼確認接單</div>
+            <input type="text" id="verifyCodeInput" class="modal-input" placeholder="0000" maxlength="4" inputmode="numeric" onkeypress="if(event.key==='Enter')confirmAccept()">
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeVerifyModal()">取消</button>
+                <button class="modal-btn confirm" onclick="confirmAccept()">確認</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 完成確認模態框 -->
+    <div id="completeModal" class="modal-overlay">
+        <div class="modal modal-success">
+            <div class="modal-title">✅ 確認完成</div>
+            <div class="modal-desc">確定已完成清潔並離開房源嗎？</div>
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeCompleteModal()">取消</button>
+                <button class="modal-btn confirm" onclick="confirmComplete()">確認完成</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
     <script>
-        const API = 'http://127.0.0.1:5000/api';
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast ' + type;
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
         let cleanerId = localStorage.getItem('cleaner_id');
         
         if (!cleanerId) {
-            alert('請先登錄');
+            showToast('請先登錄', 'warn');
             location.href = 'index.html';
         }
         
@@ -90,7 +151,7 @@
                     <div class="card-info">${o.property_address || ''}</div>
                     <div class="card-info">🏠 ${o.host_name} | 📞 ${o.host_phone}</div>
                     <div class="card-info">🕐 ${o.checkout_time} | <span class="price">$${o.price}</span></div>
-                    <button class="btn btn-success" onclick="acceptOrder(${o.id})">接單</button>
+                    <div class="card-actions"><button class="btn btn-success" onclick="acceptOrder(${o.id})">接單</button></div>
                 </div>
             `).join('') || '<div class="empty">暫無開放訂單</div>';
             
@@ -101,36 +162,76 @@
                     <div class="card-title">${o.property_name || '未知房源'}</div>
                     <div class="card-info">🕐 ${o.checkout_time} | <span class="price">$${o.price}</span></div>
                     <div style="margin-top:8px"><span class="badge ${o.status}">${o.status === 'accepted' ? '已接單' : '已完成'}</span></div>
-                    ${o.status === 'accepted' ? `<button class="btn" onclick="completeOrder(${o.id})">完成清潔</button>` : ''}
+                    ${o.status === 'accepted' ? `<div class="card-actions"><button class="btn btn-success" onclick="completeOrder(${o.id})">完成清潔</button></div>` : ''}
                 </div>
             `).join('') || '<div class="empty">暫無歷史訂單</div>';
         }
         
-        async function acceptOrder(orderId) {
-            const code = prompt('請輸入驗證碼:');
-            if (!code) return;
+        let pendingOrderId = null;
+        
+        function openVerifyModal(orderId) {
+            pendingOrderId = orderId;
+            document.getElementById('verifyCodeInput').value = '';
+            document.getElementById('verifyModal').classList.add('show');
+            document.getElementById('verifyCodeInput').focus();
+        }
+        
+        function closeVerifyModal() {
+            document.getElementById('verifyModal').classList.remove('show');
+            pendingOrderId = null;
+        }
+        
+        async function confirmAccept() {
+            const code = document.getElementById('verifyCodeInput').value.trim();
+            if (!code) {
+                showToast('請輸入驗證碼', 'warn');
+                return;
+            }
             
-            const res = await fetch(API + '/orders/' + orderId + '/verify-accept', {
+            const res = await fetch(API + '/orders/' + pendingOrderId + '/verify-accept', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cleaner_id: cleanerId, code: code })
             });
             
+            closeVerifyModal();
+            
             if (res.ok) {
-                alert('接單成功！');
+                showToast('接單成功！');
                 loadOrders();
             } else {
-                alert('驗證碼錯誤');
+                showToast('驗證碼錯誤', 'error');
             }
         }
         
-        async function completeOrder(orderId) {
-            await fetch(API + '/orders/' + orderId + '?action=complete', {
+        async function acceptOrder(orderId) {
+            openVerifyModal(orderId);
+        }
+        
+        let pendingCompleteId = null;
+        
+        function openCompleteModal(orderId) {
+            pendingCompleteId = orderId;
+            document.getElementById('completeModal').classList.add('show');
+        }
+        
+        function closeCompleteModal() {
+            document.getElementById('completeModal').classList.remove('show');
+            pendingCompleteId = null;
+        }
+        
+        async function confirmComplete() {
+            await fetch(API + '/orders/' + pendingCompleteId + '?action=complete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
-            alert('已完成！');
+            closeCompleteModal();
+            showToast('已完成！');
             loadOrders();
+        }
+        
+        async function completeOrder(orderId) {
+            openCompleteModal(orderId);
         }
         
         loadOrders();

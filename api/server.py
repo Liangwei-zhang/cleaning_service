@@ -626,7 +626,7 @@ class APIHandler(BaseHTTPRequestHandler):
         print(f"[API] {args[0]}")
 
 
-def run_server(api, host="0.0.0.0", port=5000):
+def run_server(api, host="0.0.0.0", port=8080):
     APIHandler.api = api
     server = HTTPServer((host, port), APIHandler)
     print(f"Running on http://{host}:{port}")

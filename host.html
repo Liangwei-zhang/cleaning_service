@@ -34,6 +34,33 @@
         .badge.completed { background: #9E9E9E; color: white; }
         
         .empty { text-align: center; padding: 30px; color: #999; }
+        .btn-delete { background: #ef5350; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+        .btn-edit { background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; margin-right: 10px; }
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        
+        /* 悬浮按钮 */
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #8A9A5B; color: white; border: none; font-size: 32px; cursor: pointer; box-shadow: 0 4px 15px rgba(138,154,91,0.4); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+        .fab:hover { transform: scale(1.1); }
+        .fab-add { z-index: 100; }
+        
+        /* Toast 提示 */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 10px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { background: #4CAF50; }
+        .toast.error { background: #f44336; }
+        .toast.warn { background: #ff9800; }
+        
+        /* 确认弹窗 */
+        .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+        .confirm-overlay.show { display: flex; }
+        .confirm-box { background: white; padding: 24px; border-radius: 16px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .confirm-icon { font-size: 48px; margin-bottom: 15px; }
+        .confirm-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }
+        .confirm-desc { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .confirm-btns { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; }
+        .confirm-btn.cancel { background: #f0f0f0; color: #666; }
+        .confirm-btn.danger { background: #ef5350; color: white; }
     </style>
 </head>
 <body>
@@ -48,13 +75,13 @@
     </div>
     
     <div id="pageOrders" class="content">
-        <button class="btn" onclick="showAddOrder()">➕ 發布訂單</button>
         <div id="hostOrdersList"></div>
+        <button class="fab fab-add" onclick="showAddOrder()">+</button>
     </div>
     
     <div id="pageProperties" class="content" style="display:none">
-        <button class="btn" onclick="showAddProperty()">➕ 添加房源</button>
         <div id="myPropertiesList"></div>
+        <button class="fab fab-add" onclick="showAddProperty()">+</button>
     </div>
     
     <div class="modal" id="modalOrder">
@@ -80,12 +107,62 @@
         </div>
     </div>
     
+    <!-- 編輯訂單 Modal -->
+    <div class="modal" id="modalEditOrder">
+        <div class="modal-content">
+            <h3>✏️ 編輯訂單</h3>
+            <input type="hidden" id="editOrderId">
+            <select id="editOrderProperty"></select>
+            <input type="datetime-local" id="editOrderTime">
+            <input type="number" id="editOrderPrice" placeholder="價格 ($)">
+            <button class="btn" onclick="saveOrder()">保存</button>
+            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <!-- 确认弹窗 -->
+    <div id="confirmModal" class="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title" id="confirmTitle">確認刪除</div>
+            <div class="confirm-desc" id="confirmDesc">確定要刪除嗎？</div>
+            <div class="confirm-btns">
+                <button class="confirm-btn cancel" onclick="closeConfirm()">取消</button>
+                <button class="confirm-btn danger" id="confirmBtn">刪除</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        const API = 'http://127.0.0.1:5000/api';
+        function showConfirm(title, desc, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmDesc').textContent = desc;
+            document.getElementById('confirmBtn').onclick = function() {
+                closeConfirm();
+                onConfirm();
+            };
+            document.getElementById('confirmModal').classList.add('show');
+        }
+        
+        function closeConfirm() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+        
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast ' + type;
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
         let hostPhone = localStorage.getItem('host_phone');
         
         if (!hostPhone) {
-            alert('請先登錄');
+            showToast('請先登錄', 'warn');
             location.href = 'index.html';
         }
         
@@ -116,11 +193,20 @@
                         <div class="card-title">${o.property_name || '未知房源'}</div>
                         <div class="card-info">🕐 ${o.checkout_time} | <span class="price">$${o.price}</span></div>
                         <div style="margin-top:8px"><span class="badge ${o.status}">${o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成'}</span></div>
+                        ${o.status === 'open' ? `<div class="card-actions"><button class="btn-edit" onclick="showEditOrder(${o.id}, '${o.property_name}', '${o.property_address}', '${o.checkout_time}', ${o.price})">✏️ 修改</button><button class="btn-delete" onclick="deleteOrder(${o.id})">🗑️ 刪除</button></div>` : ''}
                     </div>
                 `).join('') || '<div class="empty">暫無發布的訂單</div>';
             } catch(e) {
                 console.error(e);
             }
+        }
+        
+        async function deleteOrder(id) {
+            showConfirm('確認刪除', '確定要刪除這個訂單嗎？', async () => {
+                await fetch(API + '/orders/' + id, { method: 'DELETE' });
+                loadOrders();
+                showToast('已刪除');
+            });
         }
         
         async function loadProperties() {
@@ -134,6 +220,7 @@
                         <div class="card-title">${p.name}</div>
                         <div class="card-info">${p.address}</div>
                         <div class="card-info">🛏️ ${p.bedrooms} | 🚿 ${p.bathrooms}</div>
+                        <div class="card-actions"><button class="btn-delete" onclick="deleteProperty(${p.id})">🗑️ 刪除</button></div>
                     </div>
                 `).join('') || '<div class="empty">暫無房源</div>';
                 
@@ -169,7 +256,7 @@
             });
             closeModal();
             loadOrders();
-            alert('發布成功');
+            showToast('發布成功');
         }
         
         async function addProperty() {
@@ -185,7 +272,43 @@
             });
             closeModal();
             loadProperties();
-            alert('添加成功');
+            showToast('添加成功');
+        }
+        
+        async function deleteProperty(id) {
+            showConfirm('確認刪除', '確定要刪除這個房源嗎？', async () => {
+                await fetch(API + '/properties/' + id, { method: 'DELETE' });
+                loadProperties();
+                showToast('已刪除');
+            });
+        }
+        
+        async function showEditOrder(id, propertyName, propertyAddress, checkoutTime, price) {
+            // 加載房源列表到編輯表單
+            const res = await fetch(API + '/properties');
+            const data = await res.json();
+            document.getElementById('editOrderProperty').innerHTML = (data.data || []).map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            
+            document.getElementById('editOrderId').value = id;
+            document.getElementById('editOrderTime').value = checkoutTime;
+            document.getElementById('editOrderPrice').value = price;
+            document.getElementById('modalEditOrder').classList.add('active');
+        }
+        
+        async function saveOrder() {
+            const id = document.getElementById('editOrderId').value;
+            await fetch(API + '/orders/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    property_id: document.getElementById('editOrderProperty').value,
+                    checkout_time: document.getElementById('editOrderTime').value,
+                    price: document.getElementById('editOrderPrice').value
+                })
+            });
+            closeModal();
+            loadOrders();
+            showToast('修改成功');
         }
         
         loadOrders();
