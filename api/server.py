@@ -17,7 +17,7 @@ from models.cleaning import Database, Property, Cleaner, Job, CleaningRepository
 
 
 class CleaningAPI:
-    def __init__(self, db_path: str = "cleaning.db"):
+    def __init__(self, db_path: str = "/home/nico/projects/cleaning_service/cleaning.db"):
         self.db = Database(db_path)
         self.repo = CleaningRepository(self.db)
     

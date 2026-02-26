@@ -276,40 +276,46 @@
     <div class="modal" id="modal-host">
         <div class="modal-content">
             <h2 class="modal-title">🏠 房東登錄</h2>
+            <form onsubmit="event.preventDefault(); loginHost();">
             <div class="form-group">
                 <label class="form-label">驗證碼</label>
                 <input type="text" id="host-code" class="input-premium" placeholder="輸入驗證碼" value="547047">
             </div>
-            <button class="btn-primary" onclick="loginHost()">登錄</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+            <button type="submit" class="btn-primary">登錄</button>
+            <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
+            </form>
         </div>
     </div>
     
     <div class="modal" id="modal-cleaner">
         <div class="modal-content">
             <h2 class="modal-title">👷 清潔工登錄</h2>
+            <form onsubmit="event.preventDefault(); loginCleaner();">
             <div class="form-group">
                 <label class="form-label">驗證碼</label>
                 <input type="text" id="cleaner-code" class="input-premium" placeholder="輸入驗證碼" value="733025">
             </div>
-            <button class="btn-primary" onclick="loginCleaner()">登錄</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+            <button type="submit" class="btn-primary">登錄</button>
+            <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
+            </form>
         </div>
     </div>
     
     <div class="modal" id="modal-admin">
         <div class="modal-content">
             <h2 class="modal-title">📊 管理員登錄</h2>
+            <form onsubmit="event.preventDefault(); loginAdmin();">
             <div class="form-group">
                 <label class="form-label">用戶名</label>
                 <input type="text" id="admin-username" class="input-premium" placeholder="用戶名" value="admin">
             </div>
             <div class="form-group">
                 <label class="form-label">密碼</label>
-                <input type="password" id="admin-password" class="input-premium" placeholder="密碼" value="admin123">
+                <input type="text" id="admin-password" class="input-premium" placeholder="密碼" value="admin123">
             </div>
-            <button class="btn-primary" onclick="loginAdmin()">登錄</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+            <button type="submit" class="btn-primary">登錄</button>
+            <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
+            </form>
         </div>
     </div>
     
