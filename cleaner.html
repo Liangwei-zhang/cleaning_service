@@ -37,7 +37,6 @@
         /* 模态框样式 */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal.active { display: flex; }
         .modal-content { background: white; border-radius: 4px; padding: 24px; width: 90%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .modal-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 8px; color: #333; }
         .modal-desc { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
@@ -86,7 +85,7 @@
     </div>
     
     <!-- 驗證碼模態框 -->
-    <div id="verifyModal" class="modal-overlay">
+    <div id="verifyModal" class="modal">
         <div class="modal">
             <div class="modal-title">🔐 輸入驗證碼</div>
             <div class="modal-desc">請輸入房東提供的驗證碼確認接單</div>
@@ -99,7 +98,7 @@
     </div>
     
     <!-- 完成確認模態框 -->
-    <div id="completeModal" class="modal-overlay">
+    <div id="completeModal" class="modal">
         <div class="modal modal-success">
             <div class="modal-title">✅ 確認完成</div>
             <div class="modal-desc">確定已完成清潔並離開房源嗎？</div>
@@ -129,8 +128,8 @@
             const toast = document.getElementById('toast');
             toast.textContent = msg;
             toast.className = 'toast ' + type;
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            setTimeout(() => toast.classList.add('active'), 10);
+            setTimeout(() => toast.classList.remove('active'), 2500);
         }
         
         const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
@@ -188,12 +187,12 @@
         function openVerifyModal(orderId) {
             pendingOrderId = orderId;
             document.getElementById('verifyCodeInput').value = '';
-            document.getElementById('verifyModal').classList.add('show');
+            document.getElementById('verifyModal').classList.add('active');
             document.getElementById('verifyCodeInput').focus();
         }
         
         function closeVerifyModal() {
-            document.getElementById('verifyModal').classList.remove('show');
+            document.getElementById('verifyModal').classList.remove('active');
             pendingOrderId = null;
         }
         
@@ -228,11 +227,11 @@
         
         function openCompleteModal(orderId) {
             pendingCompleteId = orderId;
-            document.getElementById('completeModal').classList.add('show');
+            document.getElementById('completeModal').classList.add('active');
         }
         
         function closeCompleteModal() {
-            document.getElementById('completeModal').classList.remove('show');
+            document.getElementById('completeModal').classList.remove('active');
             pendingCompleteId = null;
         }
         
