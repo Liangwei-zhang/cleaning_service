@@ -123,6 +123,20 @@
         </div>
     </div>
     
+    <!-- 編輯房源 Modal -->
+    <div class="modal" id="modalEditProperty">
+        <div class="modal-content">
+            <h3>✏️ 編輯房源</h3>
+            <input type="hidden" id="editPropertyId">
+            <input type="text" id="editPropertyName" placeholder="房源名稱">
+            <input type="text" id="editPropertyAddress" placeholder="地址">
+            <input type="number" id="editPropertyBedrooms" placeholder="臥室數">
+            <input type="number" id="editPropertyBathrooms" placeholder="衛浴數">
+            <button class="btn" onclick="saveProperty()">保存</button>
+            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
     <div class="toast" id="toast"></div>
     
     <!-- 确认弹窗 -->
@@ -235,7 +249,10 @@
                         <div class="card-title">${p.name}</div>
                         <div class="card-info">${p.address}</div>
                         <div class="card-info">🛏️ ${p.bedrooms} | 🚿 ${p.bathrooms}</div>
-                        <div class="card-actions"><button class="btn-delete" onclick="deleteProperty(${p.id})">🗑️ 刪除</button></div>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick="showEditProperty(${p.id}, '${p.name}', '${p.address}', ${p.bedrooms}, ${p.bathrooms})">✏️ 修改</button>
+                            <button class="btn-delete" onclick="deleteProperty(${p.id})">🗑️ 刪除</button>
+                        </div>
                     </div>
                 `).join('') || '<div class="empty">暫無房源</div>';
                 
@@ -296,6 +313,32 @@
                 loadProperties();
                 showToast('已刪除');
             });
+        }
+        
+        function showEditProperty(id, name, address, bedrooms, bathrooms) {
+            document.getElementById('editPropertyId').value = id;
+            document.getElementById('editPropertyName').value = name;
+            document.getElementById('editPropertyAddress').value = address;
+            document.getElementById('editPropertyBedrooms').value = bedrooms;
+            document.getElementById('editPropertyBathrooms').value = bathrooms;
+            document.getElementById('modalEditProperty').classList.add('active');
+        }
+        
+        async function saveProperty() {
+            const id = document.getElementById('editPropertyId').value;
+            await fetch(API + '/properties/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('editPropertyName').value,
+                    address: document.getElementById('editPropertyAddress').value,
+                    bedrooms: parseInt(document.getElementById('editPropertyBedrooms').value) || 1,
+                    bathrooms: parseInt(document.getElementById('editPropertyBathrooms').value) || 1
+                })
+            });
+            closeModal();
+            loadProperties();
+            showToast('修改成功');
         }
         
         async function showEditOrder(id, propertyName, propertyAddress, checkoutTime, price) {
