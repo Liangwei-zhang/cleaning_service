@@ -5,29 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👷 短租清潔 - 接單員</title>
     <style>
+        :root {
+            --primary: #6366F1;
+            --bg-main: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text-h: #0F172A;
+            --text-p: #475569;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --danger: #EF4444;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
-        header { background: #2E7D32; border: 1px solid #1B5E20; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-main); }
+        header { background: #6366F1; border: 1px solid #4F46E5; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 18px; }
-        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 12px; cursor: pointer; }
         
         /* 导航栏 */
         .nav { display: flex; background: white; padding: 10px 15px; gap: 10px; }
-        .nav-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; background: #F1F3F4; color: #333; color: #333; }
-        .nav-btn.active { background: #2E7D32; border: 1px solid #1B5E20; color: white; }
+        .nav-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; background: #F1F3F4; color: #333; color: #333; }
+        .nav-btn.active { background: #6366F1; border: 1px solid #4F46E5; color: white; }
         
         .content { padding: 15px; padding-bottom: 80px; animation: fadeIn 1.5s ease; }
-        .btn { background: #2E7D32; border: 1px solid #1B5E20; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; margin: 5px; }
-        .btn-success { background: #43a047; color: white; border: 1px solid #388E3C; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .btn { background: #6366F1; border: 1px solid #4F46E5; color: white; border: none; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; margin: 5px; }
+        .btn-success { background: #43a047; color: white; border: 1px solid #388E3C; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; }
         
         .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         
-        .card { background: white; pointer-events: auto; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card { background: white; pointer-events: auto; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .card-title { font-weight: bold; font-size: 16px; }
         .card-info { color: #666; font-size: 13px; margin-top: 5px; }
-        .price { color: #2E7D32; font-weight: bold; font-size: 18px; }
+        .price { color: #6366F1; font-weight: bold; font-size: 18px; }
         
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; }
         .badge.open { background: #388E3C; color: white; }
         .badge.accepted { background: #1976D2; color: white; }
         .badge.completed { background: #9E9E9E; color: white; }
@@ -37,22 +48,22 @@
         /* 模态框样式 */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: flex-end; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 4px; padding: 24px; width: 90%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .modal-content { background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .modal-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 8px; color: #333; }
         .modal-desc { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
-        .modal-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 4px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
-        .modal-input:focus { border-color: #2E7D32; }
+        .modal-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
+        .modal-input:focus { border-color: #6366F1; }
         .confirm-btns { display: flex; gap: 10px; }
-        .confirm-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; font-weight: 500; }
+        .confirm-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: 500; }
         .confirm-btn.cancel { background: #F1F3F4; color: #666; }
-        .confirm-btn.danger { background: #2E7D32; border: 1px solid #1B5E20; color: white; }
-        .confirm-btn.danger:hover { background: #1B5E20; }
+        .confirm-btn.danger { background: #6366F1; border: 1px solid #4F46E5; color: white; }
+        .confirm-btn.danger:hover { background: #4F46E5; }
         
         /* 完成确认模态框 */
         .modal-success .modal-title { color: #388E3C; }
         
         /* Toast 提示 */
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 4px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 12px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.success { background: #388E3C; }
         .toast.error { background: #f44336; }
@@ -132,7 +143,7 @@
             setTimeout(() => toast.classList.remove('active'), 2500);
         }
         
-        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
+        const API = 'http://127.0.0.1:80/api';
         let cleanerId = localStorage.getItem('cleaner_id');
         
         if (!cleanerId) {
