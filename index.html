@@ -367,6 +367,10 @@
         
         /* Confirm Overlay */
         .confirm-overlay {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+
             display: none;
             position: fixed;
             inset: 0;
@@ -381,6 +385,11 @@
         .confirm-overlay.show { display: flex; }
         
         .confirm-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+
             background: white;
             border-radius: var(--radius-lg);
             padding: 28px;
@@ -405,8 +414,8 @@
             cursor: pointer;
         }
         
-        .confirm-btn.cancel { background: #FFFFFF; color: var(--text-muted); }
-        .confirm-btn.danger { background: #DC2626; color: white; }
+        .confirm-btn.cancel { background: #F1F5F9; color: var(--text-muted); }
+        .confirm-btn.danger { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; }
         
         .header-logout { flex-shrink: 0; margin-left: auto;
             padding: 8px 16px;
@@ -605,6 +614,11 @@
         
         /* Confirm box */
         .confirm-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+
             animation: modalIn 0.35s cubic-bezier(0.34, 1.52, 0.64, 1) forwards;
         }
         
@@ -920,6 +934,11 @@
         
         /* === SOFT SHADOWS === */
         .card, .modal-content, .confirm-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
             border: none;
         }
