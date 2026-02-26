@@ -7,10 +7,10 @@
     <style>
         @layer base {
             :root {
-                --primary: #1A1C1E !important;
+                --primary: #3A7BD5 !important;
                 --accent: #38BDF8;
                 --accent-warm: #F97316;
-                --bg: #FBFBF9;
+                --bg: #FFFFFF;
                 --card: #FFFFFF;
                 --text: #1E293B;
                 --text-muted: #64748B;
@@ -52,7 +52,7 @@
         .btn-primary {
             width: 100%;
             padding: 18px;
-            background: #1A1C1E;
+            background: #3A7BD5;
             color: white;
             border: none;
             border-radius: 24px;
@@ -76,7 +76,7 @@
         .input-premium {
             width: 100%;
             padding: 16px 20px;
-            background: #FBFBF9;
+            background: #FFFFFF;
             border: none;
             border-radius: 24px;
             font-size: 16px;
@@ -144,7 +144,7 @@
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: #1A1C1E;
+            background: #3A7BD5;
             color: white;
             padding: 16px 28px;
             border-radius: 24px;
@@ -196,7 +196,7 @@
             box-shadow: var(--shadow-soft);
         }
         
-        .stat-num { font-size: 26px; font-weight: 700; color: #1A1C1E; }
+        .stat-num { font-size: 26px; font-weight: 700; color: #3A7BD5; }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
         /* Header */
@@ -234,7 +234,7 @@
         }
         
         .nav-tab.active {
-            background: #1A1C1E;
+            background: #3A7BD5;
             color: white;
         }
         
@@ -246,7 +246,7 @@
             width: 60px;
             height: 60px;
             border-radius: 24px;
-            background: #1A1C1E;
+            background: #3A7BD5;
             border: none;
             font-size: 28px;
             color: white;
@@ -267,7 +267,7 @@
         .price {
             font-size: 24px;
             font-weight: 700;
-            color: #1A1C1E;
+            color: #3A7BD5;
         }
         
         /* Status Badge */
@@ -317,7 +317,7 @@
             align-items: center;
             justify-content: center;
             padding: 40px 24px;
-            background: linear-gradient(180deg, #FBFBF9 0%, #FBFBF9 100%);
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
         }
         
         .login-logo {
@@ -336,7 +336,7 @@
         .login-title {
             font-size: 32px;
             font-weight: 700;
-            color: #1A1C1E;
+            color: #3A7BD5;
             margin-bottom: 8px;
         }
         
@@ -352,7 +352,7 @@
         .btn-secondary {
             width: 100%;
             padding: 16px;
-            background: #FBFBF9;
+            background: #FFFFFF;
             color: var(--text-muted);
             border: none;
             border-radius: 24px;
@@ -405,12 +405,12 @@
             cursor: pointer;
         }
         
-        .confirm-btn.cancel { background: #FBFBF9; color: var(--text-muted); }
+        .confirm-btn.cancel { background: #FFFFFF; color: var(--text-muted); }
         .confirm-btn.danger { background: #DC2626; color: white; }
         
         .header-logout { flex-shrink: 0; margin-left: auto;
             padding: 8px 16px;
-            background: #FBFBF9;
+            background: #FFFFFF;
             border: none;
             border-radius: 12px;
             font-size: 14px;
@@ -704,10 +704,10 @@
     
         :root {
             /* === PREMIUM LUXURY PALETTE === */
-            --primary: #1A1C1E;        /* Deep Obsidian */
-            --accent-gold: #C5A059;    /* Champagne Gold */
+            --primary: #3A7BD5;        /* Deep Obsidian */
+            --accent-gold: #F2994A;    /* Champagne Gold */
             --accent-teal: #4A6767;    /* Muted Teal */
-            --surface: #FBFBF9;         /* Alabaster */
+            --surface: #FFFFFF;         /* Alabaster */
             --neutral-soft: #E2E2DE;   /* Soft Grey */
             --charcoal: #454749;        /* Charcoal */
             --border-subtle: #F2F2F2;
@@ -849,7 +849,7 @@
         
         /* === LOGO ANIMATION === */
         .login-logo {
-            background: linear-gradient(145deg, #FBFBF9, #F5F5F5);
+            background: linear-gradient(145deg, #FFFFFF, #F5F5F5);
             box-shadow: 0 8px 32px rgba(26, 28, 30, 0.08);
         }
         
@@ -892,6 +892,203 @@
         /* Subtitle text */
         .login-subtitle, .item-info {
             color: var(--charcoal);
+        }
+
+    
+        :root {
+            /* === FRESH & CLEAN PALETTE === */
+            --primary: #3A7BD5;        /* Fresh Blue */
+            --primary-light: #5A9BE8;
+            --accent: #F2994A;          /* Warm Orange */
+            --accent-orange: #FF9F0A;
+            --success: #27AE60;         /* Mint Green */
+            --danger: #EB5757;          /* Soft Red */
+            --background: #F8FAFC;      /* Light Gray-Blue */
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #8E8E93;
+            --border-light: rgba(0, 0, 0, 0.05);
+            
+            body {
+                background: var(--background);
+                font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+                color: var(--text-primary);
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+            }
+        }
+        
+        /* === SOFT SHADOWS === */
+        .card, .modal-content, .confirm-box {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border: none;
+        }
+        
+        /* === ROUNDED CORNERS === */
+        .card, .modal-content, .stats, .portal-btn {
+            border-radius: 20px;
+        }
+        
+        /* === PRIMARY BUTTON === */
+        .btn-primary, .btn-accept {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50px;
+            box-shadow: 0 4px 16px rgba(58, 123, 213, 0.25);
+            transition: all 0.25s ease;
+        }
+        
+        .btn-primary:hover, .btn-accept:hover {
+            box-shadow: 0 6px 20px rgba(58, 123, 213, 0.35);
+            transform: translateY(-1px);
+        }
+        
+        /* === ACCENT/ORANGE BUTTONS === */
+        .btn-gold, .badge-open {
+            background: linear-gradient(135deg, var(--accent), var(--accent-orange));
+        }
+        
+        /* === PRICE - Primary Blue === */
+        .price {
+            color: var(--primary);
+            font-weight: 800;
+        }
+        
+        /* === STATUS TAGS === */
+        .badge-open { 
+            background: rgba(242, 153, 74, 0.15); 
+            color: #E67E22;
+        }
+        .badge-accepted { 
+            background: rgba(58, 123, 213, 0.15); 
+            color: var(--primary);
+        }
+        .badge-completed { 
+            background: rgba(39, 174, 96, 0.15); 
+            color: var(--success);
+        }
+        
+        /* === INPUT - Clean style === */
+        .input-premium {
+            background: #F2F2F7;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            transition: all 0.25s ease;
+        }
+        
+        .input-premium:focus {
+            background: white;
+            box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.15);
+        }
+        
+        /* === MODAL === */
+        .modal {
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(20px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+        }
+        
+        /* === HEADER === */
+        header {
+            background: white;
+            border-bottom: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+        }
+        
+        /* === NAV TABS === */
+        .nav-tab, .nav-btn {
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active, .nav-btn.active {
+            background: var(--primary);
+            box-shadow: 0 4px 16px rgba(58, 123, 213, 0.25);
+        }
+        
+        /* === PORTAL BUTTON === */
+        .portal-btn {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+        
+        .portal-btn:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* === FAB === */
+        .fab {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            box-shadow: 0 8px 24px rgba(58, 123, 213, 0.35);
+        }
+        
+        /* === STATS === */
+        .stat-num {
+            color: var(--primary);
+        }
+        
+        /* === LOGIN SCREEN === */
+        .login-screen {
+            background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+        }
+        
+        .login-logo {
+            background: white;
+            box-shadow: 0 8px 32px rgba(58, 123, 213, 0.15);
+        }
+        
+        /* === ANIMATIONS === */
+        @keyframes fadeInList {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card:nth-child(n) {
+            animation: fadeInList 0.4s ease forwards;
+            opacity: 0;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.0s; }
+        .card:nth-child(2) { animation-delay: 0.06s; }
+        .card:nth-child(3) { animation-delay: 0.12s; }
+        .card:nth-child(4) { animation-delay: 0.18s; }
+        .card:nth-child(5) { animation-delay: 0.24s; }
+        .card:nth-child(6) { animation-delay: 0.30s; }
+        
+        .btn:active, .fab:active {
+            transform: scale(0.95);
+        }
+        
+        /* === TOAST === */
+        .toast {
+            background: var(--text-primary);
+            border-radius: 16px;
+        }
+        
+        /* === EMPTY STATE === */
+        .empty {
+            color: var(--text-secondary);
+        }
+        
+        /* === TEXT COLORS === */
+        .login-subtitle, .item-info, .card-info {
+            color: var(--text-secondary);
+        }
+        
+        /* === BOTTOM NAV === */
+        .bottom-nav, .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
     </style>
