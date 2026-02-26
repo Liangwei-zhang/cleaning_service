@@ -18,7 +18,7 @@
         
         .content { padding: 15px; }
         .btn { background: #8A9A5B; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; margin: 5px; }
-        .btn-success { background: #4CAF50; }
+        .btn-success { background: #66bb6a; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; }
         
         .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         
@@ -86,7 +86,7 @@
         <div class="modal">
             <div class="modal-title">🔐 輸入驗證碼</div>
             <div class="modal-desc">請輸入房東提供的驗證碼確認接單</div>
-            <input type="text" id="verifyCodeInput" class="modal-input" placeholder="0000" maxlength="4" inputmode="numeric" onkeypress="if(event.key==='Enter')confirmAccept()">
+            <input type="text" id="verifyCodeInput" class="modal-input" placeholder="000000" maxlength="6" inputmode="numeric" onkeypress="if(event.key==='Enter')confirmAccept()">
             <div class="modal-btns">
                 <button class="modal-btn cancel" onclick="closeVerifyModal()">取消</button>
                 <button class="modal-btn confirm" onclick="confirmAccept()">確認</button>
@@ -109,6 +109,18 @@
     <div class="toast" id="toast"></div>
     
     <script>
+        function formatTime(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const h = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            return `${y}-${m}-${day} ${h}:${min}`;
+        }
+        
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -150,8 +162,8 @@
                     <div class="card-title">${o.property_name || '未知房源'}</div>
                     <div class="card-info">${o.property_address || ''}</div>
                     <div class="card-info">🏠 ${o.host_name} | 📞 ${o.host_phone}</div>
-                    <div class="card-info">🕐 ${o.checkout_time} | <span class="price">$${o.price}</span></div>
-                    <div class="card-actions"><button class="btn btn-success" onclick="acceptOrder(${o.id})">接單</button></div>
+                    <div class="card-info">🕐 ${formatTime(o.checkout_time)} | <span class="price">$${o.price}</span></div>
+                    <div class="card-actions"><button class="btn btn-success" onclick="acceptOrder(${o.id})">✋ 我要接單</button></div>
                 </div>
             `).join('') || '<div class="empty">暫無開放訂單</div>';
             
@@ -160,9 +172,9 @@
             document.getElementById('myHistory').innerHTML = myHistory.map(o => `
                 <div class="card">
                     <div class="card-title">${o.property_name || '未知房源'}</div>
-                    <div class="card-info">🕐 ${o.checkout_time} | <span class="price">$${o.price}</span></div>
+                    <div class="card-info">🕐 ${formatTime(o.checkout_time)} | <span class="price">$${o.price}</span></div>
                     <div style="margin-top:8px"><span class="badge ${o.status}">${o.status === 'accepted' ? '已接單' : '已完成'}</span></div>
-                    ${o.status === 'accepted' ? `<div class="card-actions"><button class="btn btn-success" onclick="completeOrder(${o.id})">完成清潔</button></div>` : ''}
+                    ${o.status === 'accepted' ? `<div class="card-actions"><button class="btn btn-success" onclick="completeOrder(${o.id})">✅ 完成清潔</button></div>` : ''}
                 </div>
             `).join('') || '<div class="empty">暫無歷史訂單</div>';
         }

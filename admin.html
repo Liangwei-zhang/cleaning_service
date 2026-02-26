@@ -33,6 +33,8 @@
         
         .btn { background: #8A9A5B; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 5px; }
         .btn-danger { background: #ef5350; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .btn-edit { background: #2196F3; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; margin-right: 10px; font-size: 14px; }
+        .btn-delete { background: #ff7043; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; }
         .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         
         /* 模态框 */
@@ -116,6 +118,19 @@
         </div>
     </div>
     
+    <!-- 編輯清潔工 Modal -->
+    <div class="modal" id="modalEditCleaner">
+        <div class="modal-content">
+            <h3>✏️ 編輯清潔工</h3>
+            <input type="hidden" id="editCleanerId">
+            <input type="text" id="editCleanerName" placeholder="姓名">
+            <input type="text" id="editCleanerPhone" placeholder="電話">
+            <input type="text" id="editCleanerCode" placeholder="驗證碼" maxlength="6">
+            <button class="btn" onclick="saveCleaner()">保存</button>
+            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
     <!-- 添加房東 Modal -->
     <div class="modal" id="modalHost">
         <div class="modal-content">
@@ -123,6 +138,19 @@
             <input type="text" id="hostName" placeholder="姓名">
             <input type="text" id="hostPhone" placeholder="電話">
             <button class="btn" onclick="addHost()">添加</button>
+            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <!-- 編輯房東 Modal -->
+    <div class="modal" id="modalEditHost">
+        <div class="modal-content">
+            <h3>✏️ 編輯房東</h3>
+            <input type="hidden" id="editHostId">
+            <input type="text" id="editHostName" placeholder="姓名">
+            <input type="text" id="editHostPhone" placeholder="電話">
+            <input type="text" id="editHostCode" placeholder="驗證碼" maxlength="6">
+            <button class="btn" onclick="saveHost()">保存</button>
             <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
         </div>
     </div>
@@ -155,6 +183,18 @@
         
         function closeConfirm() {
             document.getElementById('confirmModal').classList.remove('show');
+        }
+        
+        function formatTime(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const h = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            return `${y}-${m}-${day} ${h}:${min}`;
         }
         
         function showToast(msg, type = 'success') {
@@ -199,7 +239,10 @@
                     <div class="card-title">${c.name}</div>
                     <div class="card-info">📞 ${c.phone || '-'} | ⭐ ${c.rating} | 總訂單: ${c.total_jobs}<div class="card-info">🔑</div>
                      Code: ${c.code}</div>
-                    <div class="card-actions"><button class="btn btn-danger" onclick="deleteCleaner(${c.id})">🗑️ 刪除</button></div>
+                    <div class="card-actions">
+                        <button class="btn-edit" onclick="showEditCleaner(${c.id}, '${c.name}', '${c.phone || ''}', '${c.code}')">✏️ 修改</button>
+                        <button class="btn-delete" onclick="deleteCleaner(${c.id})">🗑️ 刪除</button>
+                    </div>
                 </div>
             `).join('') || '<div class="empty">暫無清潔工</div>';
             
@@ -209,7 +252,10 @@
                     <div class="card-title">${h.name}</div>
                     <div class="card-info">📞 ${h.phone}</div>
                     <div class="card-info">🔑 Code: ${h.code}</div>
-                    <div class="card-actions"><button class="btn btn-danger" onclick="deleteHost(${h.id})">🗑️ 刪除</button></div>
+                    <div class="card-actions">
+                        <button class="btn-edit" onclick="showEditHost(${h.id}, '${h.name}', '${h.phone}', '${h.code}')">✏️ 修改</button>
+                        <button class="btn-delete" onclick="deleteHost(${h.id})">🗑️ 刪除</button>
+                    </div>
                 </div>
             `).join('') || '<div class="empty">暫無房東</div>';
             
@@ -217,7 +263,7 @@
             document.getElementById('ordersList').innerHTML = (orders.data || []).slice(0, 20).map(o => `
                 <div class="card">
                     <div class="card-title">${o.property_name || '未知'} - $${o.price}</div>
-                    <div class="card-info">🏠 ${o.host_name} | 📅 ${o.checkout_time}</div>
+                    <div class="card-info">🏠 ${o.host_name} | 📅 ${formatTime(o.checkout_time)}</div>
                     <div class="card-info">狀態: ${o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成'}</div>
                 </div>
             `).join('') || '<div class="empty">暫無訂單</div>';
@@ -267,6 +313,30 @@
             showToast('添加成功');
         }
         
+        function showEditCleaner(id, name, phone, code) {
+            document.getElementById('editCleanerId').value = id;
+            document.getElementById('editCleanerName').value = name;
+            document.getElementById('editCleanerPhone').value = phone;
+            document.getElementById('editCleanerCode').value = code;
+            document.getElementById('modalEditCleaner').classList.add('active');
+        }
+        
+        async function saveCleaner() {
+            const id = document.getElementById('editCleanerId').value;
+            await fetch(API + '/cleaners/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('editCleanerName').value,
+                    phone: document.getElementById('editCleanerPhone').value,
+                    code: document.getElementById('editCleanerCode').value
+                })
+            });
+            closeModal();
+            loadData();
+            showToast('修改成功');
+        }
+        
         async function deleteCleaner(id) {
             showConfirm('確認刪除', '確定要刪除這個清潔工嗎？', async () => {
                 await fetch(API + '/cleaners/' + id, { method: 'DELETE' });
@@ -279,6 +349,30 @@
                 await fetch(API + '/hosts/' + id, { method: 'DELETE' });
                 loadData();
             });
+        }
+        
+        function showEditHost(id, name, phone, code) {
+            document.getElementById('editHostId').value = id;
+            document.getElementById('editHostName').value = name;
+            document.getElementById('editHostPhone').value = phone;
+            document.getElementById('editHostCode').value = code;
+            document.getElementById('modalEditHost').classList.add('active');
+        }
+        
+        async function saveHost() {
+            const id = document.getElementById('editHostId').value;
+            await fetch(API + '/hosts/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('editHostName').value,
+                    phone: document.getElementById('editHostPhone').value,
+                    code: document.getElementById('editHostCode').value
+                })
+            });
+            closeModal();
+            loadData();
+            showToast('修改成功');
         }
         
         loadData();

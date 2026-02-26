@@ -34,8 +34,8 @@
         .badge.completed { background: #9E9E9E; color: white; }
         
         .empty { text-align: center; padding: 30px; color: #999; }
-        .btn-delete { background: #ef5350; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
-        .btn-edit { background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; margin-right: 10px; }
+        .btn-delete { background: #ff7043; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn-edit { background: #2196F3; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 10px; }
         .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         
         /* 悬浮按钮 */
@@ -136,6 +136,18 @@
     </div>
     
     <script>
+        function formatTime(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const h = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            return `${y}-${m}-${day} ${h}:${min}`;
+        }
+        
         function showConfirm(title, desc, onConfirm) {
             document.getElementById('confirmTitle').textContent = title;
             document.getElementById('confirmDesc').textContent = desc;
@@ -191,9 +203,9 @@
                 list.innerHTML = orders.map(o => `
                     <div class="card">
                         <div class="card-title">${o.property_name || '未知房源'}</div>
-                        <div class="card-info">🕐 ${o.checkout_time} | <span class="price">$${o.price}</span></div>
+                        <div class="card-info">🕐 ${formatTime(o.checkout_time)} | <span class="price">$${o.price}</span></div>
                         <div style="margin-top:8px"><span class="badge ${o.status}">${o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成'}</span></div>
-                        ${o.status === 'open' ? `<div class="card-actions"><button class="btn-edit" onclick="showEditOrder(${o.id}, '${o.property_name}', '${o.property_address}', '${o.checkout_time}', ${o.price})">✏️ 修改</button><button class="btn-delete" onclick="deleteOrder(${o.id})">🗑️ 刪除</button></div>` : ''}
+                        ${o.status === 'open' ? `<div class="card-actions"><button class="btn-edit" onclick="showEditOrder(${o.id}, '${o.property_name}', '${o.property_address}', '${formatTime(o.checkout_time)}', ${o.price})">✏️ 修改</button><button class="btn-delete" onclick="deleteOrder(${o.id})">🗑️ 刪除</button></div>` : ''}
                     </div>
                 `).join('') || '<div class="empty">暫無發布的訂單</div>';
             } catch(e) {
