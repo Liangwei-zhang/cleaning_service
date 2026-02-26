@@ -409,10 +409,11 @@ class CleaningAPI:
         
         conn = self.db._get_connection()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO properties (name, address, bedrooms, bathrooms, cleaning_time_minutes, cleaning_checklist, notes)
-                          VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        cursor.execute("""INSERT INTO properties (name, address, bedrooms, bathrooms, floor, area, cleaning_time_minutes, cleaning_checklist, notes)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                      (data.get("name"), data.get("address"), 
                       data.get("bedrooms", 1), data.get("bathrooms", 1),
+                      data.get("floor", 0), data.get("area", 0),
                       data.get("cleaning_time_minutes", 120), 
                       data.get("cleaning_checklist", ""), data.get("notes", "")))
         prop_id = cursor.lastrowid
@@ -426,8 +427,8 @@ class CleaningAPI:
         updates = []
         params = []
         
-        for field in ["name", "address", "bedrooms", "bathrooms", "cleaning_time_minutes", "cleaning_checklist", "notes"]:
-            if data.get(field):
+        for field in ["name", "address", "bedrooms", "bathrooms", "floor", "area", "cleaning_time_minutes", "cleaning_checklist", "notes"]:
+            if data.get(field) is not None:
                 updates.append(f"{field} = ?")
                 params.append(data[field])
         

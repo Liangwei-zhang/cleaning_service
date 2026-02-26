@@ -69,13 +69,15 @@ class Database:
 
 
 class Property:
-    def __init__(self, id=None, name="", address="", bedrooms=1, bathrooms=1, 
+    def __init__(self, id=None, name="", address="", bedrooms=1, bathrooms=1, floor=0, area=0,
                  cleaning_time_minutes=120, cleaning_checklist="", notes="", status="active", created_at=None):
         self.id = id
         self.name = name
         self.address = address
         self.bedrooms = bedrooms
         self.bathrooms = bathrooms
+        self.floor = floor
+        self.area = area
         self.cleaning_time_minutes = cleaning_time_minutes
         self.cleaning_checklist = cleaning_checklist
         self.notes = notes
