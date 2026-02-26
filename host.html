@@ -2,80 +2,85 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🏠 短租清潔 - 房東</title>
     <style>
         :root {
-            --primary: #6366F1;
-            --bg-main: #F8FAFC;
-            --bg-card: #FFFFFF;
-            --text-h: #0F172A;
-            --text-p: #475569;
-            --border: #E2E8F0;
-            --success: #10B981;
-            --danger: #EF4444;
+            --p-bg: #ffffff;
+            --p-surface: rgba(255, 255, 255, 0.85);
+            --p-accent-1: #00E5FF;
+            --p-accent-2: #FF2D95;
+            --p-text-main: #1A1C2E;
+            --p-text-sub: #8E91A1;
+            --p-glass: rgba(255, 255, 255, 0.6);
+            --p-radius-lg: 32px;
+            --p-radius-md: 16px;
+            --shadow-blue: 0 20px 40px rgba(0, 229, 255, 0.15);
+            --shadow-main: 0 15px 45px rgba(26, 28, 46, 0.05);
+            --shadow-pink: 0 12px 24px rgba(255, 45, 149, 0.3);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-main); }
-        header { background: #6366F1; border: 1px solid #4F46E5; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 18px; }
-        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 12px; cursor: pointer; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { font-family: system-ui, -apple-system, sans-serif; font-size: 15px; background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 50%, #fff5f8 100%); color: var(--p-text-main); min-height: 100vh; padding-bottom: 100px; }
         
-        .nav { display: flex; background: white; padding: 10px 15px; gap: 10px; }
-        .nav-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; background: #F1F3F4; color: #333; color: #333; }
-        .nav-btn.active { background: #6366F1; border: 1px solid #4F46E5; color: white; }
+        header { position: sticky; top: 0; z-index: 100; height: 60px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        header h1 { font-size: 17px; font-weight: 700; }
+        .logout { background: var(--p-surface); border: none; padding: 10px 16px; border-radius: 12px; color: var(--p-text-sub); font-weight: 500; cursor: pointer; }
         
-        .content { padding: 15px; padding-bottom: 80px; animation: fadeIn 1.5s ease; }
-        .btn { background: #6366F1; border: 1px solid #4F46E5; color: white; border: none; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-bottom: 10px; }
+        .nav { display: flex; background: var(--p-surface); backdrop-filter: blur(40px); padding: 12px 20px; gap: 12px; margin: 20px; border-radius: var(--p-radius-lg); border: 1px solid var(--p-glass); }
+        .nav-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; background: transparent; color: var(--p-text-sub); transition: all 0.3s; }
+        .nav-btn.active { background: linear-gradient(135deg, var(--p-accent-1), #00BFFF); color: var(--p-text-main); box-shadow: var(--shadow-blue); }
         
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card-title { font-weight: bold; font-size: 16px; }
-        .card-info { color: #666; font-size: 13px; margin-top: 5px; }
-        .price { color: #6366F1; font-weight: bold; font-size: 18px; }
+        .content { padding: 20px; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: flex-end; }
-.modal.active { display: flex; }
-        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .modal-content input, .modal-content select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 12px; }
+        .card { background: var(--p-surface); backdrop-filter: blur(40px); border: 1px solid var(--p-glass); border-radius: var(--p-radius-lg); padding: 20px; margin-bottom: 16px; position: relative; overflow: hidden; box-shadow: var(--shadow-main); transition: all 0.3s; }
+        .card:active { transform: scale(0.98); }
+        .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--p-accent-2); }
         
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; }
-        .badge.open { background: #388E3C; color: white; }
-        .badge.accepted { background: #1976D2; color: white; }
-        .badge.completed { background: #9E9E9E; color: white; }
+        .card-title { font-size: 17px; font-weight: 700; color: var(--p-text-main); margin-bottom: 8px; }
+        .card-info { font-size: 13px; color: var(--p-text-sub); margin-top: 4px; }
+        .price { font-size: 24px; font-weight: 700; color: var(--p-accent-1); }
         
-        .empty { text-align: center; padding: 30px; color: #999; }
-        .btn-delete { background: #e53935; color: white; border: 1px solid #D32F2F; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; }
-        .btn-edit { background: #1976D2; color: white; border: 1px solid #1565C0; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-right: 10px; }
-        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        .badge { display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        .badge.open { background: var(--p-text-main); color: #ffffff; }
+        .badge.accepted { background: var(--p-accent-1); color: var(--p-text-main); }
+        .badge.completed { background: #10B981; color: #ffffff; }
         
-        /* 悬浮按钮 */
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #6366F1; border: 1px solid #4F46E5; color: white; border: none; font-size: 32px; line-height: 1; cursor: pointer; box-shadow: 0 4px 15px rgba(138,154,91,0.4); display: flex; align-items: center; justify-content: flex-end; transition: transform 0.2s; }
-        .fab:hover { transform: scale(1.1); }
-        .fab-add { z-index: 100; }
+        .btn { height: 48px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, var(--p-accent-1), #00BFFF); box-shadow: var(--shadow-blue); color: var(--p-text-main); }
+        .btn-edit { background: linear-gradient(135deg, var(--p-accent-1), #00BFFF); box-shadow: var(--shadow-blue); color: var(--p-text-main); padding: 14px 24px; }
+        .btn-delete { background: linear-gradient(135deg, var(--p-accent-2), #FF7EB3); box-shadow: var(--shadow-pink); color: #ffffff; padding: 14px 24px; }
         
-        /* Toast 提示 */
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 12px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .card-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background: #ffffff; border-radius: 24px; padding: 24px; width: 100%; max-width: 380px; box-shadow: 0 25px 60px rgba(0,0,0,0.1); }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+        .modal-content input, .modal-content select { width: 100%; height: 48px; background: rgba(0,0,0,0.02); border: none; border-bottom: 2px solid rgba(0,0,0,0.06); padding: 0 16px; font-size: 14px; border-radius: 10px; margin-bottom: 10px; }
+        .modal-content input:focus { border-bottom-color: var(--p-accent-1); }
+        
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--p-text-main); color: #ffffff; padding: 14px 24px; border-radius: 12px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 2000; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast.success { background: #388E3C; }
-        .toast.error { background: #f44336; }
-        .toast.warn { background: #ff9800; }
         
-        /* 确认弹窗 */
-        .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: flex-end; }
+        .fab { position: fixed; bottom: 100px; right: 24px; width: 60px; height: 60px; border-radius: 20px; background: linear-gradient(135deg, var(--p-accent-2), #FF7EB3); box-shadow: var(--shadow-pink); color: #ffffff; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; z-index: 90; }
+        
+        .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .confirm-overlay.show { display: flex; }
-        .confirm-box { background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .confirm-icon { font-size: 48px; margin-bottom: 15px; }
-        .confirm-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }
-        .confirm-desc { color: #666; font-size: 14px; margin-bottom: 20px; }
-        .confirm-btns { display: flex; gap: 10px; }
-        .confirm-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; }
-        .confirm-btn.cancel { background: #F1F3F4; color: #666; }
-        .confirm-btn.danger { background: #D93025; color: white; }
-    .fade-in { animation: fadeIn 1.5s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.card { animation: fadeIn 1.5s ease; }
-</style>
+        .confirm-box { background: #ffffff; border-radius: 24px; padding: 24px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+        .confirm-icon { font-size: 48px; margin-bottom: 12px; }
+        .confirm-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .confirm-desc { font-size: 14px; color: var(--p-text-sub); margin-bottom: 16px; }
+        .confirm-btns { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; height: 46px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 14px; }
+        .confirm-btn.cancel { background: var(--p-surface); color: var(--p-text-sub); }
+        .confirm-btn.danger { background: linear-gradient(135deg, var(--p-accent-2), #FF7EB3); color: #ffffff; }
+        
+        .empty { text-align: center; padding: 40px; color: var(--p-text-sub); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card, .content { animation: fadeIn 0.4s ease; }
+    </style>
 </head>
 <body>
     <header>
@@ -90,56 +95,54 @@
     
     <div id="pageOrders" class="content">
         <div id="hostOrdersList"></div>
-        <button class="fab fab-add" onclick="showAddOrder()">+</button>
+        <button class="fab" onclick="showAddOrder()">+</button>
     </div>
     
     <div id="pageProperties" class="content" style="display:none">
         <div id="myPropertiesList"></div>
-        <button class="fab fab-add" onclick="showAddProperty()">+</button>
+        <button class="fab" onclick="showAddProperty()">+</button>
     </div>
     
     <div class="modal" id="modalOrder">
         <div class="modal-content">
-            <h3>📝 發布訂單</h3>
+            <div class="modal-title">📝 發布訂單</div>
             <select id="orderProperty"></select>
             <input type="datetime-local" id="orderTime">
             <input type="number" id="orderPrice" placeholder="價格 ($)">
-            <button class="btn" onclick="addOrder()">發布</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="addOrder()">發布</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
     <div class="modal" id="modalProperty">
         <div class="modal-content">
-            <h3>🏡 添加房源</h3>
+            <div class="modal-title">🏡 添加房源</div>
             <input type="text" id="propName" placeholder="房源名稱">
             <input type="text" id="propAddress" placeholder="地址">
             <input type="number" id="propBedrooms" placeholder="臥室數">
             <input type="number" id="propBathrooms" placeholder="衛浴數">
             <input type="number" id="propFloor" placeholder="樓層">
             <input type="number" id="propArea" placeholder="面積 (sqft)">
-            <button class="btn" onclick="addProperty()">添加</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="addProperty()">添加</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 編輯訂單 Modal -->
     <div class="modal" id="modalEditOrder">
         <div class="modal-content">
-            <h3>✏️ 編輯訂單</h3>
+            <div class="modal-title">✏️ 編輯訂單</div>
             <input type="hidden" id="editOrderId">
             <select id="editOrderProperty"></select>
             <input type="datetime-local" id="editOrderTime">
             <input type="number" id="editOrderPrice" placeholder="價格 ($)">
-            <button class="confirm-btn danger" onclick="saveOrder()">保存</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="saveOrder()">保存</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 編輯房源 Modal -->
     <div class="modal" id="modalEditProperty">
         <div class="modal-content">
-            <h3>✏️ 編輯房源</h3>
+            <div class="modal-title">✏️ 編輯房源</div>
             <input type="hidden" id="editPropertyId">
             <input type="text" id="editPropertyName" placeholder="房源名稱">
             <input type="text" id="editPropertyAddress" placeholder="地址">
@@ -147,14 +150,13 @@
             <input type="number" id="editPropertyBathrooms" placeholder="衛浴數">
             <input type="number" id="editPropertyFloor" placeholder="樓層">
             <input type="number" id="editPropertyArea" placeholder="面積 (sqft)">
-            <button class="confirm-btn danger" onclick="saveProperty()">保存</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="saveProperty()">保存</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
     <div class="toast" id="toast"></div>
     
-    <!-- 确认弹窗 -->
     <div id="confirmModal" class="confirm-overlay">
         <div class="confirm-box">
             <div class="confirm-icon">⚠️</div>
@@ -168,51 +170,33 @@
     </div>
     
     <script>
+        var API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
+        var hostPhone = localStorage.getItem('host_phone');
+        
+        if (!hostPhone) { showToast('請先登錄', 'warn'); location.href = 'index.html'; }
+        
+        function logout() { localStorage.clear(); location.href = 'index.html'; }
+        
         function formatTime(dateStr) {
             if (!dateStr) return '-';
-            const d = new Date(dateStr);
+            var d = new Date(dateStr);
             if (isNaN(d.getTime())) return dateStr;
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            const h = String(d.getHours()).padStart(2, '0');
-            const min = String(d.getMinutes()).padStart(2, '0');
-            return `${y}-${m}-${day} ${h}:${min}`;
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
         }
         
         function showConfirm(title, desc, onConfirm) {
             document.getElementById('confirmTitle').textContent = title;
             document.getElementById('confirmDesc').textContent = desc;
-            document.getElementById('confirmBtn').onclick = function() {
-                closeConfirm();
-                onConfirm();
-            };
+            document.getElementById('confirmBtn').onclick = function() { closeConfirm(); onConfirm(); };
             document.getElementById('confirmModal').classList.add('show');
         }
+        function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
         
-        function closeConfirm() {
-            document.getElementById('confirmModal').classList.remove('show');
-        }
-        
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
+        function showToast(msg, type) {
+            var toast = document.getElementById('toast');
             toast.textContent = msg;
-            toast.className = 'toast ' + type;
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-        
-        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
-        let hostPhone = localStorage.getItem('host_phone');
-        
-        if (!hostPhone) {
-            showToast('請先登錄', 'warn');
-            location.href = 'index.html';
-        }
-        
-        function logout() {
-            localStorage.clear();
-            location.href = 'index.html';
+            toast.className = 'toast show';
+            setTimeout(function() { toast.classList.remove('toast', 'show'); }, 2500);
         }
         
         function showPage(page) {
@@ -220,116 +204,53 @@
             document.getElementById('navProperties').className = page === 'properties' ? 'nav-btn active' : 'nav-btn';
             document.getElementById('pageOrders').style.display = page === 'orders' ? 'block' : 'none';
             document.getElementById('pageProperties').style.display = page === 'properties' ? 'block' : 'none';
-            
             if (page === 'orders') loadOrders();
             if (page === 'properties') loadProperties();
         }
         
         async function loadOrders() {
-            try {
-                const res = await fetch(API + '/orders');
-                const data = await res.json();
-                const orders = data.data?.filter(o => o.host_phone === hostPhone) || [];
-                
-                const list = document.getElementById('hostOrdersList');
-                list.innerHTML = orders.map(o => `
-                    <div class="card">
-                        <div class="card-title">${o.property_name || '未知房源'}</div>
-                        <div class="card-info">🕐 ${formatTime(o.checkout_time)} | <span class="price">$${o.price}</span></div>
-                        <div style="margin-top:8px"><span class="badge ${o.status}">${o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成'}</span></div>
-                        ${o.status === 'open' ? `<div class="card-actions"><button class="btn-edit" onclick="showEditOrder(${o.id}, '${o.property_name}', '${o.property_address}', '${formatTime(o.checkout_time)}', ${o.price})">✏️ 修改</button><button class="btn-delete" onclick="deleteOrder(${o.id})">🗑️ 刪除</button></div>` : ''}
-                    </div>
-                `).join('') || '<div class="empty">暫無發布的訂單</div>';
-            } catch(e) {
-                console.error(e);
-            }
-        }
-        
-        async function deleteOrder(id) {
-            showConfirm('確認刪除', '確定要刪除這個訂單嗎？', async () => {
-                await fetch(API + '/orders/' + id, { method: 'DELETE' });
-                loadOrders();
-                showToast('已刪除');
-            });
+            var res = await fetch(API + '/orders');
+            var data = await res.json();
+            var orders = data.data ? data.data.filter(function(o) { return o.host_phone === hostPhone; }) : [];
+            
+            document.getElementById('hostOrdersList').innerHTML = orders.map(function(o) {
+                var status = o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成';
+                var actions = o.status === 'open' ? '<div class="card-actions"><button class="btn-edit" onclick="showEditOrder(' + o.id + ', \'' + (o.property_name || '') + '\', \'' + (o.property_address || '') + '\', \'' + formatTime(o.checkout_time) + '\', ' + o.price + ')">✏️ 修改</button><button class="btn-delete" onclick="deleteOrder(' + o.id + ')">🗑️ 刪除</button></div>' : '';
+                return '<div class="card"><div class="card-title">' + (o.property_name || '未知房源') + '</div><div class="card-info">🕐 ' + formatTime(o.checkout_time) + ' | <span class="price">$' + o.price + '</span></div><div style="margin-top:8px"><span class="badge ' + o.status + '">' + status + '</span></div>' + actions + '</div>';
+            }).join('') || '<div class="empty">暫無發布的訂單</div>';
         }
         
         async function loadProperties() {
-            try {
-                const res = await fetch(API + '/properties');
-                const data = await res.json();
-                
-                const list = document.getElementById('myPropertiesList');
-                list.innerHTML = (data.data || []).map(p => `
-                    <div class="card">
-                        <div class="card-title">${p.name}</div>
-                        <div class="card-info">${p.address}</div>
-                        <div class="card-info">🛏️ ${p.bedrooms} | 🚿 ${p.bathrooms} | 🏢 ${p.floor || '-'} | 📐 ${p.area || '-'} sqft</div>
-                        <div class="card-actions">
-                            <button class="btn-edit" onclick="showEditProperty(${p.id}, '${p.name}', '${p.address}', ${p.bedrooms}, ${p.bathrooms}, ${p.floor || 0}, ${p.area || 0})">✏️ 修改</button>
-                            <button class="btn-delete" onclick="deleteProperty(${p.id})">🗑️ 刪除</button>
-                        </div>
-                    </div>
-                `).join('') || '<div class="empty">暫無房源</div>';
-                
-                document.getElementById('orderProperty').innerHTML = (data.data || []).map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-            } catch(e) {
-                console.error(e);
-            }
+            var res = await fetch(API + '/properties');
+            var data = await res.json();
+            
+            document.getElementById('myPropertiesList').innerHTML = (data.data || []).map(function(p) {
+                return '<div class="card"><div class="card-title">' + p.name + '</div><div class="card-info">' + p.address + '</div><div class="card-info">🛏️ ' + p.bedrooms + ' | 🚿 ' + p.bathrooms + ' | 🏢 ' + (p.floor || '-') + ' | 📐 ' + (p.area || '-') + ' sqft</div><div class="card-actions"><button class="btn-edit" onclick="showEditProperty(' + p.id + ', \'' + p.name + '\', \'' + p.address + '\', ' + p.bedrooms + ', ' + p.bathrooms + ', ' + (p.floor || 0) + ', ' + (p.area || 0) + ')">✏️ 修改</button><button class="btn-delete" onclick="deleteProperty(' + p.id + ')">🗑️ 刪除</button></div></div>';
+            }).join('') || '<div class="empty">暫無房源</div>';
+            
+            document.getElementById('orderProperty').innerHTML = (data.data || []).map(function(p) { return '<option value="' + p.id + '">' + p.name + '</option>'; }).join('');
         }
         
-        function showAddOrder() {
-            document.getElementById('modalOrder').classList.add('active');
-        }
-        
-        function showAddProperty() {
-            document.getElementById('modalProperty').classList.add('active');
-        }
-        
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
+        function showAddOrder() { document.getElementById('modalOrder').classList.add('active'); }
+        function showAddProperty() { document.getElementById('modalProperty').classList.add('active'); }
+        function closeModal() { document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('active'); }); }
         
         async function addOrder() {
-            await fetch(API + '/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    property_id: document.getElementById('orderProperty').value,
-                    checkout_time: document.getElementById('orderTime').value,
-                    price: document.getElementById('orderPrice').value,
-                    host_name: '房東',
-                    host_phone: hostPhone
-                })
-            });
-            closeModal();
-            loadOrders();
-            showToast('發布成功');
+            await fetch(API + '/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: document.getElementById('orderProperty').value, checkout_time: document.getElementById('orderTime').value, price: document.getElementById('orderPrice').value, host_name: '房東', host_phone: hostPhone }) });
+            closeModal(); loadOrders(); showToast('發布成功');
         }
         
         async function addProperty() {
-            await fetch(API + '/properties', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: document.getElementById('propName').value,
-                    address: document.getElementById('propAddress').value,
-                    bedrooms: parseInt(document.getElementById('propBedrooms').value) || 1,
-                    bathrooms: parseInt(document.getElementById('propBathrooms').value) || 1,
-                    floor: parseInt(document.getElementById('propFloor').value) || 0,
-                    area: parseInt(document.getElementById('propArea').value) || 0
-                })
-            });
-            closeModal();
-            loadProperties();
-            showToast('添加成功');
+            await fetch(API + '/properties', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('propName').value, address: document.getElementById('propAddress').value, bedrooms: parseInt(document.getElementById('propBedrooms').value) || 1, bathrooms: parseInt(document.getElementById('propBathrooms').value) || 1, floor: parseInt(document.getElementById('propFloor').value) || 0, area: parseInt(document.getElementById('propArea').value) || 0 }) });
+            closeModal(); loadProperties(); showToast('添加成功');
         }
         
-        async function deleteProperty(id) {
-            showConfirm('確認刪除', '確定要刪除這個房源嗎？', async () => {
-                await fetch(API + '/properties/' + id, { method: 'DELETE' });
-                loadProperties();
-                showToast('已刪除');
-            });
+        function deleteOrder(id) {
+            showConfirm('確認刪除', '確定要刪除這個訂單嗎？', function() { fetch(API + '/orders/' + id, { method: 'DELETE' }).then(function() { loadOrders(); showToast('已刪除'); }); });
+        }
+        
+        function deleteProperty(id) {
+            showConfirm('確認刪除', '確定要刪除這個房源嗎？', function() { fetch(API + '/properties/' + id, { method: 'DELETE' }).then(function() { loadProperties(); showToast('已刪除'); }); });
         }
         
         function showEditProperty(id, name, address, bedrooms, bathrooms, floor, area) {
@@ -344,30 +265,15 @@
         }
         
         async function saveProperty() {
-            const id = document.getElementById('editPropertyId').value;
-            await fetch(API + '/properties/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: document.getElementById('editPropertyName').value,
-                    address: document.getElementById('editPropertyAddress').value,
-                    bedrooms: parseInt(document.getElementById('editPropertyBedrooms').value) || 1,
-                    bathrooms: parseInt(document.getElementById('editPropertyBathrooms').value) || 1,
-                    floor: parseInt(document.getElementById('editPropertyFloor').value) || 0,
-                    area: parseInt(document.getElementById('editPropertyArea').value) || 0
-                })
-            });
-            closeModal();
-            loadProperties();
-            showToast('修改成功');
+            var id = document.getElementById('editPropertyId').value;
+            await fetch(API + '/properties/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('editPropertyName').value, address: document.getElementById('editPropertyAddress').value, bedrooms: parseInt(document.getElementById('editPropertyBedrooms').value) || 1, bathrooms: parseInt(document.getElementById('editPropertyBathrooms').value) || 1, floor: parseInt(document.getElementById('editPropertyFloor').value) || 0, area: parseInt(document.getElementById('editPropertyArea').value) || 0 }) });
+            closeModal(); loadProperties(); showToast('修改成功');
         }
         
         async function showEditOrder(id, propertyName, propertyAddress, checkoutTime, price) {
-            // 加載房源列表到編輯表單
-            const res = await fetch(API + '/properties');
-            const data = await res.json();
-            document.getElementById('editOrderProperty').innerHTML = (data.data || []).map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-            
+            var res = await fetch(API + '/properties');
+            var data = await res.json();
+            document.getElementById('editOrderProperty').innerHTML = (data.data || []).map(function(p) { return '<option value="' + p.id + '">' + p.name + '</option>'; }).join('');
             document.getElementById('editOrderId').value = id;
             document.getElementById('editOrderTime').value = checkoutTime;
             document.getElementById('editOrderPrice').value = price;
@@ -375,19 +281,9 @@
         }
         
         async function saveOrder() {
-            const id = document.getElementById('editOrderId').value;
-            await fetch(API + '/orders/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    property_id: document.getElementById('editOrderProperty').value,
-                    checkout_time: document.getElementById('editOrderTime').value,
-                    price: document.getElementById('editOrderPrice').value
-                })
-            });
-            closeModal();
-            loadOrders();
-            showToast('修改成功');
+            var id = document.getElementById('editOrderId').value;
+            await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: document.getElementById('editOrderProperty').value, checkout_time: document.getElementById('editOrderTime').value, price: document.getElementById('editOrderPrice').value }) });
+            closeModal(); loadOrders(); showToast('修改成功');
         }
         
         loadOrders();
