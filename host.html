@@ -72,7 +72,7 @@
         
         .input-premium:focus { background: white; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
         
-        .toast {
+        .toast { opacity: 0; 
             position: fixed;
             bottom: 100px;
             left: 50%;
@@ -302,8 +302,8 @@
         }
         
         /* Toast: Slide up fade */
-        .toast {
-            animation: toastIn 0.4s cubic-bezier(0.34, 1.52, 0.64, 1) forwards;
+        .toast { opacity: 0; 
+            opacity: 0; transition: opacity 0.3s ease;
         }
         
         @keyframes toastIn {
