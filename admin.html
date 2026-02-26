@@ -24,7 +24,7 @@
         .nav-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; background: #f0f0f0; color: #333; }
         .nav-btn.active { background: #2E7D32; border: 1px solid #1B5E20; color: white; }
         
-        .content { padding: 15px; animation: fadeIn 0.3s ease; }
+        .content { padding: 15px; animation: fadeIn 1.5s ease; }
         
         /* 卡片 */
         .card { background: white; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -38,7 +38,7 @@
         .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         
         /* 模态框 */
-        .modal { display: none; opacity: 0; transition: opacity 0.3s ease; } position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal { display: none; opacity: 0; transition: opacity 1.5s ease; } position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
         .modal.active { display: flex; opacity: 1; } align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 4px; width: 90%; max-width: 400px; }
         .modal-content input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
@@ -46,7 +46,7 @@
         .empty { text-align: center; padding: 30px; color: #999; }
         
         /* Toast 提示 */
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 4px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 4px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 1.5s ease; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.success { background: #388E3C; }
         .toast.error { background: #f44336; }
@@ -57,7 +57,7 @@
         .fab:hover { transform: scale(1.1); }
         
         /* 确认弹窗 */
-        .confirm-overlay { display: none; opacity: 0; transition: opacity 0.3s ease; } position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+        .confirm-overlay { display: none; opacity: 0; transition: opacity 1.5s ease; } position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
         .confirm-overlay.show { display: flex; opacity: 1; } }
         .confirm-box { background: white; padding: 24px; border-radius: 8px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .confirm-icon { font-size: 48px; margin-bottom: 15px; }
@@ -67,9 +67,9 @@
         .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-size: 15px; font-weight: 500; cursor: pointer; }
         .confirm-btn.cancel { background: #f0f0f0; color: #666; }
         .confirm-btn.danger { background: #d32f2f; color: white; }
-    .fade-in { animation: fadeIn 0.3s ease; }
+    .fade-in { animation: fadeIn 1.5s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.card { animation: fadeIn 0.3s ease; }
+.card { animation: fadeIn 1.5s ease; }
 </style>
 </head>
 <body>
