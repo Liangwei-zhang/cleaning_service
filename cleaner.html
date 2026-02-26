@@ -1364,6 +1364,219 @@
             color: #EF4444;
         }
 
+    
+        :root {
+            /* === SOFT MUTED PALETTE === */
+            --brand: #7FB5FF;          /* Soft Blue */
+            --brand-dark: #5A8AC8;
+            --surface: #FFFFFF;
+            --background: linear-gradient(180deg, #F8F9FA 0%, #F0F4F8 100%);
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            
+            /* Soft shadows */
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.08);
+            
+            --radius-lg: 24px;
+            --radius-md: 18px;
+            
+            body {
+                background: var(--background);
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif;
+                color: var(--text-primary);
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+            }
+        }
+        
+        /* === CARD === */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* === PRICE - Muted dark === */
+        .price {
+            color: #2D3748;
+            font-weight: 700;
+            font-size: 26px;
+            text-align: right;
+        }
+        
+        /* === STATUS TAGS - Muted === */
+        .badge {
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 14px;
+        }
+        
+        .badge-open {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .badge-accepted {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .badge-completed {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        /* === BUTTONS === */
+        .btn-primary, .btn-accept {
+            background: var(--brand);
+            color: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover, .btn-accept:hover {
+            background: var(--brand-dark);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* Edit button - soft gray */
+        .btn-edit {
+            background: #F0F2F5;
+            color: #4A5568;
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-weight: 600;
+        }
+        
+        .btn-edit:hover {
+            background: #E2E8F0;
+        }
+        
+        /* Delete button - soft pink */
+        .btn-delete {
+            background: #FFF5F5;
+            color: #E53E3E;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-weight: 600;
+        }
+        
+        .btn-delete:hover {
+            background: #FED7D7;
+        }
+        
+        /* === INPUT === */
+        .input-premium {
+            background: #F7FAFC;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            font-size: 15px;
+        }
+        
+        .input-premium:focus {
+            background: white;
+            box-shadow: var(--shadow-card);
+        }
+        
+        /* === MODAL === */
+        .modal {
+            background: rgba(248, 249, 250, 0.9);
+            backdrop-filter: blur(20px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* === PORTAL === */
+        .portal-btn {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+        }
+        
+        .portal-btn:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* === FAB === */
+        .fab {
+            background: var(--brand);
+            box-shadow: var(--shadow-hover);
+            border-radius: var(--radius-md);
+        }
+        
+        /* === STATS === */
+        .stats {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+        }
+        
+        .stat-num {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        
+        /* === NAV === */
+        .nav-tab.active {
+            background: var(--brand);
+            box-shadow: var(--shadow-card);
+        }
+        
+        /* === LOGIN === */
+        .login-screen {
+            background: linear-gradient(180deg, #F8F9FA 0%, #F0F4F8 100%);
+        }
+        
+        .login-logo {
+            background: white;
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* === TOAST === */
+        .toast {
+            background: var(--text-primary);
+            border-radius: 14px;
+        }
+        
+        /* === TEXT === */
+        h1, .card-title {
+            font-weight: 700;
+        }
+        
+        .login-subtitle, .card-info {
+            color: var(--text-secondary);
+        }
+        
+        /* === ANIMATION === */
+        @keyframes softFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card:nth-child(n) {
+            animation: softFadeIn 0.4s ease forwards;
+            opacity: 0;
+        }
+        
+        .btn:active, .fab:active {
+            transform: scale(0.97);
+        }
+
     </style>
 </head>
 <body>
