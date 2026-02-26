@@ -200,7 +200,7 @@
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
         /* Header */
-        header {
+        header { display: flex; justify-content: space-between; align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -408,7 +408,7 @@
         .confirm-btn.cancel { background: #FBFBF9; color: var(--text-muted); }
         .confirm-btn.danger { background: #DC2626; color: white; }
         
-        .header-logout {
+        .header-logout { flex-shrink: 0; margin-left: auto;
             padding: 8px 16px;
             background: #FBFBF9;
             border: none;
@@ -521,7 +521,7 @@
         }
         
         /* Header fade */
-        header {
+        header { display: flex; justify-content: space-between; align-items: center;
             animation: pageIn 0.3s ease forwards;
         }
         
@@ -619,7 +619,7 @@
         }
         
         /* Header: Quick fade */
-        header {
+        header { display: flex; justify-content: space-between; align-items: center;
             animation: headerIn 0.35s ease forwards;
         }
         

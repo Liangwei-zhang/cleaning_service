@@ -28,9 +28,9 @@
         .stat-num { font-size: 26px; font-weight: 700; color: #1A1C1E; }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
-        header { position: sticky; top: 0; z-index: 100; background: white; padding: 20px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+        header { display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; background: white; padding: 20px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
         header h1 { font-size: 20px; font-weight: 700; }
-        .header-logout { padding: 8px 16px; background: #FBFBF9; border: none; border-radius: 12px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
+        .header-logout { flex-shrink: 0; margin-left: auto; padding: 8px 16px; background: #FBFBF9; border: none; border-radius: 12px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
         
         .nav-tabs { display: flex; gap: 10px; padding: 16px 20px; background: white; border-bottom: 1px solid var(--border-subtle); }
         .nav-tab { flex: 1; padding: 14px; background: transparent; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.3s; }
@@ -141,7 +141,7 @@
         }
         
         /* Header: Quick fade */
-        header {
+        header { display: flex; justify-content: space-between; align-items: center;
             animation: headerIn 0.35s ease forwards;
         }
         

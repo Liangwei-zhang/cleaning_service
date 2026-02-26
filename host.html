@@ -127,7 +127,7 @@
         .stat-num { font-size: 26px; font-weight: 700; color: #1A1C1E; }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
-        header {
+        header { display: flex; justify-content: space-between; align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -207,7 +207,7 @@
         
         .content { padding: 20px; padding-bottom: 100px; }
         
-        .header-logout { padding: 8px 16px; background: #FBFBF9; border: none; border-radius: 12px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
+        .header-logout { flex-shrink: 0; margin-left: auto; padding: 8px 16px; background: #FBFBF9; border: none; border-radius: 12px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
         
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
@@ -312,7 +312,7 @@
         }
         
         /* Header: Quick fade */
-        header {
+        header { display: flex; justify-content: space-between; align-items: center;
             animation: headerIn 0.35s ease forwards;
         }
         
