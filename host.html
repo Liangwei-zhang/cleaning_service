@@ -18,7 +18,7 @@
         .content { padding: 15px; animation: fadeIn 1.5s ease; }
         .btn { background: #2E7D32; border: 1px solid #1B5E20; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-bottom: 10px; }
         
-        .card { background: white; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card { background: white; pointer-events: auto; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .card-title { font-weight: bold; font-size: 16px; }
         .card-info { color: #666; font-size: 13px; margin-top: 5px; }
         .price { color: #2E7D32; font-weight: bold; font-size: 18px; }
@@ -34,9 +34,9 @@
         .badge.completed { background: #9E9E9E; color: white; }
         
         .empty { text-align: center; padding: 30px; color: #999; }
-        .btn-delete { background: #e53935; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .btn-delete { background: #e53935; pointer-events: auto; z-index: 10; position: relative; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-size: 14px; }
         .btn-edit { background: #1976D2; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 10px; }
-        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        .card-actions { display: flex; pointer-events: auto; overflow: visible; justify-content: flex-end; margin-top: 10px; }
         
         /* 悬浮按钮 */
         .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #2E7D32; border: 1px solid #1B5E20; color: white; border: none; font-size: 32px; cursor: pointer; box-shadow: 0 4px 15px rgba(138,154,91,0.4); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
