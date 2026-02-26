@@ -2,86 +2,89 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>📊 短租清潔 - 管理員</title>
     <style>
         :root {
-            --primary: #6366F1;
-            --bg-main: #F8FAFC;
-            --bg-card: #FFFFFF;
-            --text-h: #0F172A;
-            --text-p: #475569;
-            --border: #E2E8F0;
-            --success: #10B981;
-            --danger: #EF4444;
+            --p-bg: #ffffff;
+            --p-surface: rgba(255, 255, 255, 0.85);
+            --p-accent-1: #00E5FF;
+            --p-accent-2: #FF2D95;
+            --p-text-main: #1A1C2E;
+            --p-text-sub: #8E91A1;
+            --p-glass: rgba(255, 255, 255, 0.6);
+            --p-radius-lg: 32px;
+            --p-radius-md: 16px;
+            --p-blur: blur(50px);
+            --shadow-blue: 0 20px 40px rgba(0, 229, 255, 0.15);
+            --shadow-main: 0 15px 45px rgba(26, 28, 46, 0.05);
+            --shadow-pink: 0 12px 24px rgba(255, 45, 149, 0.3);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-main); }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { font-family: system-ui, -apple-system, sans-serif; font-size: 15px; background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 50%, #fff5f8 100%); color: var(--p-text-main); min-height: 100vh; padding-bottom: 100px; }
         
-        /* 顶部 */
-        header { background: #6366F1; border: 1px solid #4F46E5; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 18px; }
-        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 12px; cursor: pointer; }
+        h1 { font-weight: 800; letter-spacing: -0.04em; font-size: 18px; }
         
-        /* 统计 */
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: white; }
-        .stat { text-align: center; padding: 15px; background: var(--bg-main); border-radius: 12px; }
-        .stat-num { font-size: 24px; font-weight: bold; color: #6366F1; }
-        .stat-label { font-size: 12px; color: #666; }
+        header { position: sticky; top: 0; z-index: 100; height: 60px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        header h1 { font-size: 17px; font-weight: 700; }
+        .logout { background: var(--p-surface); border: none; padding: 10px 16px; border-radius: 12px; color: var(--p-text-sub); font-weight: 500; cursor: pointer; }
         
-        /* 导航 */
-        .nav { display: flex; background: white; padding: 10px 15px; gap: 10px; }
-        .nav-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; background: #F1F3F4; color: #333; color: #333; }
-        .nav-btn.active { background: #6366F1; border: 1px solid #4F46E5; color: white; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 20px; background: var(--p-surface); backdrop-filter: blur(40px); border-radius: var(--p-radius-lg); margin: 20px; border: 1px solid var(--p-glass); }
+        .stat { text-align: center; padding: 16px 8px; background: #ffffff; border-radius: 16px; }
+        .stat-num { font-size: 26px; font-weight: 700; color: var(--p-accent-1); letter-spacing: -0.02em; }
+        .stat-label { font-size: 11px; color: var(--p-text-sub); margin-top: 4px; font-weight: 500; }
         
-        .content { padding: 15px; padding-bottom: 80px; animation: fadeIn 1.5s ease; }
+        .nav { display: flex; background: var(--p-surface); backdrop-filter: blur(40px); padding: 12px 20px; gap: 12px; margin: 0 20px; border-radius: var(--p-radius-lg); border: 1px solid var(--p-glass); }
+        .nav-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; background: transparent; color: var(--p-text-sub); transition: all 0.3s; }
+        .nav-btn.active { background: linear-gradient(135deg, var(--p-accent-1), #00BFFF); color: var(--p-text-main); box-shadow: var(--shadow-blue); }
         
-        /* 卡片 */
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card-title { font-weight: bold; font-size: 16px; }
-        .card-info { color: #666; font-size: 13px; margin-top: 5px; }
+        .content { padding: 20px; }
         
-        .btn { background: #6366F1; border: 1px solid #4F46E5; color: white; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-right: 5px; }
-        .btn-danger { background: #D93025; color: white; border: none; padding: 8px 16px; border-radius: 12px; cursor: pointer; }
-        .btn-edit { background: #1976D2; color: white; border: 1px solid #1565C0; padding: 14px 24px; border-radius: 12px; cursor: pointer; margin-right: 10px; font-size: 14px; }
-        .btn-delete { background: #e53935; color: white; border: 1px solid #D32F2F; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; }
-        .card-actions { display: flex; justify-content: center; margin-top: 10px; }
+        .card { background: var(--p-surface); backdrop-filter: blur(40px); border: 1px solid var(--p-glass); border-radius: var(--p-radius-lg); padding: 20px; margin-bottom: 16px; position: relative; overflow: hidden; box-shadow: var(--shadow-main); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .card:active { transform: scale(0.98); }
+        .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--p-accent-1); }
         
-        /* 模态框 */
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .card-title { font-size: 17px; font-weight: 700; color: var(--p-text-main); margin-bottom: 8px; letter-spacing: -0.02em; }
+        .card-info { font-size: 13px; color: var(--p-text-sub); margin-top: 4px; }
+        
+        .btn { height: 48px; border-radius: var(--p-radius-md); font-weight: 600; font-size: 14px; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, var(--p-accent-1), #00BFFF); box-shadow: var(--shadow-blue); color: var(--p-text-main); }
+        .btn-edit { background: linear-gradient(135deg, var(--p-accent-1), #00BFFF); box-shadow: var(--shadow-blue); color: var(--p-text-main); padding: 14px 24px; border-radius: 12px; }
+        .btn-delete { background: linear-gradient(135deg, var(--p-accent-2), #FF7EB3); box-shadow: var(--shadow-pink); color: #ffffff; padding: 14px 24px; border-radius: 12px; }
+        
+        .card-actions { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .modal-content input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 12px; }
+        .modal-content { background: #ffffff; border-radius: 24px; padding: 28px; width: 100%; max-width: 380px; box-shadow: 0 25px 60px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); }
+        .modal-title { font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 20px; color: var(--p-text-main); }
+        .modal-content input { width: 100%; height: 52px; background: rgba(0,0,0,0.02); border: none; border-bottom: 2px solid rgba(0,0,0,0.06); padding: 0 16px; font-size: 15px; color: var(--p-text-main); outline: none; transition: all 0.3s; border-radius: 10px 10px 0 0; margin-bottom: 12px; }
+        .modal-content input:focus { background: #ffffff; border-bottom-color: var(--p-accent-1); box-shadow: 0 4px 20px rgba(0,229,255,0.1); }
+        .modal-content h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; }
         
-        .empty { text-align: center; padding: 30px; color: #999; }
-        
-        /* Toast 提示 */
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 12px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--p-text-main); color: #ffffff; padding: 14px 24px; border-radius: 12px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 2000; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast.success { background: #388E3C; }
-        .toast.error { background: #f44336; }
-        .toast.warn { background: #ff9800; }
         
-        /* 悬浮按钮 */
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #6366F1; border: 1px solid #4F46E5; color: white; font-size: 32px; line-height: 1; cursor: pointer; box-shadow: 0 4px 15px rgba(46,125,50,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
-        .fab:hover { transform: scale(1.1); }
+        .fab { position: fixed; bottom: 100px; right: 24px; width: 60px; height: 60px; border-radius: 20px; background: linear-gradient(135deg, var(--p-accent-2), #FF7EB3); box-shadow: var(--shadow-pink); color: #ffffff; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; z-index: 90; }
+        .fab:active { transform: scale(0.92); }
         
-        /* 确认弹窗 */
-        .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .confirm-overlay.show { display: flex; }
-        .confirm-box { background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .confirm-icon { font-size: 48px; margin-bottom: 15px; }
-        .confirm-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }
-        .confirm-desc { color: #666; font-size: 14px; margin-bottom: 20px; }
-        .confirm-btns { display: flex; gap: 10px; }
-        .confirm-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; }
-        .confirm-btn.cancel { background: #F1F3F4; color: #666; }
-        .confirm-btn.danger { background: #D93025; color: white; }
-    .fade-in { animation: fadeIn 1.5s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.card { animation: fadeIn 1.5s ease; }
-</style>
+        .confirm-box { background: #ffffff; border-radius: 24px; padding: 28px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+        .confirm-icon { font-size: 52px; margin-bottom: 12px; }
+        .confirm-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .confirm-desc { font-size: 14px; color: var(--p-text-sub); margin-bottom: 20px; }
+        .confirm-btns { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; height: 48px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 14px; }
+        .confirm-btn.cancel { background: var(--p-surface); color: var(--p-text-sub); }
+        .confirm-btn.danger { background: linear-gradient(135deg, var(--p-accent-2), #FF7EB3); color: #ffffff; }
+        
+        .empty { text-align: center; padding: 40px; color: var(--p-text-sub); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card, .content { animation: fadeIn 0.4s ease; }
+    </style>
 </head>
 <body>
     <header>
@@ -89,7 +92,6 @@
         <button class="logout" onclick="logout()">登出</button>
     </header>
     
-    <!-- 统计 -->
     <div class="stats">
         <div class="stat"><div class="stat-num" id="statProperties">0</div><div class="stat-label">房源</div></div>
         <div class="stat"><div class="stat-num" id="statCleaners">0</div><div class="stat-label">清潔工</div></div>
@@ -97,42 +99,36 @@
         <div class="stat"><div class="stat-num" id="statOrders">0</div><div class="stat-label">訂單</div></div>
     </div>
     
-    <!-- 导航 -->
     <div class="nav">
         <button class="nav-btn active" id="navCleaners" onclick="showPage('cleaners')">👷 清潔工</button>
         <button class="nav-btn" id="navHosts" onclick="showPage('hosts')">🏠 房東</button>
         <button class="nav-btn" id="navOrders" onclick="showPage('orders')">📋 訂單</button>
     </div>
     
-    <!-- 清洁工 -->
     <div id="pageCleaners" class="content">
         <div id="cleanersList"></div>
         <button class="fab" onclick="showAddCleaner()">+</button>
     </div>
     
-    <!-- 房東 -->
     <div id="pageHosts" class="content" style="display:none">
         <div id="hostsList"></div>
         <button class="fab" onclick="showAddHost()">+</button>
     </div>
     
-    <!-- 訂單 -->
     <div id="pageOrders" class="content" style="display:none">
         <div id="ordersList"></div>
     </div>
     
-    <!-- 添加清洁工 Modal -->
     <div class="modal" id="modalCleaner">
         <div class="modal-content">
             <h3>👷 添加清潔工</h3>
             <input type="text" id="cleanerName" placeholder="姓名">
             <input type="text" id="cleanerPhone" placeholder="電話">
-            <button class="btn" onclick="addCleaner()">添加</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="addCleaner()">添加</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 編輯清潔工 Modal -->
     <div class="modal" id="modalEditCleaner">
         <div class="modal-content">
             <h3>✏️ 編輯清潔工</h3>
@@ -140,23 +136,21 @@
             <input type="text" id="editCleanerName" placeholder="姓名">
             <input type="text" id="editCleanerPhone" placeholder="電話">
             <input type="text" id="editCleanerCode" placeholder="驗證碼" maxlength="6">
-            <button class="confirm-btn danger" onclick="saveCleaner()">保存</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="saveCleaner()">保存</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 添加房東 Modal -->
     <div class="modal" id="modalHost">
         <div class="modal-content">
             <h3>🏠 添加房東</h3>
             <input type="text" id="hostName" placeholder="姓名">
             <input type="text" id="hostPhone" placeholder="電話">
-            <button class="btn" onclick="addHost()">添加</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="addHost()">添加</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 編輯房東 Modal -->
     <div class="modal" id="modalEditHost">
         <div class="modal-content">
             <h3>✏️ 編輯房東</h3>
@@ -164,14 +158,13 @@
             <input type="text" id="editHostName" placeholder="姓名">
             <input type="text" id="editHostPhone" placeholder="電話">
             <input type="text" id="editHostCode" placeholder="驗證碼" maxlength="6">
-            <button class="confirm-btn danger" onclick="saveHost()">保存</button>
-            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" style="width:100%" onclick="saveHost()">保存</button>
+            <button class="btn" style="width:100%;background:var(--p-surface);color:var(--p-text-sub);margin-top:10px" onclick="closeModal()">取消</button>
         </div>
     </div>
     
     <div class="toast" id="toast"></div>
     
-    <!-- 确认弹窗 -->
     <div id="confirmModal" class="confirm-overlay">
         <div class="confirm-box">
             <div class="confirm-icon">⚠️</div>
@@ -185,45 +178,32 @@
     </div>
     
     <script>
+        var API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
+        
         function showConfirm(title, desc, onConfirm) {
             document.getElementById('confirmTitle').textContent = title;
             document.getElementById('confirmDesc').textContent = desc;
-            document.getElementById('confirmBtn').onclick = function() {
-                closeConfirm();
-                onConfirm();
-            };
+            document.getElementById('confirmBtn').onclick = function() { closeConfirm(); onConfirm(); };
             document.getElementById('confirmModal').classList.add('show');
         }
         
-        function closeConfirm() {
-            document.getElementById('confirmModal').classList.remove('show');
-        }
+        function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
         
         function formatTime(dateStr) {
             if (!dateStr) return '-';
-            const d = new Date(dateStr);
+            var d = new Date(dateStr);
             if (isNaN(d.getTime())) return dateStr;
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            const h = String(d.getHours()).padStart(2, '0');
-            const min = String(d.getMinutes()).padStart(2, '0');
-            return `${y}-${m}-${day} ${h}:${min}`;
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
         }
         
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
+        function showToast(msg, type) {
+            var toast = document.getElementById('toast');
             toast.textContent = msg;
-            toast.className = 'toast ' + type;
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            toast.className = 'toast show';
+            setTimeout(function() { toast.classList.remove('show'); }, 2500);
         }
         
-        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
-        
-        function logout() {
-            location.href = 'index.html';
-        }
+        function logout() { location.href = 'index.html'; }
         
         function showPage(page) {
             document.getElementById('navCleaners').className = page === 'cleaners' ? 'nav-btn active' : 'nav-btn';
@@ -235,96 +215,48 @@
         }
         
         async function loadData() {
-            const [stats, cleaners, hosts, orders] = await Promise.all([
-                fetch(API + '/stats').then(r => r.json()),
-                fetch(API + '/cleaners').then(r => r.json()),
-                fetch(API + '/hosts').then(r => r.json()),
-                fetch(API + '/orders').then(r => r.json())
-            ]);
+            var stats, cleaners, hosts, orders;
+            stats = await fetch(API + '/stats').then(function(r) { return r.json(); });
+            cleaners = await fetch(API + '/cleaners').then(function(r) { return r.json(); });
+            hosts = await fetch(API + '/hosts').then(function(r) { return r.json(); });
+            orders = await fetch(API + '/orders').then(function(r) { return r.json(); });
             
             document.getElementById('statProperties').textContent = stats.properties;
             document.getElementById('statCleaners').textContent = stats.available_cleaners;
-            document.getElementById('statHosts').textContent = hosts.data?.length || 0;
-            document.getElementById('statOrders').textContent = orders.data?.length || 0;
+            document.getElementById('statHosts').textContent = hosts.data ? hosts.data.length : 0;
+            document.getElementById('statOrders').textContent = orders.data ? orders.data.length : 0;
             
-            // 清洁工列表
-            document.getElementById('cleanersList').innerHTML = (cleaners.data || []).map(c => `
-                <div class="card">
-                    <div class="card-title">${c.name}</div>
-                    <div class="card-info">📞 ${c.phone || '-'} | ⭐ ${c.rating} | 總訂單: ${c.total_jobs}</div>
-                    <div class="card-info">🔑 Code: ${c.code}</div>
-                    <div class="card-actions">
-                        <button class="btn-edit" onclick="showEditCleaner(${c.id}, '${c.name}', '${c.phone || ''}', '${c.code}')">✏️ 修改</button>
-                        <button class="btn-delete" onclick="deleteCleaner(${c.id})">🗑️ 刪除</button>
-                    </div>
-                </div>
-            `).join('') || '<div class="empty">暫無清潔工</div>';
+            document.getElementById('cleanersList').innerHTML = (cleaners.data || []).map(function(c) {
+                return '<div class="card"><div class="card-title">' + c.name + '</div><div class="card-info">📞 ' + (c.phone || '-') + ' | ⭐ ' + c.rating + ' | 總訂單: ' + c.total_jobs + '</div><div class="card-info">🔑 Code: ' + c.code + '</div><div class="card-actions"><button class="btn-edit" onclick="showEditCleaner(' + c.id + ', \'' + c.name + '\', \'' + (c.phone || '') + '\', \'' + c.code + '\')">✏️ 修改</button><button class="btn-delete" onclick="deleteCleaner(' + c.id + ')">🗑️ 刪除</button></div></div>';
+            }).join('') || '<div class="empty">暫無清潔工</div>';
             
-            // 房東列表
-            document.getElementById('hostsList').innerHTML = (hosts.data || []).map(h => `
-                <div class="card">
-                    <div class="card-title">${h.name}</div>
-                    <div class="card-info">📞 ${h.phone}</div>
-                    <div class="card-info">🔑 Code: ${h.code}</div>
-                    <div class="card-actions">
-                        <button class="btn-edit" onclick="showEditHost(${h.id}, '${h.name}', '${h.phone}', '${h.code}')">✏️ 修改</button>
-                        <button class="btn-delete" onclick="deleteHost(${h.id})">🗑️ 刪除</button>
-                    </div>
-                </div>
-            `).join('') || '<div class="empty">暫無房東</div>';
+            document.getElementById('hostsList').innerHTML = (hosts.data || []).map(function(h) {
+                return '<div class="card"><div class="card-title">' + h.name + '</div><div class="card-info">📞 ' + h.phone + '</div><div class="card-info">🔑 Code: ' + h.code + '</div><div class="card-actions"><button class="btn-edit" onclick="showEditHost(' + h.id + ', \'' + h.name + '\', \'' + h.phone + '\', \'' + h.code + '\')">✏️ 修改</button><button class="btn-delete" onclick="deleteHost(' + h.id + ')">🗑️ 刪除</button></div></div>';
+            }).join('') || '<div class="empty">暫無房東</div>';
             
-            // 訂單列表
-            document.getElementById('ordersList').innerHTML = (orders.data || []).slice(0, 20).map(o => `
-                <div class="card">
-                    <div class="card-title">${o.property_name || '未知'} - $${o.price}</div>
-                    <div class="card-info">🏠 ${o.host_name} | 📅 ${formatTime(o.checkout_time)}</div>
-                    <div class="card-info">狀態: ${o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成'}</div>
-                </div>
-            `).join('') || '<div class="empty">暫無訂單</div>';
+            document.getElementById('ordersList').innerHTML = (orders.data || []).slice(0, 20).map(function(o) {
+                return '<div class="card"><div class="card-title">' + (o.property_name || '未知') + ' - $' + o.price + '</div><div class="card-info">🏠 ' + o.host_name + ' | 📅 ' + formatTime(o.checkout_time) + '</div><div class="card-info">狀態: ' + (o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成') + '</div></div>';
+            }).join('') || '<div class="empty">暫無訂單</div>';
         }
         
-        function showAddCleaner() {
-            document.getElementById('modalCleaner').classList.add('active');
-        }
-        
-        function showAddHost() {
-            document.getElementById('modalHost').classList.add('active');
-        }
-        
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
+        function showAddCleaner() { document.getElementById('modalCleaner').classList.add('active'); }
+        function showAddHost() { document.getElementById('modalHost').classList.add('active'); }
+        function closeModal() { document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('active'); }); }
         
         async function addCleaner() {
-            const name = document.getElementById('cleanerName').value;
-            const phone = document.getElementById('cleanerPhone').value;
+            var name = document.getElementById('cleanerName').value;
+            var phone = document.getElementById('cleanerPhone').value;
             if (!name) { showToast('請輸入姓名', 'warn'); return; }
-            
-            await fetch(API + '/cleaners/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, phone })
-            });
-            
-            closeModal();
-            loadData();
-            showToast('添加成功');
+            await fetch(API + '/cleaners/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone }) });
+            closeModal(); loadData(); showToast('添加成功');
         }
         
         async function addHost() {
-            const name = document.getElementById('hostName').value;
-            const phone = document.getElementById('hostPhone').value;
+            var name = document.getElementById('hostName').value;
+            var phone = document.getElementById('hostPhone').value;
             if (!name || !phone) { showToast('請輸入姓名和電話', 'warn'); return; }
-            
-            await fetch(API + '/hosts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, phone })
-            });
-            
-            closeModal();
-            loadData();
-            showToast('添加成功');
+            await fetch(API + '/hosts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone }) });
+            closeModal(); loadData(); showToast('添加成功');
         }
         
         function showEditCleaner(id, name, phone, code) {
@@ -336,33 +268,17 @@
         }
         
         async function saveCleaner() {
-            const id = document.getElementById('editCleanerId').value;
-            await fetch(API + '/cleaners/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: document.getElementById('editCleanerName').value,
-                    phone: document.getElementById('editCleanerPhone').value,
-                    code: document.getElementById('editCleanerCode').value
-                })
-            });
-            closeModal();
-            loadData();
-            showToast('修改成功');
+            var id = document.getElementById('editCleanerId').value;
+            await fetch(API + '/cleaners/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('editCleanerName').value, phone: document.getElementById('editCleanerPhone').value, code: document.getElementById('editCleanerCode').value }) });
+            closeModal(); loadData(); showToast('修改成功');
         }
         
-        async function deleteCleaner(id) {
-            showConfirm('確認刪除', '確定要刪除這個清潔工嗎？', async () => {
-                await fetch(API + '/cleaners/' + id, { method: 'DELETE' });
-                loadData();
-            });
+        function deleteCleaner(id) {
+            showConfirm('確認刪除', '確定要刪除這個清潔工嗎？', function() { fetch(API + '/cleaners/' + id, { method: 'DELETE' }).then(function() { loadData(); }); });
         }
         
-        async function deleteHost(id) {
-            showConfirm('確認刪除', '確定要刪除這個房東嗎？', async () => {
-                await fetch(API + '/hosts/' + id, { method: 'DELETE' });
-                loadData();
-            });
+        function deleteHost(id) {
+            showConfirm('確認刪除', '確定要刪除這個房東嗎？', function() { fetch(API + '/hosts/' + id, { method: 'DELETE' }).then(function() { loadData(); }); });
         }
         
         function showEditHost(id, name, phone, code) {
@@ -374,19 +290,9 @@
         }
         
         async function saveHost() {
-            const id = document.getElementById('editHostId').value;
-            await fetch(API + '/hosts/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: document.getElementById('editHostName').value,
-                    phone: document.getElementById('editHostPhone').value,
-                    code: document.getElementById('editHostCode').value
-                })
-            });
-            closeModal();
-            loadData();
-            showToast('修改成功');
+            var id = document.getElementById('editHostId').value;
+            await fetch(API + '/hosts/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('editHostName').value, phone: document.getElementById('editHostPhone').value, code: document.getElementById('editHostCode').value }) });
+            closeModal(); loadData(); showToast('修改成功');
         }
         
         loadData();
