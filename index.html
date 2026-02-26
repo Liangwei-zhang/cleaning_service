@@ -417,6 +417,124 @@
             color: var(--text-muted);
             cursor: pointer;
         }
+    
+        
+        /* === REFINED ANIMATIONS === */
+        
+        /* Page Transition: Scale & Fade */
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes pageOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(1.02);
+            }
+        }
+        
+        /* Staggered List Animation */
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Card hover lift */
+        .card {
+            animation: pageIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.0s; }
+        .card:nth-child(2) { animation-delay: 0.08s; }
+        .card:nth-child(3) { animation-delay: 0.16s; }
+        .card:nth-child(4) { animation-delay: 0.24s; }
+        .card:nth-child(5) { animation-delay: 0.32s; }
+        .card:nth-child(6) { animation-delay: 0.40s; }
+        
+        /* Button micro-interaction: press feedback */
+        .btn-primary, .btn-action, .fab, .portal-btn {
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+        }
+        
+        .btn-primary:active, .btn-action:active, .fab:active {
+            transform: scale(0.96);
+        }
+        
+        /* Card hover lift */
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+        }
+        
+        /* Smooth modal */
+        .modal-content {
+            animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        /* Toast slide */
+        .toast {
+            animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        /* Stats entrance */
+        .stats {
+            animation: pageIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        /* Header fade */
+        header {
+            animation: pageIn 0.3s ease forwards;
+        }
+        
+        /* Nav tabs smooth */
+        .nav-tab {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Floating nav shimmer */
+        .bottom-nav {
+            animation: pageIn 0.5s ease forwards;
+        }
+
     </style>
 </head>
 <body>
