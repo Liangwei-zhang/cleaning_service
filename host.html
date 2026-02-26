@@ -7,10 +7,10 @@
     <style>
         @layer base {
             :root {
-                --primary: #0F172A;
+                --primary: #0F172A !important;
                 --accent: #38BDF8;
                 --accent-warm: #F97316;
-                --bg: #F8FAFC;
+                --bg: #F1F5F9;
                 --card: #FFFFFF;
                 --text: #1E293B;
                 --text-muted: #64748B;
@@ -30,7 +30,7 @@
         
         .card {
             background: var(--card);
-            border-radius: 24px;
+            border-radius: 32px;
             padding: 24px;
             margin-bottom: 16px;
             border: 1px solid var(--border-subtle);
@@ -44,10 +44,10 @@
         .btn-primary {
             width: 100%;
             padding: 18px;
-            background: var(--primary);
+            background: #0F172A;
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 24px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -63,7 +63,7 @@
             padding: 16px 20px;
             background: #F1F5F9;
             border: none;
-            border-radius: 16px;
+            border-radius: 24px;
             font-size: 16px;
             color: var(--text);
             outline: none;
@@ -77,10 +77,10 @@
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: var(--primary);
+            background: #0F172A;
             color: white;
             padding: 16px 28px;
-            border-radius: 16px;
+            border-radius: 24px;
             font-size: 14px;
             font-weight: 500;
             opacity: 0;
@@ -119,12 +119,12 @@
             gap: 12px;
             padding: 20px;
             background: white;
-            border-radius: 24px;
+            border-radius: 32px;
             border: 1px solid var(--border-subtle);
             box-shadow: var(--shadow-soft);
         }
         
-        .stat-num { font-size: 26px; font-weight: 700; color: var(--primary); }
+        .stat-num { font-size: 26px; font-weight: 700; color: #0F172A; }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
         header {
@@ -159,7 +159,7 @@
             transition: all 0.3s ease;
         }
         
-        .nav-tab.active { background: var(--primary); color: white; }
+        .nav-tab.active { background: #0F172A; color: white; }
         
         .fab {
             position: fixed;
@@ -167,8 +167,8 @@
             right: 24px;
             width: 60px;
             height: 60px;
-            border-radius: 20px;
-            background: var(--primary);
+            border-radius: 24px;
+            background: #0F172A;
             border: none;
             font-size: 28px;
             color: white;
@@ -182,12 +182,12 @@
         
         .fab:hover { transform: scale(1.05); box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35); }
         
-        .price { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .price { font-size: 24px; font-weight: 700; color: #0F172A; }
         
         .badge {
             display: inline-block;
             padding: 6px 14px;
-            border-radius: 20px;
+            border-radius: 24px;
             font-size: 12px;
             font-weight: 600;
         }
@@ -212,12 +212,12 @@
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
         
-        .btn-secondary { width: 100%; padding: 16px; background: #F1F5F9; color: var(--text-muted); border: none; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: all 0.3s ease; }
+        .btn-secondary { width: 100%; padding: 16px; background: #F1F5F9; color: var(--text-muted); border: none; border-radius: 24px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: all 0.3s ease; }
         .btn-secondary:hover { background: #E2E8F0; }
         
         .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(248, 250, 252, 0.95); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; padding: 24px; }
         .confirm-overlay.show { display: flex; }
-        .confirm-box { background: white; border-radius: 24px; padding: 28px; text-align: center; max-width: 320px; box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15); }
+        .confirm-box { background: white; border-radius: 32px; padding: 28px; text-align: center; max-width: 320px; box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15); }
         .confirm-icon { font-size: 48px; margin-bottom: 16px; }
         .confirm-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
         .confirm-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }

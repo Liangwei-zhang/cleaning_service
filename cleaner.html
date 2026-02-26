@@ -7,9 +7,9 @@
     <style>
         @layer base {
             :root {
-                --primary: #0F172A;
+                --primary: #0F172A !important;
                 --accent: #38BDF8;
-                --bg: #F8FAFC;
+                --bg: #F1F5F9;
                 --card: #FFFFFF;
                 --text: #1E293B;
                 --text-muted: #64748B;
@@ -21,11 +21,11 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
         
-        .card { background: var(--card); border-radius: 24px; padding: 24px; margin-bottom: 16px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-soft); transition: all 0.3s; }
+        .card { background: var(--card); border-radius: 32px; padding: 24px; margin-bottom: 16px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-soft); transition: all 0.3s; }
         .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
         
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 20px; background: white; border-radius: 24px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-soft); margin: 20px; }
-        .stat-num { font-size: 26px; font-weight: 700; color: var(--primary); }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 20px; background: white; border-radius: 32px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-soft); margin: 20px; }
+        .stat-num { font-size: 26px; font-weight: 700; color: #0F172A; }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
         header { position: sticky; top: 0; z-index: 100; background: white; padding: 20px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
@@ -34,23 +34,23 @@
         
         .nav-tabs { display: flex; gap: 10px; padding: 16px 20px; background: white; border-bottom: 1px solid var(--border-subtle); }
         .nav-tab { flex: 1; padding: 14px; background: transparent; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.3s; }
-        .nav-tab.active { background: var(--primary); color: white; }
+        .nav-tab.active { background: #0F172A; color: white; }
         
         .content { padding: 20px; padding-bottom: 100px; }
         
-        .price { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .price { font-size: 28px; font-weight: 700; color: #0F172A; }
         
-        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 24px; font-size: 12px; font-weight: 600; }
         .badge-open { background: #FEF3C7; color: #D97706; }
         .badge-accepted { background: #E0F2FE; color: #0284C7; }
         .badge-completed { background: #D1FAE5; color: #059669; }
         
-        .btn-accept { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2); transition: all 0.3s; }
+        .btn-accept { width: 100%; padding: 18px; background: #0F172A; color: white; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2); transition: all 0.3s; }
         .btn-accept:hover { background: #1E293B; }
         
-        .btn-complete { width: 100%; padding: 18px; background: #059669; color: white; border: none; border-radius: 20px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2); }
+        .btn-complete { width: 100%; padding: 18px; background: #059669; color: white; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2); }
         
-        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--primary); color: white; padding: 16px 28px; border-radius: 16px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 2000; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: #0F172A; color: white; padding: 16px 28px; border-radius: 24px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 2000; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
         .empty { text-align: center; padding: 60px; color: var(--text-muted); }

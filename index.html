@@ -7,10 +7,10 @@
     <style>
         @layer base {
             :root {
-                --primary: #0F172A;
+                --primary: #0F172A !important;
                 --accent: #38BDF8;
                 --accent-warm: #F97316;
-                --bg: #F8FAFC;
+                --bg: #F1F5F9;
                 --card: #FFFFFF;
                 --text: #1E293B;
                 --text-muted: #64748B;
@@ -31,7 +31,7 @@
         /* Premium Card - Floating Effect */
         .card {
             background: var(--card);
-            border-radius: 24px;
+            border-radius: 32px;
             padding: 24px;
             margin-bottom: 16px;
             border: 1px solid var(--border-subtle);
@@ -52,10 +52,10 @@
         .btn-primary {
             width: 100%;
             padding: 18px;
-            background: var(--primary);
+            background: #0F172A;
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 24px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -78,7 +78,7 @@
             padding: 16px 20px;
             background: #F1F5F9;
             border: none;
-            border-radius: 16px;
+            border-radius: 24px;
             font-size: 16px;
             color: var(--text);
             outline: none;
@@ -99,7 +99,7 @@
             padding: 20px 24px;
             background: white;
             border: 1px solid var(--border-subtle);
-            border-radius: 20px;
+            border-radius: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-soft);
@@ -144,10 +144,10 @@
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: var(--primary);
+            background: #0F172A;
             color: white;
             padding: 16px 28px;
-            border-radius: 16px;
+            border-radius: 24px;
             font-size: 14px;
             font-weight: 500;
             opacity: 0;
@@ -191,12 +191,12 @@
             gap: 12px;
             padding: 20px;
             background: white;
-            border-radius: 24px;
+            border-radius: 32px;
             border: 1px solid var(--border-subtle);
             box-shadow: var(--shadow-soft);
         }
         
-        .stat-num { font-size: 26px; font-weight: 700; color: var(--primary); }
+        .stat-num { font-size: 26px; font-weight: 700; color: #0F172A; }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
         /* Header */
@@ -234,7 +234,7 @@
         }
         
         .nav-tab.active {
-            background: var(--primary);
+            background: #0F172A;
             color: white;
         }
         
@@ -245,8 +245,8 @@
             right: 24px;
             width: 60px;
             height: 60px;
-            border-radius: 20px;
-            background: var(--primary);
+            border-radius: 24px;
+            background: #0F172A;
             border: none;
             font-size: 28px;
             color: white;
@@ -267,14 +267,14 @@
         .price {
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            color: #0F172A;
         }
         
         /* Status Badge */
         .badge {
             display: inline-block;
             padding: 6px 14px;
-            border-radius: 20px;
+            border-radius: 24px;
             font-size: 12px;
             font-weight: 600;
         }
@@ -317,14 +317,14 @@
             align-items: center;
             justify-content: center;
             padding: 40px 24px;
-            background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+            background: linear-gradient(180deg, #F1F5F9 0%, #F1F5F9 100%);
         }
         
         .login-logo {
             width: 80px;
             height: 80px;
             background: white;
-            border-radius: 24px;
+            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -336,7 +336,7 @@
         .login-title {
             font-size: 32px;
             font-weight: 700;
-            color: var(--primary);
+            color: #0F172A;
             margin-bottom: 8px;
         }
         
@@ -355,7 +355,7 @@
             background: #F1F5F9;
             color: var(--text-muted);
             border: none;
-            border-radius: 16px;
+            border-radius: 24px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -382,7 +382,7 @@
         
         .confirm-box {
             background: white;
-            border-radius: 24px;
+            border-radius: 32px;
             padding: 28px;
             text-align: center;
             max-width: 320px;
