@@ -12,7 +12,7 @@
         .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
         
         /* 导航栏 */
-        .nav { display: flex; background: white; padding: 10px 15px; gap: 10px; }
+        .nav { display: flex; background: white; padding: 10px 15px; gap: 12px; }
         .nav-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; background: #f0f0f0; color: #333; }
         .nav-btn.active { background: #2E7D32; border: 1px solid #1B5E20; color: white; }
         
@@ -42,11 +42,11 @@
         .modal-desc { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
         .modal-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 4px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
         .modal-input:focus { border-color: #2E7D32; }
-        .modal-btns { display: flex; gap: 10px; }
-        .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; font-weight: 500; }
-        .modal-btn.cancel { background: #f0f0f0; color: #666; }
-        .modal-btn.confirm { background: #2E7D32; border: 1px solid #1B5E20; color: white; }
-        .modal-btn.confirm:hover { background: #7a8a4c; }
+        .confirm-btns { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; font-weight: 500; }
+        .confirm-btn.cancel { background: #f0f0f0; color: #666; }
+        .confirm-btn.danger { background: #2E7D32; border: 1px solid #1B5E20; color: white; }
+        .confirm-btn.danger:hover { background: #1B5E20; }
         
         /* 完成确认模态框 */
         .modal-success .modal-title { color: #388E3C; }
@@ -90,9 +90,9 @@
             <div class="modal-title">🔐 輸入驗證碼</div>
             <div class="modal-desc">請輸入房東提供的驗證碼確認接單</div>
             <input type="text" id="verifyCodeInput" class="modal-input" placeholder="000000" maxlength="6" inputmode="numeric" onkeypress="if(event.key==='Enter')confirmAccept()">
-            <div class="modal-btns">
-                <button class="modal-btn cancel" onclick="closeVerifyModal()">取消</button>
-                <button class="modal-btn confirm" onclick="confirmAccept()">確認</button>
+            <div class="confirm-btns">
+                <button class="confirm-btn cancel" onclick="closeVerifyModal()">取消</button>
+                <button class="confirm-btn danger" onclick="confirmAccept()">確認</button>
             </div>
         </div>
     </div>
@@ -102,9 +102,9 @@
         <div class="modal modal-success">
             <div class="modal-title">✅ 確認完成</div>
             <div class="modal-desc">確定已完成清潔並離開房源嗎？</div>
-            <div class="modal-btns">
-                <button class="modal-btn cancel" onclick="closeCompleteModal()">取消</button>
-                <button class="modal-btn confirm" onclick="confirmComplete()">確認完成</button>
+            <div class="confirm-btns">
+                <button class="confirm-btn cancel" onclick="closeCompleteModal()">取消</button>
+                <button class="confirm-btn danger" onclick="confirmComplete()">確認完成</button>
             </div>
         </div>
     </div>
