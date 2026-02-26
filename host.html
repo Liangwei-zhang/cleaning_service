@@ -1317,6 +1317,194 @@
             color: #EF4444;
         }
 
+    
+        :root {
+            /* === HYPER-MINIMALISM PALETTE === */
+            --brand: #0062FF;
+            --surface: #FFFFFF;
+            --background: linear-gradient(180deg, #F4F7FF 0%, #FFFFFF 100%);
+            --text-primary: #1A1C20;
+            --text-secondary: #64748B;
+            
+            /* Tactile shadows */
+            --shadow-tactile: 0 4px 20px -4px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 20px 40px -12px rgba(0, 0, 0, 0.05);
+            --shadow-pressed: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            
+            --radius-lg: 32px;
+            --radius-md: 20px;
+            
+            body {
+                background: var(--background);
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif;
+                color: var(--text-primary);
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+            }
+        }
+        
+        /* === CARD - Minimal with hover depth === */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: var(--shadow-tactile);
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            border: 1px solid rgba(0, 98, 255, 0.08);
+        }
+        
+        /* === BUTTONS - Tactile feel === */
+        .btn-primary, .btn-accept {
+            background: var(--brand);
+            color: white;
+            border-radius: var(--radius-md);
+            border: none;
+            box-shadow: var(--shadow-tactile), 0 0 0 0 rgba(0, 98, 255, 0);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: var(--shadow-hover), 0 0 20px rgba(0, 98, 255, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary:active {
+            box-shadow: var(--shadow-pressed);
+            transform: translateY(0);
+        }
+        
+        /* === PRICE === */
+        .price {
+            color: var(--brand);
+            font-weight: 800;
+            font-size: 28px;
+        }
+        
+        /* === INPUTS - Clean === */
+        .input-premium {
+            background: #F8FAFC;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-premium:focus {
+            background: white;
+            box-shadow: var(--shadow-tactile);
+        }
+        
+        /* === MODAL === */
+        .modal {
+            background: rgba(244, 247, 255, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-hover);
+            border: none;
+        }
+        
+        /* === HEADER === */
+        header {
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            box-shadow: none;
+        }
+        
+        /* === NAV === */
+        .nav-tab.active {
+            background: var(--brand);
+            box-shadow: var(--shadow-tactile);
+        }
+        
+        /* === PORTAL === */
+        .portal-btn {
+            background: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-tactile);
+            transition: all 0.4s ease;
+        }
+        
+        .portal-btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateX(8px);
+        }
+        
+        /* === FAB === */
+        .fab {
+            background: var(--brand);
+            box-shadow: var(--shadow-hover);
+            border-radius: var(--radius-md);
+        }
+        
+        /* === STATS === */
+        .stats {
+            background: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-tactile);
+        }
+        
+        /* === ANIMATIONS === */
+        @keyframes ultraFadeIn {
+            from { opacity: 0; transform: scale(0.99); filter: blur(4px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+        
+        .card:nth-child(n) {
+            animation: ultraFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.0s; }
+        .card:nth-child(2) { animation-delay: 0.08s; }
+        .card:nth-child(3) { animation-delay: 0.16s; }
+        .card:nth-child(4) { animation-delay: 0.24s; }
+        
+        .btn:active, .fab:active {
+            transform: scale(0.97);
+            box-shadow: var(--shadow-pressed);
+        }
+        
+        /* === LOGIN === */
+        .login-screen {
+            background: linear-gradient(180deg, #F4F7FF 0%, #FFFFFF 100%);
+        }
+        
+        .login-logo {
+            background: white;
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* === TOAST === */
+        .toast {
+            background: var(--text-primary);
+            border-radius: 16px;
+        }
+        
+        /* === TEXT HIERARCHY === */
+        h1, .card-title {
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+        
+        .login-subtitle, .card-info {
+            color: var(--text-secondary);
+        }
+
     </style>
 </head>
 <body>
