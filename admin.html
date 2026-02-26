@@ -237,8 +237,8 @@
             document.getElementById('cleanersList').innerHTML = (cleaners.data || []).map(c => `
                 <div class="card">
                     <div class="card-title">${c.name}</div>
-                    <div class="card-info">📞 ${c.phone || '-'} | ⭐ ${c.rating} | 總訂單: ${c.total_jobs}<div class="card-info">🔑</div>
-                     Code: ${c.code}</div>
+                    <div class="card-info">📞 ${c.phone || '-'} | ⭐ ${c.rating} | 總訂單: ${c.total_jobs}</div>
+                    <div class="card-info">🔑 Code: ${c.code}</div>
                     <div class="card-actions">
                         <button class="btn-edit" onclick="showEditCleaner(${c.id}, '${c.name}', '${c.phone || ''}', '${c.code}')">✏️ 修改</button>
                         <button class="btn-delete" onclick="deleteCleaner(${c.id})">🗑️ 刪除</button>
