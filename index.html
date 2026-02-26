@@ -29,7 +29,10 @@
         .toast.success { background: #4CAF50; }
         .toast.error { background: #f44336; }
         .toast.warn { background: #ff9800; }
-    </style>
+            .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-size: 15px; font-weight: 500; cursor: pointer; }
+        .confirm-btn.cancel { background: #f0f0f0; color: #666; }
+        .confirm-btn.danger { background: #2E7D32; color: white; border: 1px solid #1B5E20; }
+</style>
 </head>
 <body>
     <div class="login-screen">
@@ -47,8 +50,8 @@
         <div class="modal-content">
             <h3>🏠 房東登錄</h3>
             <input type="text" id="host-code" placeholder="驗證碼" value="547047">
-            <button onclick="loginHost()">登錄</button>
-            <button class="cancel" onclick="closeModal()">取消</button>
+            <button class="confirm-btn danger" onclick="loginHost()">登錄</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -57,8 +60,8 @@
         <div class="modal-content">
             <h3>👷 清潔工登錄</h3>
             <input type="text" id="cleaner-code" placeholder="驗證碼" value="733025">
-            <button onclick="loginCleaner()">登錄</button>
-            <button class="cancel" onclick="closeModal()">取消</button>
+            <button class="confirm-btn danger" onclick="loginCleaner()">登錄</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -68,8 +71,8 @@
             <h3>📊 管理員登錄</h3>
             <input type="text" id="admin-username" placeholder="用戶名" value="admin">
             <input type="password" id="admin-password" placeholder="密碼" value="admin123">
-            <button onclick="loginAdmin()">登錄</button>
-            <button class="cancel" onclick="closeModal()">取消</button>
+            <button class="confirm-btn danger" onclick="loginAdmin()">登錄</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -146,4 +149,7 @@
 .fade-in { animation: fadeIn 1.5s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .card { animation: fadeIn 1.5s ease; }
+        .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-size: 15px; font-weight: 500; cursor: pointer; }
+        .confirm-btn.cancel { background: #f0f0f0; color: #666; }
+        .confirm-btn.danger { background: #2E7D32; color: white; border: 1px solid #1B5E20; }
 </style>

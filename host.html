@@ -94,7 +94,7 @@
             <input type="datetime-local" id="orderTime">
             <input type="number" id="orderPrice" placeholder="價格 ($)">
             <button class="btn" onclick="addOrder()">發布</button>
-            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -106,7 +106,7 @@
             <input type="number" id="propBedrooms" placeholder="臥室數">
             <input type="number" id="propBathrooms" placeholder="衛浴數">
             <button class="btn" onclick="addProperty()">添加</button>
-            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -118,8 +118,8 @@
             <select id="editOrderProperty"></select>
             <input type="datetime-local" id="editOrderTime">
             <input type="number" id="editOrderPrice" placeholder="價格 ($)">
-            <button class="btn" onclick="saveOrder()">保存</button>
-            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+            <button class="confirm-btn danger" onclick="saveOrder()">保存</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -132,8 +132,8 @@
             <input type="text" id="editPropertyAddress" placeholder="地址">
             <input type="number" id="editPropertyBedrooms" placeholder="臥室數">
             <input type="number" id="editPropertyBathrooms" placeholder="衛浴數">
-            <button class="btn" onclick="saveProperty()">保存</button>
-            <button class="btn" style="background:#999" onclick="closeModal()">取消</button>
+            <button class="confirm-btn danger" onclick="saveProperty()">保存</button>
+            <button class="confirm-btn cancel" onclick="closeModal()">取消</button>
         </div>
     </div>
     
