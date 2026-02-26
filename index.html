@@ -81,7 +81,7 @@
             border-radius: var(--radius-lg);
             font-size: 16px;
             color: var(--text);
-            outline: none;
+            outline: none !important;
             transition: all 0.3s ease;
         }
         
@@ -1203,8 +1203,8 @@
         
         .input-premium:focus {
             background: white;
-            border-color: rgba(0, 98, 255, 0.2);
-            box-shadow: 0 0 0 4px var(--brand-glow);
+            border-color: transparent;
+            box-shadow: none;
         }
         
         /* === MODAL - Glassmorphism 2.0 === */
@@ -1455,9 +1455,9 @@
         
         .input-premium:focus {
             background: white;
-            border-color: rgba(0, 98, 255, 0.2);
-            box-shadow: 0 0 0 4px var(--brand-glow);
-            outline: none;
+            border-color: transparent;
+            box-shadow: none;
+            outline: none !important;
         }
         
         /* === MODAL - Glassmorphism === */

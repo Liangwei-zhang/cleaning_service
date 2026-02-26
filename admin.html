@@ -51,7 +51,7 @@
         
         .form-group { margin-bottom: 14px; }
         .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
-        .input-premium { width: 100%; padding: 14px 18px; background: #FFFFFF; border: none; border-radius: var(--radius-lg); font-size: 15px; color: var(--text); outline: none; transition: all 0.3s; }
+        .input-premium { width: 100%; padding: 14px 18px; background: #FFFFFF; border: none; border-radius: var(--radius-lg); font-size: 15px; color: var(--text); outline: none !important; transition: all 0.3s; }
         .input-premium:focus { background: white; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
         
         .btn-primary { width: 100%; padding: 16px; background: #0062FF; color: white; border: none; border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2); }
@@ -743,8 +743,8 @@
         
         .input-premium:focus {
             background: white;
-            border-color: rgba(0, 98, 255, 0.2);
-            box-shadow: 0 0 0 4px var(--brand-glow);
+            border-color: transparent;
+            box-shadow: none;
         }
         
         /* === MODAL - Glassmorphism 2.0 === */
@@ -995,9 +995,9 @@
         
         .input-premium:focus {
             background: white;
-            border-color: rgba(0, 98, 255, 0.2);
-            box-shadow: 0 0 0 4px var(--brand-glow);
-            outline: none;
+            border-color: transparent;
+            box-shadow: none;
+            outline: none !important;
         }
         
         /* === MODAL - Glassmorphism === */
