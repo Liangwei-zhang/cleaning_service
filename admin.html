@@ -35,10 +35,10 @@
         .btn-danger { background: #D93025; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
         .btn-edit { background: #1976D2; color: white; border: 1px solid #1565C0; padding: 10px 18px; border-radius: 4px; cursor: pointer; margin-right: 10px; font-size: 14px; }
         .btn-delete { background: #e53935; color: white; border: 1px solid #D32F2F; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        .card-actions { display: flex; justify-content: center; margin-top: 10px; }
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         
         /* 模态框 */
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: flex-end; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 20px; border-radius: 4px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .modal-content input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
@@ -53,11 +53,11 @@
         .toast.warn { background: #ff9800; }
         
         /* 悬浮按钮 */
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #2E7D32; border: 1px solid #1B5E20; color: white; font-size: 32px; cursor: pointer; box-shadow: 0 4px 15px rgba(46,125,50,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #2E7D32; border: 1px solid #1B5E20; color: white; font-size: 32px; cursor: pointer; box-shadow: 0 4px 15px rgba(46,125,50,0.4); display: flex; align-items: center; justify-content: flex-end; z-index: 100; }
         .fab:hover { transform: scale(1.1); }
         
         /* 确认弹窗 */
-        .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: flex-end; }
         .confirm-overlay.show { display: flex; }
         .confirm-box { background: white; padding: 24px; border-radius: 4px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .confirm-icon { font-size: 48px; margin-bottom: 15px; }
