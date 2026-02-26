@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 短租清潔管理系統</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+        
+        /* 登錄頁面 */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #8A9A5B 0%, #6B7A45 100%);
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+        .login-logo { font-size: 60px; margin-bottom: 20px; }
+        .login-title { font-size: 24px; margin-bottom: 20px; color: #333; }
+-btn {
+            display: block;
+                   
+        .role width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #8A9A5B;
+            border-radius: 10px;
+            background: white;
+            color: #8A9A5B;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .role-btn:hover, .role-btn.active {
+            background: #8A9A5B;
+            color: white;
+        }
+        
+        /* 主界面 */
+        .header {
+            background: #8A9A5B;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { font-size: 18px; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: white;
+            margin: 10px;
+            border-radius: 8px;
+        }
+        .stat-item { text-align: center; padding: 8px; background: #f8f8f8; border-radius: 6px; }
+        .stat-num { font-size: 18px; font-weight: bold; color: #8A9A5B; }
+        .stat-label { font-size: 10px; color: #666; }
+        
+        .content { padding: 15px; }
+        
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-title { font-weight: bold; font-size: 16px; }
+        .card-address { color: #666; font-size: 13px; margin: 5px 0; }
+        .card-info { font-size: 12px; color: #888; }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .badge.open { background: #4CAF50; color: white; }
+        .badge.accepted { background: #2196F3; color: white; }
+        .badge.completed { background: #9C27B0; color: white; }
+        
+        .btn {
+            background: #8A9A5B;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+            width: 100%;
+        }
+        .btn:hover { background: #6B7A45; }
+        
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #8A9A5B;
+            color: white;
+            font-size: 30px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 350px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .empty { text-align: center; padding: 40px; color: #999; }
+        .price { font-size: 18px; font-weight: bold; color: #8A9A5B; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- 登錄頁面 -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">🏠</div>
+            <div class="login-title">短租清潔管理</div>
+            <p style="margin-bottom:15px;color:#666;">選擇您的角色：</p>
+            <button class="role-btn" onclick="login('host')">
+                🏠 房東（發單）
+            </button>
+            <button class="role-btn" onclick="login('cleaner')">
+                👷 清潔工（接單）
+            </button>
+            <button class="role-btn" onclick="login('admin')">
+                📊 調度平台（管理）
+            </button>
+        </div>
+    </div>
+    
+    <!-- 主界面 -->
+    <div id="mainScreen" class="hidden">
+        <div class="header">
+            <h1 id="roleTitle">短租清潔管理</h1>
+            <button onclick="logout()" style="position:absolute;right:15px;top:15px;background:none;border:none;color:white;font-size:12px;">退出</button>
+        </div>
+        
+        <!-- 統計 -->
+        <div class="stats" id="stats">
+            <div class="stat-item"><div class="stat-num" id="stat-open">0</div><div class="stat-label">待接單</div></div>
+            <div class="stat-item"><div class="stat-num" id="stat-accepted">0</div><div class="stat-label">進行中</div></div>
+            <div class="stat-item"><div class="stat-num" id="stat-completed">0</div><div class="stat-label">已完成</div></div>
+        </div>
+        
+        <!-- 房源列表（房東/管理員） -->
+        <div id="propertiesSection" class="content hidden">
+            <h3 style="margin-bottom:10px;">🏠 我的房源</h3>
+            <div id="propertiesList"></div>
+        </div>
+        
+        <!-- 訂單列表 -->
+        <div id="ordersSection" class="content">
+            <h3 style="margin-bottom:10px;">📋 訂單列表</h3>
+            <div id="ordersList"></div>
+        </div>
+        
+        <!-- 清潔工列表（管理員） -->
+        <div id="cleanersSection" class="content hidden">
+            <h3 style="margin-bottom:10px;">👷 清潔工列表</h3>
+            <button class="btn" onclick="showRegisterModal()" style="margin-bottom:10px;">➕ 添加清潔工</button>
+            <div id="cleanersList"></div>
+        </div>
+        
+        <!-- 房東列表（管理員） -->
+        <div id="hostsSection" class="content hidden">
+            <h3 style="margin-bottom:10px;">🏠 房東列表</h3>
+            <button class="btn" onclick="showAddHostModal()" style="margin-bottom:10px;">➕ 添加房東</button>
+            <div id="hostsList"></div>
+        </div>
+        
+        <button class="fab" id="addBtn" onclick="showAddModal()">+</button>
+    </div>
+    
+    <!-- 發單 Modal -->
+    <div class="modal" id="modal-add">
+        <div class="modal-content">
+            <h3>📝 發布訂單</h3>
+            <select id="order-property">
+                <option value="">選擇房源</option>
+            </select>
+            <input type="text" id="order-host-name" placeholder="您的姓名">
+            <input type="tel" id="order-host-phone" placeholder="您的電話">
+            <input type="datetime-local" id="order-checkout">
+            <input type="number" id="order-price" placeholder="價格 ($)" value="100">
+            <button class="btn" onclick="addOrder()">發布訂單</button>
+            <button class="btn" style="background:#999;margin-top:10px" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <!-- 註冊 Modal -->
+    <div class="modal" id="modal-register">
+        <div class="modal-content">
+            <h3>👷 清潔工註冊</h3>
+            <input type="text" id="reg-name" placeholder="姓名">
+            <input type="tel" id="reg-phone" placeholder="電話號碼">
+            <button class="btn" onclick="registerCleaner()">註冊</button>
+            <button class="btn" style="background:#999;margin-top:10px" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <!-- 房東登錄 Modal -->
+    <div class="modal" id="modal-host-login">
+        <div class="modal-content">
+            <h3>🏠 房東登錄</h3>
+            <input type="text" id="host-name" placeholder="姓名">
+            <input type="tel" id="host-phone" placeholder="電話號碼">
+            <button class="btn" onclick="loginHost()">登錄/註冊</button>
+            <button class="btn" style="background:#999;margin-top:10px" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+    
+    <!-- 添加房東 Modal -->
+    <div class="modal" id="modal-add-host">
+        <div class="modal-content">
+            <h3>🏠 添加房東</h3>
+            <input type="text" id="new-host-name" placeholder="姓名">
+            <input type="tel" id="new-host-phone" placeholder="電話號碼">
+            <button class="btn" onclick="addHost()">添加</button>
+            <button class="btn" style="background:#999;margin-top:10px" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://10.0.0.225:5000/api';
+        let currentRole = '';
+        let currentCleanerId = localStorage.getItem('cleaner_id') || '';
+        let currentHostId = localStorage.getItem('host_id') || '';
+        
+        function login(role) {
+            currentRole = role;
+            localStorage.setItem('user_role', role);
+            
+            // 如果是房東，需要驗證
+            if (role === 'host') {
+                const hostId = localStorage.getItem('host_id');
+                if (!hostId) {
+                    alert('請先登錄或註冊房東');
+                    showHostLoginModal();
+                    return;
+                }
+            }
+            
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.remove('hidden');
+            
+            // 根據角色顯示不同界面
+            const title = role === 'host' ? '🏠 房東 - 發單' : 
+                         role === 'cleaner' ? '👷 清潔工 - 接單' : '📊 調度平台';
+            document.getElementById('roleTitle').textContent = title;
+            
+            // 顯示/隱藏區塊
+            document.getElementById('propertiesSection').classList.toggle('hidden', role === 'cleaner');
+            document.getElementById('cleanersSection').classList.toggle('hidden', role !== 'admin');
+            document.getElementById('hostsSection').classList.toggle('hidden', role !== 'admin');
+            document.getElementById('addBtn').style.display = role === 'host' ? 'block' : 'none';
+            
+            loadData();
+        }
+        
+        function logout() {
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('cleaner_id');
+            location.reload();
+        }
+        
+        async function loadData() {
+            try {
+            await Promise.all([loadOrders(), loadStats()]);
+            console.log("Data loaded successfully");
+        } catch(e) {
+            console.error("Load data error:", e);
+            alert("加载数据失败: " + e.message);
+        }
+            if (currentRole === 'admin') {
+                loadCleaners();
+                loadProperties();
+            }
+            if (currentRole === 'host') {
+                loadProperties();
+            }
+        }
+        
+        async function loadStats() {
+            const res = await fetch(`${API_BASE}/orders`);
+            const data = await res.json();
+            const orders = data.data || [];
+            
+            document.getElementById('stat-open').textContent = orders.filter(o => o.status === 'open').length;
+            document.getElementById('stat-accepted').textContent = orders.filter(o => o.status === 'accepted').length;
+            document.getElementById('stat-completed').textContent = orders.filter(o => o.status === 'completed').length;
+        }
+        
+        async function loadOrders() {
+            const res = await fetch(`${API_BASE}/orders`);
+            const data = await res.json();
+            const orders = data.data || [];
+            const list = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                list.innerHTML = '<div class="empty">暫無訂單</div>';
+                return;
+            }
+            
+            // 根據角色過濾訂單
+            let filtered = orders;
+            if (currentRole === 'host') {
+                // 房東只看到自己發佈的訂單
+                filtered = orders.filter(o => o.host_phone === currentHostId);
+            } else if (currentRole === 'cleaner' && currentCleanerId) {
+                filtered = orders.filter(o => o.assigned_cleaner_id == currentCleanerId || o.status === 'open');
+            }
+            
+            list.innerHTML = filtered.map(order => `
+                <div class="card">
+                    <div class="card-title">${order.property_name || '未知房源'}</div>
+                    <div class="card-address">${order.property_address || ''}</div>
+                    <div class="card-info">🏠 ${order.host_name || '-'} | 📞 ${order.host_phone || '-'}</div>
+                    <div class="card-info">🕐 ${order.checkout_time} | <span class="price">$${order.price}</span></div>
+                    <div style="margin-top:8px">
+                        <span class="badge ${order.status}">${getStatusText(order.status)}</span>
+                        ${order.cleaner_name ? `<span style="margin-left:5px;font-size:11px">👷 ${order.cleaner_name}</span>` : ''}
+                    </div>
+                    ${getActionButtons(order)}
+                </div>
+            `).join('');
+        }
+        
+        function getStatusText(status) {
+            const map = {open:'待接單', accepted:'已接單', completed:'已完成', cancelled:'已取消'};
+            return map[status] || status;
+        }
+        
+        function getActionButtons(order) {
+            if (currentRole === 'host' && order.host_phone === currentHostId && order.status === 'open') {
+                return `<button class="btn btn-small" onclick="editOrder(${order.id})">編輯</button>
+                        <button class="btn btn-small" style="background:#f44336" onclick="deleteOrder(${order.id})">刪除</button>`;
+            }
+            if (currentRole === 'cleaner' && order.status === 'open') {
+                return `<button class="btn" onclick="acceptOrder(${order.id})">接單</button>`;
+            }
+            if (currentRole === 'cleaner' && order.status === 'accepted' && order.assigned_cleaner_id == currentCleanerId) {
+                return `<button class="btn" onclick="completeOrder(${order.id})">完成清潔</button>`;
+            }
+            if (currentRole === 'admin' && order.status !== 'completed') {
+                return `<button class="btn" style="background:#f44336" onclick="cancelOrder(${order.id})">取消</button>`;
+            }
+            return '';
+        }
+        
+        async function loadProperties() {
+            const res = await fetch(`${API_BASE}/properties`);
+            const data = await res.json();
+            const list = document.getElementById('propertiesList');
+            const select = document.getElementById('order-property');
+            
+            if (!data.data) return;
+            
+            list.innerHTML = data.data.map(p => `
+                <div class="card">
+                    <div class="card-title">${p.name}</div>
+                    <div class="card-address">${p.address}</div>
+                    <div class="card-info">${p.bedrooms}房 ${p.bathrooms}衛 | 清潔時間: ${p.cleaning_time_minutes}分鐘</div>
+                </div>
+            `).join('');
+            
+            select.innerHTML = '<option value="">選擇房源</option>' + 
+                data.data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        }
+        
+        async function loadCleaners() {
+            const res = await fetch(`${API_BASE}/cleaners`);
+            const data = await res.json();
+            const list = document.getElementById('cleanersList');
+            
+            if (!data.data) return;
+            
+            list.innerHTML = data.data.map(c => `
+                <div class="card">
+                    <div class="card-title">${c.name}</div>
+                    <div class="card-info">📞 ${c.phone || '-'} | ⭐ ${c.rating || 5} | 完成 ${c.total_jobs || 0} 單</div>
+                    <div class="card-info">🔑 Code: <b>${c.code || 'N/A'}</b></div>
+                    <div style="margin-top:8px">
+                        <button class="btn btn-small" onclick="showEditCleaner(${c.id}, '${c.name}', '${c.phone}')">編輯</button>
+                        <button class="btn btn-small" style="background:#f44336" onclick="deleteCleaner(${c.id})">刪除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showAddModal() {
+            loadProperties();
+            document.getElementById('modal-add').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('modal-add').classList.remove('active');
+            document.getElementById('modal-register').classList.remove('active');
+            document.getElementById('modal-host-login').classList.remove('active');
+            document.getElementById('modal-add-host').classList.remove('active');
+        }
+        
+        function showRegisterModal() {
+            document.getElementById('modal-register').classList.add('active');
+        }
+        
+        function showHostLoginModal() {
+            document.getElementById('modal-host-login').classList.add('active');
+        }
+        
+        async function loginHost() {
+            const name = document.getElementById('host-name').value;
+            const phone = document.getElementById('host-phone').value;
+            
+            if (!name || !phone) {
+                alert('請填寫姓名和電話');
+                return;
+            }
+            
+            // 嘗試登錄
+            let res = await fetch(`${API_BASE}/hosts/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+            
+            let data = await res.json();
+            
+            if (res.ok) {
+                localStorage.setItem('host_id', data.data.id);
+                localStorage.setItem('host_name', data.data.name);
+                closeModal();
+                login('host');
+            } else {
+                // 如果登錄失敗，嘗試註冊
+                if (confirm('該信息未找到，是否註冊新房東？')) {
+                    res = await fetch(`${API_BASE}/hosts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, phone })
+                    });
+                    data = await res.json();
+                    if (res.ok) {
+                        alert(`註冊成功！邀請碼: ${data.data.code}`);
+                        localStorage.setItem('host_id', data.data.id);
+                        localStorage.setItem('host_name', data.data.name);
+                        closeModal();
+                        login('host');
+                    } else {
+                        alert(data.error || '操作失敗');
+                    }
+                }
+            }
+        }
+        
+        function showAddHostModal() {
+            document.getElementById('modal-add-host').classList.add('active');
+        }
+        
+        async function addHost() {
+            const name = document.getElementById('new-host-name').value;
+            const phone = document.getElementById('new-host-phone').value;
+            
+            if (!name || !phone) {
+                alert('請填寫姓名和電話');
+                return;
+            }
+            
+            const res = await fetch(`${API_BASE}/hosts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                alert(`房東添加成功！邀請碼: ${data.data.code}`);
+                closeModal();
+                loadHosts();
+            } else {
+                alert(data.error || '添加失敗');
+            }
+        }
+        
+        async function loadHosts() {
+            const res = await fetch(`${API_BASE}/hosts`);
+            const data = await res.json();
+            const list = document.getElementById('hostsList');
+            
+            if (!data.data) return;
+            
+            list.innerHTML = data.data.map(h => `
+                <div class="card">
+                    <div class="card-title">${h.name}</div>
+                    <div class="card-info">📞 ${h.phone} | 🔑 Code: <b>${h.code}</b></div>
+                    <div style="margin-top:8px">
+                        <button class="btn btn-small" onclick="showEditHost(${h.id}, '${h.name}', '${h.phone}')">編輯</button>
+                        <button class="btn btn-small" style="background:#f44336" onclick="deleteHost(${h.id})">刪除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showEditHost(id, name, phone) {
+            const newName = prompt('姓名:', name);
+            if (newName === null) return;
+            const newPhone = prompt('電話:', phone);
+            if (newPhone === null) return;
+            
+            fetch(`${API_BASE}/hosts/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName, phone: newPhone })
+            }).then(res => {
+                if (res.ok) { alert('已更新'); loadHosts(); }
+                else alert('更新失敗');
+            });
+        }
+        
+        async function deleteHost(hostId) {
+            if (!confirm('確定刪除這個房東？')) return;
+            
+            const res = await fetch(`${API_BASE}/hosts/${hostId}`, { method: 'DELETE' });
+            
+            if (res.ok) { alert('已刪除'); loadHosts(); }
+            else alert('刪除失敗');
+        }
+        
+        async function registerCleaner() {
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+            
+            if (!name || !phone) {
+                alert('請填寫姓名和電話');
+                return;
+            }
+            
+            const res = await fetch(`${API_BASE}/cleaners/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                alert(data.message);
+                if (data.data && data.data.registered) {
+                    // 自動登入
+                    currentCleanerId = data.data.id;
+                    localStorage.setItem('cleaner_id', currentCleanerId);
+                    closeModal();
+                    login('cleaner');
+                }
+            } else {
+                alert(data.error || '註冊失敗');
+            }
+        }
+        
+        async function addOrder() {
+            const property_id = document.getElementById('order-property').value;
+            const host_name = document.getElementById('order-host-name').value;
+            const host_phone = document.getElementById('order-host-phone').value;
+            const checkout_time = document.getElementById('order-checkout').value;
+            const price = document.getElementById('order-price').value;
+            
+            if (!property_id || !checkout_time) {
+                alert('請選擇房源和時間');
+                return;
+            }
+            
+            const res = await fetch(`${API_BASE}/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ property_id, host_name, host_phone, checkout_time, price: parseFloat(price) })
+            });
+            
+            if (res.ok) {
+                closeModal();
+                loadData();
+                alert('訂單發布成功！');
+            } else {
+                alert('發布失敗');
+            }
+        }
+        
+        async function acceptOrder(orderId) {
+            if (!currentCleanerId) {
+                alert('請先選擇清潔工');
+                return;
+            }
+            
+            const code = prompt('請輸入您的6位驗證碼:');
+            if (!code) return;
+            
+            const res = await fetch(`${API_BASE}/orders/${orderId}/verify-accept`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    cleaner_id: parseInt(currentCleanerId),
+                    code: code
+                })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.verified) {
+                alert('接單成功！');
+                loadData();
+            } else {
+                alert(data.error || '驗證失敗，請檢查驗證碼');
+            }
+        }
+        
+        async function completeOrder(orderId) {
+            const res = await fetch(`${API_BASE}/orders/${orderId}?action=complete`, { method: 'POST' });
+            if (res.ok) loadData();
+            else alert('操作失敗');
+        }
+        
+        async function deleteCleaner(cleanerId) {
+            if (!confirm('確定刪除這個清潔工？')) return;
+            const res = await fetch(`${API_BASE}/cleaners/${cleanerId}`, { method: 'DELETE' });
+            if (res.ok) { alert('已刪除'); loadCleaners(); }
+            else alert('刪除失敗');
+        }
+        
+        function showEditCleaner(id, name, phone) {
+            const newName = prompt('姓名:', name);
+            if (newName === null) return;
+            const newPhone = prompt('電話:', phone);
+            if (newPhone === null) return;
+            fetch(`${API_BASE}/cleaners/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName, phone: newPhone })
+            }).then(res => { if (res.ok) { alert('已更新'); loadCleaners(); } else alert('更新失敗'); });
+        }
+        
+        async function deleteOrder(orderId) {
+            if (!confirm('確定刪除這個訂單？')) return;
+            const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) { alert('已刪除'); loadOrders(); }
+            else alert('刪除失敗');
+        }
+        
+        function editOrder(orderId) {
+            // 簡單實現：提示用戶輸入新價格
+            const newPrice = prompt('輸入新價格:');
+            if (!newPrice) return;
+            
+            fetch(`${API_BASE}/orders/${orderId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ price: parseFloat(newPrice) })
+            }).then(res => {
+                if (res.ok) { alert('已更新'); loadOrders(); }
+                else alert('更新失敗');
+            });
+        }
+        
+        async function cancelOrder(orderId) {
+            if (!confirm('確定取消訂單？')) return;
+            const res = await fetch(`${API_BASE}/orders/${orderId}?action=cancel`, { method: 'POST' });
+            if (res.ok) loadData();
+        }
+        
+        // 初始化
+        const savedRole = localStorage.getItem('user_role');
+        if (savedRole) {
+            login(savedRole);
+        }
+        
+        // 刷新
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>

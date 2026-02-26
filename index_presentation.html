@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短租清潔管理系統 - 產品介紹</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; background: #1a1a2e; color: #fff; }
+        
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        .slide.active { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        h1 { font-size: 48px; margin-bottom: 20px; color: #8A9A5B; }
+        h2 { font-size: 36px; margin-bottom: 30px; color: #8A9A5B; }
+        p { font-size: 20px; line-height: 1.8; color: #ccc; max-width: 800px; }
+        
+        .logo { font-size: 80px; margin-bottom: 30px; }
+        
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; }
+        .feature { background: rgba(138, 154, 91, 0.1); padding: 30px; border-radius: 16px; text-align: center; }
+        .feature-icon { font-size: 48px; margin-bottom: 15px; }
+        .feature-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; color: #8A9A5B; }
+        .feature-desc { font-size: 16px; color: #aaa; }
+        
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 40px; }
+        .stat { background: rgba(138, 154, 91, 0.2); padding: 30px; border-radius: 12px; text-align: center; }
+        .stat-num { font-size: 48px; font-weight: bold; color: #8A9A5B; }
+        .stat-label { font-size: 18px; color: #aaa; }
+        
+        .steps { display: flex; flex-direction: column; gap: 20px; margin-top: 40px; }
+        .step { display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 20px 30px; border-radius: 12px; }
+        .step-num { 
+            width: 50px; height: 50px; background: #8A9A5B; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; font-weight: bold; margin-right: 20px; 
+        }
+        .step-text { font-size: 20px; }
+        
+        .price-table { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; width: 100%; max-width: 1000px; }
+        .price-card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 16px; text-align: center; }
+        .price-card.popular { background: rgba(138, 154, 91, 0.2); border: 2px solid #8A9A5B; }
+        .price-name { font-size: 24px; margin-bottom: 10px; }
+        .price-value { font-size: 48px; font-weight: bold; color: #8A9A5B; }
+        .price-value span { font-size: 18px; color: #aaa; }
+        .price-features { margin: 20px 0; text-align: left; }
+        .price-features li { margin: 10px 0; color: #ccc; }
+        
+        .nav { 
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; 
+        }
+        .nav button {
+            padding: 12px 24px; background: #8A9A5B; color: white; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 16px;
+        }
+        .nav button:hover { background: #6B7A45; }
+        
+        .screenshot { 
+            background: white; padding: 10px; border-radius: 12px; 
+            margin-top: 30px; max-width: 90%;
+        }
+        .screenshot img { width: 100%; border-radius: 8px; }
+        
+        .contact { text-align: center; margin-top: 40px; }
+        .contact-info { font-size: 24px; color: #8A9A5B; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Cover -->
+    <div class="slide active">
+        <div class="logo">🏠</div>
+        <h1>短租清潔管理系統</h1>
+        <p>幫助短租房東輕鬆管理房源調度、清潔驗收</p>
+        <p style="margin-top: 20px; color: #8A9A5B;">適用於 Airbnb、Booking、VRBO 等短租平台</p>
+    </div>
+
+    <!-- Slide 2: Pain Points -->
+    <div class="slide">
+        <h2>😰 痛點分析</h2>
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <div class="feature-title">高周轉壓力</div>
+                <div class="feature-desc">退房後需立即清潔否則空置損失</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📍</div>
+                <div class="feature-title">房源分散</div>
+                <div class="feature-desc">每個房源位置不同難以調度</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⏰</div>
+                <div class="feature-title">時間緊迫</div>
+                <div class="feature-desc">通常只有 2-4 小時清洁窗口</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">👷</div>
+                <div class="feature-title">人員調度</div>
+                <div class="feature-desc">誰有空？誰離得近？</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">✅</div>
+                <div class="feature-title">品質驗收</div>
+                <div class="feature-desc">清潔完如何確認品質？</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📦</div>
+                <div class="feature-title">物資管理</div>
+                <div class="feature-desc">床單、衛生用品庫存</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Features -->
+    <div class="slide">
+        <h2>✨ 系統功能</h2>
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🏠</div>
+                <div class="feature-title">房源管理</div>
+                <div class="feature-desc">地址、房型、清潔時間標準化</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📋</div>
+                <div class="feature-title">智能派單</div>
+                <div class="feature-desc">自動分配給可用清潔工</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📍</div>
+                <div class="feature-title">定位打卡</div>
+                <div class="feature-desc">確認清潔工到達現場</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <div class="feature-title">清潔清單</div>
+                <div class="feature-desc">標準化檢查項目</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📷</div>
+                <div class="feature-title">照片驗收</div>
+                <div class="feature-desc">清潔完成上傳照片確認</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">數據統計</div>
+                <div class="feature-desc">工作效率一目了然</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Demo Screenshot -->
+    <div class="slide">
+        <h2>📱 產品截圖</h2>
+        <div class="screenshot">
+            <img src="https://via.placeholder.com/800x500/8A9A5B/ffffff?text=清潔管理系統+界面" alt="系統截圖">
+        </div>
+        <p style="margin-top: 30px; text-align: center;">手機電腦均可訪問，隨時隨地管理</p>
+    </div>
+
+    <!-- Slide 5: How it Works -->
+    <div class="slide">
+        <h2>🔄 使用流程</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">房東創建清潔任務（選擇房源、輸入退房時間）</div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">系統自動派單給可用清潔工</div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">清潔工到達現場打卡開始清潔</div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-text">完成後上傳照片填寫清單</div>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-text">房東驗收確認，系統記錄統計</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Pricing -->
+    <div class="slide">
+        <h2>💰 價格方案</h2>
+        <div class="price-table">
+            <div class="price-card">
+                <div class="price-name">基礎版</div>
+                <div class="price-value">$99<span>/月</span></div>
+                <ul class="price-features">
+                    <li>✓ 5 個房源</li>
+                    <li>✓ 3 個清潔工</li>
+                    <li>✓ 基本派單</li>
+                    <li>✓ 數據統計</li>
+                </ul>
+            </div>
+            <div class="price-card popular">
+                <div class="price-name">專業版</div>
+                <div class="price-value">$199<span>/月</span></div>
+                <ul class="price-features">
+                    <li>✓ 20 個房源</li>
+                    <li>✓ 10 個清潔工</li>
+                    <li>✓ 智能派單</li>
+                    <li>✓ 照片驗收</li>
+                    <li>✓ 優先支援</li>
+                </ul>
+            </div>
+            <div class="price-card">
+                <div class="price-name">企業版</div>
+                <div class="price-value">$399<span>/月</span></div>
+                <ul class="price-features">
+                    <li>✓ 無限房源</li>
+                    <li>✓ 無限清潔工</li>
+                    <li>✓ 完整功能</li>
+                    <li>✓ API 對接</li>
+                    <li>✓ 7×24 支援</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Contact -->
+    <div class="slide">
+        <h2>📮 聯繫我們</h2>
+        <div class="contact">
+            <p style="font-size: 24px; margin-bottom: 30px;">讓我們幫您解決清潔管理難題！</p>
+            <div class="contact-info">電話: 825-986-2614</div>
+            <div class="contact-info">郵箱: flp.pcen@gmail.com</div>
+            <div class="contact-info">網站: flyinglap.ca</div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button onclick="prevSlide()">◀ 上一頁</button>
+        <button onclick="nextSlide()">下一頁 ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
