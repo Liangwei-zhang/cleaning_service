@@ -4,158 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🏠 短租清潔管理</title>
-    <style>
-        :root {
-            --primary: #6366F1;
-            --bg-main: #F8FAFC;
-            --bg-card: #FFFFFF;
-            --text-h: #0F172A;
-            --text-p: #475569;
-            --border: #E2E8F0;
-            --success: #10B981;
-            --danger: #EF4444;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-        .login-box {
-            background: var(--bg-card);
-            padding: 32px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        .login-logo { font-size: 56px; margin-bottom: 16px; }
-        .login-title { font-size: 22px; font-weight: 700; color: var(--text-h); margin-bottom: 24px; }
-        
-        .role-btn {
-            width: 100%;
-            height: 56px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--bg-card);
-            color: var(--text-h);
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .role-btn:active { background: var(--bg-main); transform: scale(0.98); }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 24px;
-            width: 100%;
-            max-width: 360px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        .modal-content h3 { font-size: 18px; font-weight: 600; color: var(--text-h); margin-bottom: 16px; }
-        .modal-content input {
-            width: 100%;
-            height: 48px;
-            padding: 0 16px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 15px;
-            margin-bottom: 12px;
-            outline: none;
-        }
-        .modal-content input:focus { border-color: var(--primary); }
-        
-        .btn {
-            width: 100%;
-            height: 48px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-        }
-        .btn:active { transform: scale(0.96); }
-        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
-        .btn-cancel { background: var(--bg-main); color: var(--text-p); margin-top: 8px; }
-        
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--text-h);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 2000;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    </style>
+    <style>$(cat /tmp/optimized.css)</style>
 </head>
 <body>
-    <div class="login-box">
-        <div class="login-logo">🏠</div>
-        <div class="login-title">短租清潔管理</div>
-        <button class="role-btn" onclick="showHostLogin()">🏠 房東（發單）</button>
-        <button class="role-btn" onclick="showCleanerLogin()">👷 清潔工（接單）</button>
-        <button class="role-btn" onclick="showAdminLogin()">📊 調度平台（管理）</button>
+    <div class="login-screen">
+        <div class="login-box">
+            <div class="login-logo">🏠</div>
+            <div class="login-title">短租清潔管理</div>
+            <button class="role-btn" onclick="showHostLogin()">🏠 房東（發單）</button>
+            <button class="role-btn" onclick="showCleanerLogin()">👷 清潔工（接單）</button>
+            <button class="role-btn" onclick="showAdminLogin()">📊 調度平台（管理）</button>
+        </div>
     </div>
     
-    <!-- 房東登錄 -->
     <div class="modal" id="modal-host">
         <div class="modal-content">
-            <h3>🏠 房東登錄</h3>
+            <h2>🏠 房東登錄</h2>
             <input type="text" id="host-code" placeholder="驗證碼" value="547047">
             <button class="btn btn-primary" onclick="loginHost()">登錄</button>
-            <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn" style="background:var(--bg-main);color:var(--text-p)" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 清潔工登錄 -->
     <div class="modal" id="modal-cleaner">
         <div class="modal-content">
-            <h3>👷 清潔工登錄</h3>
+            <h2>👷 清潔工登錄</h2>
             <input type="text" id="cleaner-code" placeholder="驗證碼" value="733025">
             <button class="btn btn-primary" onclick="loginCleaner()">登錄</button>
-            <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn" style="background:var(--bg-main);color:var(--text-p)" onclick="closeModal()">取消</button>
         </div>
     </div>
     
-    <!-- 管理員登錄 -->
     <div class="modal" id="modal-admin">
         <div class="modal-content">
-            <h3>📊 管理員登錄</h3>
+            <h2>📊 管理員登錄</h2>
             <input type="text" id="admin-username" placeholder="用戶名" value="admin">
             <input type="password" id="admin-password" placeholder="密碼" value="admin123">
             <button class="btn btn-primary" onclick="loginAdmin()">登錄</button>
-            <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn" style="background:var(--bg-main);color:var(--text-p)" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -170,58 +56,46 @@
             toast.style.background = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--text-h)';
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => toast.classList.remove('show'), 2500);
+            if (navigator.vibrate) navigator.vibrate(10);
         }
         
         function showHostLogin() { document.getElementById('modal-host').classList.add('active'); }
         function showCleanerLogin() { document.getElementById('modal-cleaner').classList.add('active'); }
         function showAdminLogin() { document.getElementById('modal-admin').classList.add('active'); }
-        function closeModal() { 
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
+        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
         
         async function loginHost() {
             const code = document.getElementById('host-code').value;
             if (!code) { showToast('請輸入驗證碼', 'warn'); return; }
-            
             const res = await fetch(API + '/hosts/code/' + code);
             const data = await res.json();
-            
             if (res.ok && data.data) {
                 localStorage.setItem('host_id', data.data.id);
                 localStorage.setItem('host_phone', data.data.phone);
                 location.href = 'host.html';
-            } else {
-                showToast('驗證碼錯誤', 'error');
-            }
+            } else { showToast('驗證碼錯誤', 'error'); }
         }
         
         async function loginCleaner() {
             const code = document.getElementById('cleaner-code').value;
             if (!code) { showToast('請輸入驗證碼', 'warn'); return; }
-            
             const res = await fetch(API + '/cleaners');
             const data = await res.json();
             const cleaner = data.data?.find(c => c.code === code);
-            
             if (cleaner) {
                 localStorage.setItem('cleaner_id', cleaner.id);
                 localStorage.setItem('cleaner_code', cleaner.code);
                 location.href = 'cleaner.html';
-            } else {
-                showToast('驗證碼錯誤', 'error');
-            }
+            } else { showToast('驗證碼錯誤', 'error'); }
         }
         
         async function loginAdmin() {
             const username = document.getElementById('admin-username').value;
             const password = document.getElementById('admin-password').value;
-            
             if (username === 'admin' && password === 'admin123') {
                 localStorage.setItem('admin_user', username);
                 location.href = 'admin.html';
-            } else {
-                showToast('用戶名或密碼錯誤', 'error');
-            }
+            } else { showToast('用戶名或密碼錯誤', 'error'); }
         }
     </script>
 </body>

@@ -2,120 +2,50 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>👷 短租清潔 - 接單員</title>
-    <style>
-        :root {
-            --primary: #6366F1;
-            --bg-main: #F8FAFC;
-            --bg-card: #FFFFFF;
-            --text-h: #0F172A;
-            --text-p: #475569;
-            --border: #E2E8F0;
-            --success: #10B981;
-            --danger: #EF4444;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-main); }
-        header { background: #6366F1; border: 1px solid #4F46E5; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 18px; }
-        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 12px; cursor: pointer; }
-        
-        /* 导航栏 */
-        .nav { display: flex; background: white; padding: 10px 15px; gap: 10px; }
-        .nav-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; background: #F1F3F4; color: #333; color: #333; }
-        .nav-btn.active { background: #6366F1; border: 1px solid #4F46E5; color: white; }
-        
-        .content { padding: 15px; padding-bottom: 80px; animation: fadeIn 1.5s ease; }
-        .btn { background: #6366F1; border: 1px solid #4F46E5; color: white; border: none; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; margin: 5px; }
-        .btn-success { background: #43a047; color: white; border: 1px solid #388E3C; padding: 14px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; }
-        
-        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
-        
-        .card { background: white; pointer-events: auto; padding: 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card-title { font-weight: bold; font-size: 16px; }
-        .card-info { color: #666; font-size: 13px; margin-top: 5px; }
-        .price { color: #6366F1; font-weight: bold; font-size: 18px; }
-        
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; }
-        .badge.open { background: #388E3C; color: white; }
-        .badge.accepted { background: #1976D2; color: white; }
-        .badge.completed { background: #9E9E9E; color: white; }
-        
-        .empty { text-align: center; padding: 30px; color: #999; }
-        
-        /* 模态框样式 */
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: flex-end; align-items: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .modal-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 8px; color: #333; }
-        .modal-desc { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
-        .modal-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
-        .modal-input:focus { border-color: #6366F1; }
-        .confirm-btns { display: flex; gap: 10px; }
-        .confirm-btn { width: 50%; flex: none; box-sizing: border-box; white-space: nowrap; padding: 12px; border: none; border-radius: 12px; font-size: 15px; cursor: pointer; font-weight: 500; }
-        .confirm-btn.cancel { background: #F1F3F4; color: #666; }
-        .confirm-btn.danger { background: #6366F1; border: 1px solid #4F46E5; color: white; }
-        .confirm-btn.danger:hover { background: #4F46E5; }
-        
-        /* 完成确认模态框 */
-        .modal-success .modal-title { color: #388E3C; }
-        
-        /* Toast 提示 */
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 14px 24px; border-radius: 12px; font-size: 15px; z-index: 2000; opacity: 0; transition: all 0.3s ease; }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast.success { background: #388E3C; }
-        .toast.error { background: #f44336; }
-        .toast.warn { background: #ff9800; }
-    .fade-in { animation: fadeIn 1.5s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.card { animation: fadeIn 1.5s ease; }
-</style>
+    <style>$(cat /tmp/optimized.css)</style>
 </head>
 <body>
     <header>
-        <h1>👷 短租清潔 - 接單員</h1>
+        <h1>👷 短租清潔</h1>
         <button class="logout" onclick="logout()">登出</button>
     </header>
     
-    <!-- 导航 -->
-    <div class="nav">
-        <button class="nav-btn active" id="navOpen" onclick="showPage('open')">📋 搶單大廳</button>
+    <nav class="nav">
+        <button class="nav-btn active" id="navOrders" onclick="showPage('orders')">📋 搶單大廳</button>
         <button class="nav-btn" id="navHistory" onclick="showPage('history')">📜 我的歷史</button>
+    </nav>
+    
+    <div id="pageOrders" class="content">
+        <div id="ordersList"></div>
     </div>
     
-    <!-- 搶單大廳 -->
-    <div id="pageOpen" class="content">
-        <div id="openOrders"></div>
-    </div>
-    
-    <!-- 我的歷史 -->
     <div id="pageHistory" class="content" style="display:none">
         <div id="myHistory"></div>
     </div>
     
-    <!-- 驗證碼模態框 -->
-    <div id="verifyModal" class="modal">
+    <!-- 驗證碼 Modal -->
+    <div class="modal" id="verifyModal">
         <div class="modal-content">
             <div class="modal-title">🔐 輸入驗證碼</div>
             <div class="modal-desc">請輸入房東提供的驗證碼確認接單</div>
-            <input type="text" id="verifyCodeInput" class="modal-input" placeholder="000000" maxlength="6" inputmode="numeric" onkeypress="if(event.key==='Enter')confirmAccept()">
-            <div class="confirm-btns">
-                <button class="confirm-btn cancel" onclick="closeVerifyModal()">取消</button>
-                <button class="confirm-btn danger" onclick="confirmAccept()">確認</button>
+            <input type="text" id="verifyCodeInput" class="modal-input" placeholder="000000" maxlength="6" inputmode="numeric">
+            <div class="modal-btns">
+                <button class="btn" style="background:var(--bg-main);color:var(--text-p)" onclick="closeVerifyModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmAccept()">確認</button>
             </div>
         </div>
     </div>
     
-    <!-- 完成確認模態框 -->
-    <div id="completeModal" class="modal">
-        <div class="modal-content modal-success">
+    <!-- 完成確認 Modal -->
+    <div class="modal" id="completeModal">
+        <div class="modal-content">
             <div class="modal-title">✅ 確認完成</div>
             <div class="modal-desc">確定已完成清潔並離開房源嗎？</div>
-            <div class="confirm-btns">
-                <button class="confirm-btn cancel" onclick="closeCompleteModal()">取消</button>
-                <button class="confirm-btn danger" onclick="confirmComplete()">確認完成</button>
+            <div class="modal-btns">
+                <button class="btn" style="background:var(--bg-main);color:var(--text-p)" onclick="closeCompleteModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmComplete()">確認完成</button>
             </div>
         </div>
     </div>
@@ -123,6 +53,8 @@
     <div class="toast" id="toast"></div>
     
     <script>
+        const API = 'http://127.0.0.1:80/api';
+        
         function formatTime(dateStr) {
             if (!dateStr) return '-';
             const d = new Date(dateStr);
@@ -138,17 +70,25 @@
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
-            toast.className = 'toast ' + type;
-            setTimeout(() => toast.classList.add('active'), 10);
-            setTimeout(() => toast.classList.remove('active'), 2500);
+            toast.style.background = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--text-h)';
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 2500);
+            if (navigator.vibrate) navigator.vibrate(10);
         }
         
-        const API = 'http://127.0.0.1:80/api';
-        let cleanerId = localStorage.getItem('cleaner_id');
-        
+        const cleanerId = localStorage.getItem('cleaner_id');
         if (!cleanerId) {
             showToast('請先登錄', 'warn');
             location.href = 'index.html';
+        }
+        
+        function showPage(page) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(page === 'orders' ? 'navOrders' : 'navHistory').classList.add('active');
+            document.getElementById('pageOrders').style.display = page === 'orders' ? 'block' : 'none';
+            document.getElementById('pageHistory').style.display = page === 'history' ? 'block' : 'none';
+            if (page === 'orders') loadOrders();
+            if (page === 'history') loadHistory();
         }
         
         function logout() {
@@ -156,33 +96,24 @@
             location.href = 'index.html';
         }
         
-        // 页面切换
-        function showPage(page) {
-            document.getElementById('navOpen').className = page === 'open' ? 'nav-btn active' : 'nav-btn';
-            document.getElementById('navHistory').className = page === 'history' ? 'nav-btn active' : 'nav-btn';
-            document.getElementById('pageOpen').style.display = page === 'open' ? 'block' : 'none';
-            document.getElementById('pageHistory').style.display = page === 'history' ? 'block' : 'none';
-        }
-        
-        // 加载订单
         async function loadOrders() {
             const res = await fetch(API + '/orders');
             const data = await res.json();
-            
-            // 抢单大厅 - 开放订单
-            const openOrders = data.data.filter(o => o.status === 'open');
-            document.getElementById('openOrders').innerHTML = openOrders.map(o => `
+            const orders = data.data?.filter(o => o.status === 'open') || [];
+            document.getElementById('ordersList').innerHTML = orders.map(o => `
                 <div class="card">
                     <div class="card-title">${o.property_name || '未知房源'}</div>
-                    <div class="card-info">${o.property_address || ''}</div>
-                    <div class="card-info">🏠 ${o.host_name} | 📞 ${o.host_phone}</div>
+                    <div class="card-info">${o.property_address || '-'}</div>
                     <div class="card-info">🕐 ${formatTime(o.checkout_time)} | <span class="price">$${o.price}</span></div>
                     <div class="card-actions"><button class="btn btn-success" onclick="acceptOrder(${o.id})">✋ 我要接單</button></div>
                 </div>
             `).join('') || '<div class="empty">暫無開放訂單</div>';
-            
-            // 我的历史
-            const myHistory = data.data.filter(o => o.assigned_cleaner_id == cleanerId && o.status !== 'open');
+        }
+        
+        async function loadHistory() {
+            const res = await fetch(API + '/orders');
+            const data = await res.json();
+            const myHistory = data.data?.filter(o => o.assigned_cleaner_id == cleanerId && o.status !== 'open') || [];
             document.getElementById('myHistory').innerHTML = myHistory.map(o => `
                 <div class="card">
                     <div class="card-title">${o.property_name || '未知房源'}</div>
@@ -209,10 +140,7 @@
         
         async function confirmAccept() {
             const code = document.getElementById('verifyCodeInput').value.trim();
-            if (!code) {
-                showToast('請輸入驗證碼', 'warn');
-                return;
-            }
+            if (!code) { showToast('請輸入驗證碼', 'warn'); return; }
             
             const res = await fetch(API + '/orders/' + pendingOrderId + '/verify-accept', {
                 method: 'POST',
@@ -253,7 +181,7 @@
             });
             closeCompleteModal();
             showToast('已完成！');
-            loadOrders();
+            loadHistory();
         }
         
         async function completeOrder(orderId) {
