@@ -228,6 +228,172 @@
         
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+    
+        
+        /* ========================================
+           REFINED ANIMATIONS - FULL SUITE
+           ======================================== */
+        
+        /* Page Transition: Scale & Fade from depth */
+        @keyframes pageIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        @keyframes pageOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(1.02); }
+        }
+        
+        /* Staggered List Animation - Visual Guidance */
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Button/Portal: Press feedback */
+        .btn-primary, .btn-action, .fab, .portal-btn, .nav-btn, .confirm-btn, .btn-accept, .btn-complete {
+            transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 0.2s ease,
+                        background-color 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .btn-primary:active, .btn-action:active, .fab:active, 
+        .portal-btn:active, .confirm-btn:active, .btn-accept:active, .btn-complete:active {
+            transform: scale(0.945);
+        }
+        
+        /* Card hover lift - Premium feel */
+        .card {
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 0.25s ease,
+                        border-color 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+        }
+        
+        /* Staggered delays for list items */
+        .card:nth-child(1) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .card:nth-child(2) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.06s; }
+        .card:nth-child(3) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.12s; }
+        .card:nth-child(4) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.18s; }
+        .card:nth-child(5) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.24s; }
+        .card:nth-child(6) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.30s; }
+        .card:nth-child(7) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.36s; }
+        .card:nth-child(8) { animation: cardIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.42s; }
+        
+        /* Modal: Spring-like scale animation */
+        .modal-content {
+            animation: modalIn 0.4s cubic-bezier(0.34, 1.52, 0.64, 1) forwards;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(24px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        /* Confirm box */
+        .confirm-box {
+            animation: modalIn 0.35s cubic-bezier(0.34, 1.52, 0.64, 1) forwards;
+        }
+        
+        /* Toast: Slide up fade */
+        .toast {
+            animation: toastIn 0.4s cubic-bezier(0.34, 1.52, 0.64, 1) forwards;
+        }
+        
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        /* Header: Quick fade */
+        header {
+            animation: headerIn 0.35s ease forwards;
+        }
+        
+        @keyframes headerIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stats entrance */
+        .stats {
+            animation: statsIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes statsIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Nav tabs: Smooth color transition */
+        .nav-tab, .nav-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Portal button hover slide */
+        .portal-btn:hover {
+            transform: translateX(8px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+        }
+        
+        /* FAB hover glow */
+        .fab:hover {
+            transform: scale(1.06);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+        }
+        
+        /* Login logo bounce */
+        .login-logo {
+            animation: logoBounce 0.6s cubic-bezier(0.34, 1.52, 0.64, 1) forwards;
+        }
+        
+        @keyframes logoBounce {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            60% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        /* Bottom nav shimmer */
+        .bottom-nav {
+            animation: navSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes navSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* List item - slight scale on appear */
+        .item-card {
+            animation: itemIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes itemIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Input focus glow */
+        .input-premium:focus {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Gentle pulse for empty state */
+        .empty {
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes gentlePulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
     </style>
 </head>
 <body>
