@@ -677,7 +677,7 @@
             var res = await fetch(API + '/orders');
             var data = await res.json();
             var cleanerId = localStorage.getItem('cleaner_id');
-            var orders = (data.data || []).filter(function(o) { return o.cleaner_id == cleanerId && o.status !== 'open'; });
+            var orders = (data.data || []).filter(function(o) { return o.assigned_cleaner_id == cleanerId && o.status !== 'open'; });
             var today = 0; var todayStr = new Date().toISOString().slice(0,10);
             orders.forEach(function(o) { if (o.checkout_time && o.checkout_time.slice(0,10) === todayStr) today++; });
             document.getElementById('statToday').textContent = today;
