@@ -3,121 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏠 短租清潔管理</title>
+    <title>🏠 短租清潔</title>
     <style>
         @layer base {
             :root {
-                --glass-bg: rgba(255, 255, 255, 0.7);
-                --aurora-blue: #00E5FF;
-                --aurora-indigo: #6366F1;
-                --aurora-pink: #FF2D95;
-                --text-deep: #0F172A;
-                --text-slate: #64748B;
-                --text-light: #94A3B8;
+                --primary: #0F172A;
+                --accent: #38BDF8;
+                --accent-warm: #F97316;
+                --bg: #F8FAFC;
+                --card: #FFFFFF;
+                --text: #1E293B;
+                --text-muted: #64748B;
+                --border-subtle: rgba(15, 23, 42, 0.06);
+                --shadow-soft: 0 4px 20px rgba(15, 23, 42, 0.08);
+                --shadow-hover: 0 8px 30px rgba(15, 23, 42, 0.12);
             }
             body {
-                background: radial-gradient(at top right, #EEF2FF, #F8FAFC);
-                font-family: 'Inter Tight', system-ui, -apple-system, sans-serif;
-                color: var(--text-deep);
+                background: var(--bg);
+                font-family: system-ui, -apple-system, sans-serif;
+                color: var(--text);
                 min-height: 100vh;
             }
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
         
-        /* 高級感玻璃邊框 */
-        .glass-border {
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
-        }
-        
-        /* 登錄頁面 */
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Premium Card - Floating Effect */
+        .card {
+            background: var(--card);
+            border-radius: 24px;
             padding: 24px;
-            background: radial-gradient(at top right, #EEF2FF, #F8FAFC);
-        }
-        
-        .login-box {
-            width: 100%;
-            max-width: 380px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06);
-            text-align: center;
-        }
-        
-        .login-logo {
-            font-size: 72px;
             margin-bottom: 16px;
-            filter: drop-shadow(0 8px 20px rgba(0, 229, 255, 0.3));
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .login-title {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            margin-bottom: 8px;
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
         }
         
-        .login-subtitle {
-            font-size: 14px;
-            color: var(--text-slate);
-            margin-bottom: 32px;
+        .card:active {
+            transform: scale(0.99);
         }
         
-        /* 按鈕樣式 */
-        .role-btn {
+        /* Premium Button */
+        .btn-primary {
             width: 100%;
             padding: 18px;
-            margin-bottom: 14px;
-            background: rgba(248, 250, 252, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: var(--primary);
+            color: white;
+            border: none;
             border-radius: 20px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
-            color: var(--text-deep);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
         }
         
-        .role-btn:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.15);
+        .btn-primary:hover {
+            background: #1E293B;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
         }
         
-        .role-btn:active {
+        .btn-primary:active {
             transform: scale(0.98);
         }
         
-        /* 模態框 */
+        /* Input Premium */
+        .input-premium {
+            width: 100%;
+            padding: 16px 20px;
+            background: #F1F5F9;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .input-premium:focus {
+            background: white;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+        
+        /* Portal Button */
+        .portal-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .portal-btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateX(4px);
+        }
+        
+        .portal-btn .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .portal-btn .label {
+            flex: 1;
+            margin-left: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .portal-btn .arrow {
+            color: #CBD5E1;
+            transition: transform 0.3s ease;
+        }
+        
+        .portal-btn:hover .arrow {
+            transform: translateX(4px);
+            color: var(--accent);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--primary);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(30px);
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(10px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -131,180 +180,299 @@
             max-width: 380px;
             padding: 32px;
             background: white;
-            border-radius: 32px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15);
         }
         
-        .modal-title {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            text-align: center;
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 20px;
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .stat-num { font-size: 26px; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        header h1 { font-size: 20px; font-weight: 700; }
+        
+        /* Nav Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 16px 20px;
+            background: white;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: var(--primary);
+            border: none;
+            font-size: 28px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .fab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+        }
+        
+        /* Price Tag */
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Status Badge */
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-open { background: #FEF3C7; color: #D97706; }
+        .badge-accepted { background: #E0F2FE; color: #0284C7; }
+        .badge-completed { background: #D1FAE5; color: #059669; }
+        
+        /* Action Buttons */
+        .btn-action {
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit { background: #E0F2FE; color: #0284C7; }
+        .btn-delete { background: #FEE2E2; color: #DC2626; }
+        
+        .empty { text-align: center; padding: 60px; color: var(--text-muted); }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card, .content { animation: fadeIn 0.4s ease; }
+        
+        .content { padding: 20px; padding-bottom: 100px; }
+
+        
+        /* Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+        }
+        
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: var(--shadow-soft);
             margin-bottom: 24px;
         }
         
-        /* 高級輸入框 */
-        .form-group { margin-bottom: 16px; }
-        
-        .form-label {
-            display: block;
-            font-size: 11px;
+        .login-title {
+            font-size: 32px;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-light);
+            color: var(--primary);
             margin-bottom: 8px;
-            text-align: left;
-            padding-left: 4px;
         }
         
-        .input-premium {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(248, 250, 252, 0.8);
-            border: none;
-            border-radius: 20px;
-            font-size: 16px;
-            color: var(--text-deep);
-            outline: none;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        .login-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
         }
         
-        .input-premium:focus {
-            background: white;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 0 0 4px rgba(0, 229, 255, 0.1), 0 10px 25px rgba(0, 229, 255, 0.1);
-        }
-        
-        .input-premium::placeholder {
-            color: var(--text-light);
-        }
-        
-        /* 主按鈕 */
-        .btn-primary {
-            width: 100%;
-            padding: 18px;
-            background: var(--text-deep);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
-            margin-top: 8px;
-        }
-        
-        .btn-primary:hover {
-            background: var(--aurora-blue);
-            box-shadow: 0 15px 40px rgba(0, 229, 255, 0.3);
-        }
-        
-        .btn-primary:active {
-            transform: scale(0.97);
-        }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
         
         .btn-secondary {
             width: 100%;
             padding: 16px;
-            background: rgba(248, 250, 252, 0.8);
-            color: var(--text-slate);
+            background: #F1F5F9;
+            color: var(--text-muted);
             border: none;
-            border-radius: 20px;
-            font-size: 14px;
+            border-radius: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 12px;
             transition: all 0.3s ease;
         }
         
-        .btn-secondary:hover {
-            background: rgba(248, 250, 252, 1);
+        .btn-secondary:hover { background: #E2E8F0; }
+        
+        /* Confirm Overlay */
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
         }
         
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--text-deep);
-            color: white;
-            padding: 16px 28px;
-            border-radius: 16px;
+        .confirm-overlay.show { display: flex; }
+        
+        .confirm-box {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            text-align: center;
+            max-width: 320px;
+            box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15);
+        }
+        
+        .confirm-icon { font-size: 48px; margin-bottom: 16px; }
+        .confirm-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .confirm-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+        
+        .confirm-btns { display: flex; gap: 12px; }
+        
+        .confirm-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
             font-size: 14px;
             font-weight: 600;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 2000;
+            cursor: pointer;
         }
         
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .confirm-btn.cancel { background: #F1F5F9; color: var(--text-muted); }
+        .confirm-btn.danger { background: #DC2626; color: white; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        .header-logout {
+            padding: 8px 16px;
+            background: #F1F5F9;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
         }
-        
-        .login-box, .modal-content { animation: fadeIn 0.4s ease; }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-box">
-            <div class="login-logo">🏠</div>
-            <h1 class="login-title">短租清潔</h1>
-            <p class="login-subtitle">快速媒合專業清潔員</p>
+    <div class="login-screen">
+        <div class="login-logo">🏠</div>
+        <h1 class="login-title">短租清潔</h1>
+        <p class="login-subtitle">專業、高效、可靠的物業服務</p>
+        
+        <div style="width:100%;max-width:360px">
+            <button class="portal-btn" onclick="showHostLogin()" style="margin-bottom:14px">
+                <span class="icon" style="background:#FFF7ED;color:#F97316">🏠</span>
+                <span class="label">房東發單</span>
+                <span class="arrow">›</span>
+            </button>
             
-            <button class="role-btn" onclick="showHostLogin()">
-                <span>🏠</span> 房東發單
+            <button class="portal-btn" onclick="showCleanerLogin()" style="margin-bottom:14px">
+                <span class="icon" style="background:#E0F2FE;color:#0284C7">👷</span>
+                <span class="label">清潔接單</span>
+                <span class="arrow">›</span>
             </button>
-            <button class="role-btn" onclick="showCleanerLogin()">
-                <span>👷</span> 清潔接單
-            </button>
-            <button class="role-btn" onclick="showAdminLogin()">
-                <span>📊</span> 調度管理
+            
+            <button class="portal-btn" onclick="showAdminLogin()">
+                <span class="icon" style="background:#F3E8FF;color:#9333EA">📊</span>
+                <span class="label">調度管理</span>
+                <span class="arrow">›</span>
             </button>
         </div>
     </div>
     
     <div class="modal" id="modal-host">
         <div class="modal-content">
-            <h2 class="modal-title">🏠 房東登錄</h2>
-            <form onsubmit="event.preventDefault(); loginHost();">
+            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">房東登錄</h2>
             <div class="form-group">
                 <label class="form-label">驗證碼</label>
                 <input type="text" id="host-code" class="input-premium" placeholder="輸入驗證碼" value="547047">
             </div>
-            <button type="submit" class="btn-primary">登錄</button>
-            <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
-            </form>
+            <button class="btn-primary" onclick="loginHost()">登錄</button>
+            <button class="btn-secondary" onclick="closeModal()">取消</button>
         </div>
     </div>
     
     <div class="modal" id="modal-cleaner">
         <div class="modal-content">
-            <h2 class="modal-title">👷 清潔工登錄</h2>
-            <form onsubmit="event.preventDefault(); loginCleaner();">
+            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">清潔工登錄</h2>
             <div class="form-group">
                 <label class="form-label">驗證碼</label>
                 <input type="text" id="cleaner-code" class="input-premium" placeholder="輸入驗證碼" value="733025">
             </div>
-            <button type="submit" class="btn-primary">登錄</button>
-            <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
-            </form>
+            <button class="btn-primary" onclick="loginCleaner()">登錄</button>
+            <button class="btn-secondary" onclick="closeModal()">取消</button>
         </div>
     </div>
     
     <div class="modal" id="modal-admin">
         <div class="modal-content">
-            <h2 class="modal-title">📊 管理員登錄</h2>
-            <form onsubmit="event.preventDefault(); loginAdmin();">
+            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">管理員登錄</h2>
             <div class="form-group">
                 <label class="form-label">用戶名</label>
                 <input type="text" id="admin-username" class="input-premium" placeholder="用戶名" value="admin">
@@ -313,9 +481,8 @@
                 <label class="form-label">密碼</label>
                 <input type="text" id="admin-password" class="input-premium" placeholder="密碼" value="admin123">
             </div>
-            <button type="submit" class="btn-primary">登錄</button>
-            <button type="button" class="btn-secondary" onclick="closeModal()">取消</button>
-            </form>
+            <button class="btn-primary" onclick="loginAdmin()">登錄</button>
+            <button class="btn-secondary" onclick="closeModal()">取消</button>
         </div>
     </div>
     
@@ -324,9 +491,7 @@
     <script>
         var API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
         
-        function haptic() {
-            if (navigator.vibrate) navigator.vibrate(20);
-        }
+        function haptic() { if (navigator.vibrate) navigator.vibrate(20); }
         
         function showToast(msg) {
             var t = document.getElementById('toast');
