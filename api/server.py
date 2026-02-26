@@ -216,6 +216,8 @@ class CleaningAPI:
         return {
             "id": prop.id, "name": prop.name, "address": prop.address,
             "bedrooms": prop.bedrooms, "bathrooms": prop.bathrooms,
+            "floor": getattr(prop, 'floor', 0),
+            "area": getattr(prop, 'area', 0),
             "cleaning_time_minutes": prop.cleaning_time_minutes
         }
     
@@ -627,7 +629,7 @@ class APIHandler(BaseHTTPRequestHandler):
         print(f"[API] {args[0]}")
 
 
-def run_server(api, host="0.0.0.0", port=8080):
+def run_server(api, host="0.0.0.0", port=80):
     APIHandler.api = api
     server = HTTPServer((host, port), APIHandler)
     print(f"Running on http://{host}:{port}")
