@@ -11,7 +11,7 @@
         /* 顶部 */
         header { background: #2E7D32; border: 1px solid #1B5E20; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 18px; }
-        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
         
         /* 统计 */
         .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: white; }
@@ -39,10 +39,9 @@
         
         /* 模态框 */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-.modal.active { display: flex; }
-        .modal.active { display: flex; opacity: 1; } align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 4px; width: 90%; max-width: 400px; }
-        .modal-content input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 20px; border-radius: 4px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-content input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
         
         .empty { text-align: center; padding: 30px; color: #999; }
         
@@ -60,7 +59,7 @@
         /* 确认弹窗 */
         .confirm-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
         .confirm-overlay.show { display: flex; }
-        .confirm-box { background: white; padding: 24px; border-radius: 4px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .confirm-box { background: white; padding: 24px; border-radius: 4px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .confirm-icon { font-size: 48px; margin-bottom: 15px; }
         .confirm-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }
         .confirm-desc { color: #666; font-size: 14px; margin-bottom: 20px; }
