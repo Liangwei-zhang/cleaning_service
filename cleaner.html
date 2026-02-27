@@ -4623,7 +4623,7 @@
             var cleanerId = localStorage.getItem('cleaner_id');
             if (!cleanerId) return;
             
-            var res = await fetch(API + '/api/cleaner/stats?cleaner_id=' + parseInt(cleanerId));
+            var res = await fetch(API + '/cleaner/stats?cleaner_id=' + parseInt(cleanerId));
             var stats = await res.json();
             
             document.getElementById('statToday').textContent = stats.completed_today || 0;
