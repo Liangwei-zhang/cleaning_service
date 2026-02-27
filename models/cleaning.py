@@ -244,3 +244,40 @@ class CleaningRepository:
             "pending_jobs": pending_jobs,
             "completed_today": completed_today
         }
+    
+    # Cleaner specific stats
+    def get_cleaner_stats(self, cleaner_id: int) -> dict:
+        conn = self.db._get_connection()
+        cursor = conn.cursor()
+        
+        # Today's completed orders (using created_at as completion time)
+        cursor.execute("""
+            SELECT COUNT(*) FROM orders 
+            WHERE assigned_cleaner_id = ? 
+            AND status = 'completed' 
+            AND DATE(created_at) = DATE('now')
+        """, (cleaner_id,))
+        completed_today = cursor.fetchone()[0]
+        
+        # Total completed orders
+        cursor.execute("""
+            SELECT COUNT(*) FROM orders 
+            WHERE assigned_cleaner_id = ? 
+            AND status = 'completed'
+        """, (cleaner_id,))
+        total_completed = cursor.fetchone()[0]
+        
+        # Total earnings
+        cursor.execute("""
+            SELECT COALESCE(SUM(price), 0) FROM orders 
+            WHERE assigned_cleaner_id = ? 
+            AND status = 'completed'
+        """, (cleaner_id,))
+        total_earnings = cursor.fetchone()[0]
+        
+        conn.close()
+        return {
+            "completed_today": completed_today,
+            "total_orders": total_completed,
+            "total_earnings": total_earnings
+        }

@@ -38,6 +38,14 @@ class CleaningAPI:
         if path == "/api/stats":
             return self.repo.get_stats()
         
+        # Cleaner stats
+        if path == "/api/cleaner/stats":
+            if method == "GET":
+                cleaner_id = query.get("cleaner_id", [None])[0]
+                if cleaner_id:
+                    return self.repo.get_cleaner_stats(int(cleaner_id))
+            return {"error": "Missing cleaner_id"}
+        
         # ========== 房源 ==========
         if path == "/api/properties":
             if method == "GET":

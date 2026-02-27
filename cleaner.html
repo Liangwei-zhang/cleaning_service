@@ -3003,7 +3003,17 @@
             if (page === 'my') loadMyOrders();
         }
         
-        async function loadStats() { var res = await fetch(API + '/stats'); var stats = await res.json(); document.getElementById('statTotal').textContent = stats.total_orders || 0; document.getElementById('statIncome').textContent = '$' + (stats.total_earnings || 0); }
+        async function loadStats() {
+            var cleanerId = localStorage.getItem('cleaner_id');
+            if (!cleanerId) return;
+            
+            var res = await fetch(API + '/api/cleaner/stats?cleaner_id=' + cleanerId);
+            var stats = await res.json();
+            
+            document.getElementById('statToday').textContent = stats.completed_today || 0;
+            document.getElementById('statTotal').textContent = stats.total_orders || 0;
+            document.getElementById('statIncome').textContent = '$' + (stats.total_earnings || 0);
+        }
         
         async function loadOpenOrders() {
             var res = await fetch(API + '/orders');
