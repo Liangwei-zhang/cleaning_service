@@ -546,6 +546,15 @@ class CleaningAPI:
         cursor = conn.cursor()
         updates = []
         params = []
+        
+        if data.get("property_id"):
+            updates.append("property_id = ?")
+            params.append(data["property_id"])
+        
+        if data.get("checkout_time"):
+            updates.append("checkout_time = ?")
+            params.append(data["checkout_time"])
+        
         if data.get("price"):
             updates.append("price = ?")
             params.append(data["price"])
@@ -554,6 +563,7 @@ class CleaningAPI:
             params.append(order_id)
             cursor.execute(f"UPDATE orders SET {', '.join(updates)} WHERE id = ?", params)
             conn.commit()
+        
         conn.close()
         return {"message": "Order updated"}
     

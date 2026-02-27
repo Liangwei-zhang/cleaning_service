@@ -4900,12 +4900,12 @@
             document.getElementById('orderProperty').innerHTML = (data.data || []).map(function(p) { return '<option value="' + p.id + '">' + p.name + '</option>'; }).join('');
         }
         
-        function showAddOrder() { document.getElementById('modalOrder').classList.add('active'); }
-        function showAddProperty() { document.getElementById('modalProperty').classList.add('active'); }
-        function closeModal() { document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('active'); }); }
+        function showAddOrder() { document.getElementById('modalOrder').classList.add('show'); }
+        function showAddProperty() { document.getElementById('modalProperty').classList.add('show'); }
+        function closeModal() { document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('show'); }); }
         
         async function addOrder() {
-            await fetch(API + '/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: document.getElementById('orderProperty').value, checkout_time: document.getElementById('orderTime').value, price: document.getElementById('orderPrice').value, host_name: '房東', host_phone: hostPhone }) });
+            await fetch(API + '/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: parseInt(document.getElementById('orderProperty').value, checkout_time: document.getElementById('orderTime').value, price: document.getElementById('orderPrice').value, host_name: '房東', host_phone: hostPhone }) });
             closeModal(); loadOrders(); showToast('發布成功');
         }
         
@@ -4925,7 +4925,7 @@
             document.getElementById('editPropertyBathrooms').value = bathrooms;
             document.getElementById('editPropertyFloor').value = floor || 0;
             document.getElementById('editPropertyArea').value = area || 0;
-            document.getElementById('modalEditProperty').classList.add('active');
+            document.getElementById('modalEditProperty').classList.add('show');
         }
         
         async function saveProperty() {
@@ -4941,12 +4941,12 @@
             document.getElementById('editOrderId').value = id;
             document.getElementById('editOrderTime').value = checkoutTime;
             document.getElementById('editOrderPrice').value = price;
-            document.getElementById('modalEditOrder').classList.add('active');
+            document.getElementById('modalEditOrder').classList.add('show');
         }
         
         async function saveOrder() {
             var id = document.getElementById('editOrderId').value;
-            await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: document.getElementById('editOrderProperty').value, checkout_time: document.getElementById('editOrderTime').value, price: document.getElementById('editOrderPrice').value }) });
+            await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: parseInt(document.getElementById('editOrderProperty').value, checkout_time: document.getElementById('editOrderTime').value, price: document.getElementById('editOrderPrice').value }) });
             closeModal(); loadOrders(); showToast('修改成功');
         }
         
