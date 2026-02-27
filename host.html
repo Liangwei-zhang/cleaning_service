@@ -2,1229 +2,421 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏠 短租清潔 - 房東</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FAFBFF">
+    <title>🏠 房東控制台 - 短租清潔系統</title>
     <style>
-   
+        /* ========================================
+           2026 Flagship Unified Design System
+           ======================================== */
+        @layer base, components, utilities;
 
-    
         :root {
-            /* === 2026 FLAGSHIP + INTERACTION === */
-            --bg-main: #FAFBFF;
-            --surface: rgba(255, 255, 255, 0.92);
-            --surface-solid: #FFFFFF;
+            /* 核心調色板 - OKLCH 高通透感 */
+            --primary: oklch(60% 0.2 250);
+            --primary-light: oklch(92% 0.04 250);
+            --bg-main: oklch(98.5% 0.01 240);
+            --surface: oklch(100% 0 0 / 92%);
+            --midnight: oklch(25% 0.02 240);
+            --text-muted: oklch(55% 0.02 240);
             
-            --midnight: #1A1C20;
-            --midnight-light: #2D2F33;
-            --glacier: #E8F4FC;
-            --glacier-dark: #B8DCF0;
-            --champagne: #B48C4F;
-            
-            --text-primary: #1A1C20;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            
-            --shadow-soft: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.04);
-            --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
-            
-            --radius-lg: 32px;
-            --radius-md: 24px;
-            --radius-sm: 16px;
-            
-            body {
-                background: var(--bg-main);
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-                color: var(--text-primary);
-                min-height: 100vh;
-                -webkit-font-smoothing: antialiased;
-            }
+            /* 物理系統參數 */
+            --radius-xl: 32px;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow-premium: 0 20px 40px -12px oklch(0% 0 0 / 8%);
+            --shadow-fab: 0 12px 28px -6px oklch(60% 0.2 250 / 35%);
         }
-        
-        /* === FADE & BLUR ANIMATION === */
-        @keyframes fadeInBlur {
-            from { 
-                opacity: 0; 
-                transform: translateY(16px); 
-                filter: blur(10px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-                filter: blur(0); 
-            }
-        }
-        
-        /* === HAPTIC BUTTON === */
-        .btn, .btn-primary, .btn-accept, .btn-action, .confirm-btn, .fab, .nav-tab, .portal-btn {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .btn:active, .btn-primary:active, .btn-accept:active, 
-        .btn-action:active, .confirm-btn:active, .fab:active,
-        .nav-tab:active, .portal-btn:active {
-            transform: scale(0.96);
-        }
-        
-        /* === CARD HOVER - Subtle color shift === */
-        .card, .portal-btn, .stat-main, .stat-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover, .portal-btn:hover {
-            background: #F8FAFC;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-3px);
-        }
-        
-        /* === LAYOUT === */
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        /* === HEADER === */
-        header {
-            background: var(--surface);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        
-        .header-avatar {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--midnight), var(--midnight-light));
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 600; font-size: 16px;
-        }
-        
-        .header-title { font-size: 18px; font-weight: 600; }
-        .header-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
-        .header-right { display: flex; align-items: center; gap: 14px; }
-        
-        .header-btn {
-            background: var(--glacier);
-            border: none;
-            color: var(--text-secondary);
-            font-size: 14px; font-weight: 500;
-            cursor: pointer; padding: 10px 16px;
-            border-radius: 24px;
-        }
-        
-        /* === BENTO STATS === */
-        .stats {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 18px;
-            padding: 22px;
-            margin-bottom: 18px;
-        }
-        
-        .stat-main {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 24px;
-            display: flex; flex-direction: column;
-            justify-content: space-between;
-            min-height: 120px;
-        }
-        
-        .stat-main-label {
-            font-size: 12px; font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-        
-        .stat-main-num {
-            font-size: 38px; font-weight: 700;
-            color: var(--champagne);
-            letter-spacing: -0.02em;
-        }
-        
-        .stat-side { display: flex; flex-direction: column; gap: 18px; }
-        
-        .stat-item {
-            background: var(--surface-solid);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-card);
-            padding: 20px;
-            flex: 1;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center;
-        }
-        
-        .stat-item.highlight { background: var(--midnight); }
-        
-        .stat-item-num {
-            font-size: 24px; font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .stat-item.highlight .stat-item-num { color: white; }
-        
-        .stat-item-label {
-            font-size: 11px; font-weight: 600;
-            color: var(--text-muted); margin-top: 4px;
-        }
-        
-        .stat-item.highlight .stat-item-label { color: rgba(255,255,255,0.7); }
-        
-        /* === TAB === */
-        .nav-tabs {
-            display: flex;
-            background: var(--surface-solid);
-            padding: 8px;
-            border-radius: var(--radius-md);
-            margin: 0 22px 22px;
-            box-shadow: var(--shadow-card);
-        }
-        
-        .nav-tab {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 24px;
-            font-size: 15px; font-weight: 600;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            background: transparent;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-        
-        .nav-tab.active {
-            background: var(--midnight);
-            color: white;
-        }
-        
-        /* === CARD === */
-        .card {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            margin: 0 22px 18px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            background: #F8FAFC;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-3px);
-        }
-        
-        .card-inner { padding: 24px; }
-        
-        .card-header {
-            display: flex; justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 18px;
-        }
-        
-        .card-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px; font-weight: 600;
-            letter-spacing: 0.04em;
-            margin-bottom: 10px;
-        }
-        
-        .badge-hot { background: #FEF3C7; color: #D97706; }
-        
-        .card-title {
-            font-size: 18px; font-weight: 600;
-            color: var(--text-primary);
-            line-height: 1.35;
-        }
-        
-        .card-price { text-align: right; }
-        
-        .card-price-old {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-decoration: line-through;
-        }
-        
-        .price {
-            font-size: 26px; font-weight: 700;
-            color: var(--champagne);
-        }
-        
-        .card-info {
-            display: flex; align-items: center;
-            gap: 18px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
-        
-        .card-info span { display: flex; align-items: center; gap: 6px; }
-        
-        /* === BADGE === */
-        .badge {
-            display: inline-block;
-            border-radius: 14px;
-            font-size: 12px; font-weight: 500;
-            padding: 5px 12px;
-        }
-        
-        .badge-open { background: #FEF3C7; color: #D97706; }
-        .badge-accepted { background: var(--glacier); color: #0369A1; }
-        .badge-completed { background: #D1FAE5; color: #059669; }
-        
-        /* === ACTIONS === */
-        .card-actions { padding: 0 24px 24px; }
-        
-        .btn-primary, .btn-accept {
-            background: var(--midnight);
-            color: white;
-            border-radius: 28px;
-            border: none;
-            font-weight: 600;
-            padding: 18px 28px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            width: 100%;
-            font-size: 15px;
-            display: flex; align-items: center;
-            justify-content: center; gap: 10px;
-        }
-        
-        .btn-primary:hover, .btn-accept:hover {
-            background: #2563EB;
-            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.25);
-        }
-        
-        .btn-action {
-            padding: 12px 16px;
-            border-radius: 14px;
-            font-size: 13px; font-weight: 500;
-            border: none; cursor: pointer;
-        }
-        
-        .btn-edit { background: var(--glacier); color: var(--text-secondary); }
-        .btn-delete { background: #FEE2E2; color: #DC2626; }
-        
-        .card-actions-row { display: flex; gap: 12px; }
-        .card-actions-row .btn-action { flex: 1; }
-        
-        /* === FLOATING NAV === */
-        .bottom-nav, .nav {
-            position: fixed;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 28, 32, 0.95);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-radius: 36px;
-            padding: 12px 18px;
-            display: flex; gap: 6px;
-            box-shadow: 0 24px 56px rgba(0, 0, 0, 0.22);
-            z-index: 1000;
-        }
-        
-        .nav-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 14px 24px;
-            border-radius: 28px;
-            font-size: 14px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent; border: none;
-        }
-        
-        .nav-item.active { background: white; color: var(--midnight); }
-        .nav-item:hover:not(.active) { color: rgba(255, 255, 255, 0.8); }
-        
-        /* === FAB === */
-        .fab {
-            background: var(--midnight);
-            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
-            border-radius: 28px;
-            border: none;
-            width: 56px; height: 56px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 24px; color: white;
-        }
-        
-        /* === INPUT === */
-        .input-premium {
-            background: var(--glacier);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 16px 18px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-            color: var(--text-primary);
-        }
-        
-        .input-premium::placeholder { color: var(--text-muted); }
-        
-        /* === MODAL === */
-        .modal {
-            background: rgba(26, 28, 32, 0.5);
-            backdrop-filter: blur(24px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            padding: 28px;
-        }
-        
-        .modal.show { display: flex; }
-        
-        .modal-content {
-            background: var(--surface-solid);
-            border-radius: 32px;
-            box-shadow: var(--shadow-soft);
-            padding: 30px;
-            width: 90%;
-            max-width: 380px;
-            text-align: center;
-        }
-        
-        .confirm-icon { font-size: 48px; margin-bottom: 16px; }
-        .confirm-title { font-size: 22px; font-weight: 600; margin-bottom: 12px; }
-        .confirm-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 26px; }
-        
-        .confirm-btns { display: flex; flex-direction: column; gap: 12px; }
-        
-        .confirm-btn {
-            width: 100%;
-            padding: 18px 28px;
-            border: none;
-            border-radius: 24px;
-            font-size: 16px; font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .confirm-btn.danger { background: var(--midnight); color: white; }
-        .confirm-btn.danger:hover { background: #2563EB; }
-        
-        .confirm-btn.cancel { background: var(--glacier); color: var(--text-secondary); }
-        
-        /* === PORTAL === */
-        .portal-btn {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 22px 24px;
-            display: flex; align-items: center;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 18px;
-            box-sizing: border-box;
-        }
-        
-        .portal-btn:hover {
-            background: #F8FAFC;
-            box-shadow: var(--shadow-hover);
-            transform: translateX(6px);
-        }
-        
-        .portal-icon {
-            width: 56px; height: 56px;
-            border-radius: 20px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 18px;
-        }
-        
-        .portal-icon.cleaner { background: var(--glacier); }
-        .portal-icon.host { background: #FEF3C7; }
-        .portal-icon.admin { background: #EDE9FE; }
-        
-        .portal-text h3 { font-size: 17px; font-weight: 600; }
-        .portal-text p { font-size: 14px; color: var(--text-muted); margin-top: 3px; }
-        
-        /* === LOGIN === */
-        .login-screen { background: var(--bg-main); }
-        .login-logo { background: var(--surface-solid); box-shadow: var(--shadow-soft); }
-        .login-container { max-width: 340px; margin: 0 auto; padding: 56px 24px; }
-        
-        /* === TOAST === */
-        .toast {
-            background: var(--midnight);
-            border-radius: 16px;
-            padding: 16px 22px;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        
-        /* === ANIMATIONS === */
-        .card:nth-child(n) {
-            animation: fadeInBlur 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
-        }
-        
-        .card:nth-child(1) { animation-delay: 0.0s; }
-        .card:nth-child(2) { animation-delay: 0.08s; }
-        .card:nth-child(3) { animation-delay: 0.16s; }
-        .card:nth-child(4) { animation-delay: 0.24s; }
-        
-        /* === CONTENT === */
-        .content { padding-bottom: 110px; }
-        
-        .form-group { margin-bottom: 16px; }
-        
-        .form-label { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; display: block; }
-        
-        .btn-secondary {
-            background: var(--glacier);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            width: 100%;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 14px;
-        }
-        
-        .empty { color: var(--text-muted); text-align: center; padding: 56px 24px; font-size: 15px; }
 
-    
-        :root {
-            /* === 2026 REFINED === */
-            --bg-main: #FAFBFF;
-            --surface: rgba(255, 255, 255, 0.95);
-            --surface-solid: #FFFFFF;
-            
-            --midnight: #1A1C20;
-            --midnight-light: #2D2F33;
-            --glacier: #E8F4FC;
-            --glacier-dark: #B8DCF0;
-            --champagne: #B48C4F;
-            
-            --text-primary: #1A1C20;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            
-            --shadow-soft: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.03);
-            --shadow-hover: 0 14px 34px rgba(0, 0, 0, 0.06);
-            
-            --radius-xl: 40px;
-            --radius-lg: 32px;
-            --radius-md: 24px;
-            --radius-sm: 20px;
-            
-            body {
-                background: var(--bg-main);
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
-                color: var(--text-primary);
-                min-height: 100vh;
-                -webkit-font-smoothing: antialiased;
-            }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--midnight);
+            line-height: 1.5;
+            padding-bottom: 120px; /* 為導航留空 */
+            -webkit-font-smoothing: antialiased;
         }
-        
-        /* === ANIMATIONS === */
-        @keyframes fadeInBlur {
-            from { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-        
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        /* === HAPTIC BUTTON === */
-        * { -webkit-tap-highlight-color: transparent; }
-        
-        .btn, .btn-primary, .btn-accept, .btn-action, .confirm-btn, .fab, .nav-tab, .portal-btn {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .btn:active, .btn-primary:active, .btn-accept:active, 
-        .btn-action:active, .confirm-btn:active, .fab:active,
-        .nav-tab:active, .portal-btn:active {
-            transform: scale(0.98);
-        }
-        
-        /* === CARD HOVER === */
-        .card, .portal-btn, .stat-main, .stat-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover, .portal-btn:hover {
-            background: #FFFFFF;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-3px) scale(1.01);
-        }
-        
-        /* === LAYOUT === */
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        /* === HEADER === */
+
+        /* --- 頂部玻璃感導航 --- */
         header {
-            background: var(--surface);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            padding: 20px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        
-        .header-avatar {
-            width: 48px; height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--midnight), var(--midnight-light));
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 600; font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-        .header-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-        .header-right { display: flex; align-items: center; gap: 14px; }
-        
-        .header-btn {
-            background: var(--glacier);
-            border: none;
-            color: var(--text-secondary);
-            font-size: 14px; font-weight: 500;
-            cursor: pointer; padding: 10px 18px;
-            border-radius: 24px;
-        }
-        
-        /* === BENTO STATS === */
-        .stats {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-main {
-            background: var(--surface-solid);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            padding: 28px;
-            display: flex; flex-direction: column;
-            justify-content: space-between;
-            min-height: 140px;
-        }
-        
-        .stat-main-label {
-            font-size: 11px; font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-        }
-        
-        .stat-main-num {
-            font-size: 42px; font-weight: 800;
-            color: var(--champagne);
-            letter-spacing: -0.03em;
-            line-height: 1;
-        }
-        
-        .stat-side { display: flex; flex-direction: column; gap: 20px; }
-        
-        .stat-item {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 24px;
-            flex: 1;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center;
-        }
-        
-        .stat-item.highlight { background: var(--midnight); }
-        
-        .stat-item-num {
-            font-size: 28px; font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.02em;
-        }
-        
-        .stat-item.highlight .stat-item-num { color: white; }
-        
-        .stat-item-label {
-            font-size: 11px; font-weight: 600;
-            color: var(--text-muted); margin-top: 6px;
-            letter-spacing: 0.05em;
-        }
-        
-        .stat-item.highlight .stat-item-label { color: rgba(255,255,255,0.7); }
-        
-        /* === TAB === */
-        .nav-tabs {
-            display: flex;
-            background: var(--surface-solid);
-            padding: 10px;
-            border-radius: var(--radius-lg);
-            margin: 0 24px 24px;
-            box-shadow: var(--shadow-card);
-        }
-        
-        .nav-tab {
-            flex: 1;
-            padding: 16px 24px;
-            border-radius: 28px;
-            font-size: 15px; font-weight: 600;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            background: transparent;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-        
-        .nav-tab.active {
-            background: var(--midnight);
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        /* === CARD === */
-        .card {
-            background: var(--surface-solid);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            margin: 0 24px 20px;
-            overflow: hidden;
-            transition: all 0.35s ease;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-4px) scale(1.01);
-            border-color: rgba(0,0,0,0.05);
-        }
-        
-        .card-inner { padding: 28px; }
-        
-        .card-header {
-            display: flex; justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-        
-        .card-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 24px;
-            font-size: 11px; font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-bottom: 12px;
-        }
-        
-        .badge-hot { background: #E8F0FE; color: #2563EB; }
-        
-        .card-title {
-            font-size: 20px; font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.3;
-            letter-spacing: -0.01em;
-        }
-        
-        .card-price { text-align: right; }
-        
-        .card-price-old {
-            font-size: 14px;
-            color: var(--text-muted);
-            text-decoration: line-through;
-        }
-        
-        .price {
-            font-size: 30px; font-weight: 800;
-            color: var(--champagne);
-            letter-spacing: -0.02em;
-        }
-        
-        .card-info {
-            display: flex; align-items: center;
-            gap: 20px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-        
-        .card-info span { display: flex; align-items: center; gap: 6px; }
-        
-        /* === BADGE === */
-        .badge {
-            display: inline-block;
-            border-radius: 16px;
-            font-size: 12px; font-weight: 600;
-            padding: 6px 14px;
-        }
-        
-        .badge-open { background: #FEF3C7; color: #D97706; }
-        .badge-accepted { background: var(--glacier); color: #0369A1; }
-        .badge-completed { background: #D1FAE5; color: #059669; }
-        
-        /* === ACTIONS === */
-        .card-actions { padding: 0 28px 28px; }
-        
-        .btn-primary, .btn-accept {
-            background: var(--midnight);
-            color: white;
-            border-radius: 32px;
-            border: none;
-            font-weight: 600;
-            padding: 20px 32px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            width: 100%;
-            font-size: 15px;
-            letter-spacing: 0.02em;
-            display: flex; align-items: center;
-            justify-content: center; gap: 10px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-        }
-        
-        .btn-primary:hover, .btn-accept:hover {
-            background: #2563EB;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
-            transform: translateY(-2px);
-        }
-        
-        .btn-action {
-            padding: 14px 18px;
-            border-radius: 16px;
-            font-size: 14px; font-weight: 600;
-            border: none; cursor: pointer;
-        }
-        
-        .btn-edit { background: var(--glacier); color: var(--text-secondary); }
-        .btn-delete { background: #FEE2E2; color: #DC2626; }
-        
-        .card-actions-row { display: flex; gap: 14px; }
-        .card-actions-row .btn-action { flex: 1; }
-        
-        /* === FLOATING NAV === */
-        .bottom-nav, .nav {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 28, 32, 0.95);
-            backdrop-filter: blur(48px);
-            -webkit-backdrop-filter: blur(48px);
-            border-radius: 40px;
-            padding: 14px 20px;
-            display: flex; gap: 8px;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
-            justify-content: space-around;
-        }
-        
-        .nav-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 14px 24px;
-            border-radius: 28px;
-            font-size: 14px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent; border: none;
-        }
-        
-        .nav-item.active { background: white; color: var(--midnight); }
-        .nav-item:hover:not(.active) { color: rgba(255, 255, 255, 0.8); }
-        
-        /* === FAB === */
-        .fab {
-            background: var(--midnight);
-            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22);
-            border-radius: 28px;
-            border: none;
-            width: 60px; height: 60px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 26px; color: white;
-        }
-        
-        /* === INPUT === */
-        .input-premium {
-            background: var(--glacier);
-            border: none;
-            border-radius: var(--radius-sm);
+            position: sticky; top: 0; z-index: 1000;
+            background: oklch(100% 0 0 / 75%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 18px 20px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-            color: var(--text-primary);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid oklch(0% 0 0 / 5%);
         }
+        header h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
         
-        .input-premium::placeholder { color: var(--text-muted); }
+        .logout-btn {
+            padding: 8px 16px; border-radius: 50px; 
+            border: 1px solid oklch(0% 0 0 / 8%);
+            background: white; font-size: 13px; font-weight: 700;
+            transition: 0.2s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .logout-btn:active { transform: scale(0.92); opacity: 0.8; }
+
+        /* --- 主容器與頁面動畫 --- */
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        .page { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+        .page-title { font-size: 26px; font-weight: 850; margin-bottom: 24px; letter-spacing: -1px; }
+
+        /* --- 卡片體系 --- */
+        .card {
+            background: white; border-radius: var(--radius-lg); padding: 22px;
+            margin-bottom: 18px; box-shadow: var(--shadow-premium);
+            border: 1px solid oklch(100% 0 0 / 10%);
+            transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+            position: relative; overflow: hidden;
+        }
+        .card:active { transform: scale(0.985); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .card-title { font-size: 18px; font-weight: 800; color: var(--midnight); flex: 1; }
         
-        /* === MODAL === */
+        .price-display { font-size: 22px; font-weight: 850; color: var(--midnight); }
+        .price-display::before { content: '$'; font-size: 14px; margin-right: 2px; color: var(--text-muted); }
+
+        .info-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+        
+        /* --- 狀態標籤 --- */
+        .badge {
+            padding: 4px 12px; border-radius: 10px; font-size: 11px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .status-open { background: oklch(96% 0.1 85); color: oklch(50% 0.15 45); }
+        .status-accepted { background: oklch(93% 0.08 240); color: oklch(55% 0.15 250); }
+        .status-completed { background: oklch(94% 0.08 160); color: oklch(50% 0.15 155); }
+
+        .property-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+        .meta-tag {
+            background: var(--bg-main); padding: 5px 10px; border-radius: 10px;
+            font-size: 12px; font-weight: 600; color: oklch(40% 0.02 240);
+        }
+
+        /* --- 按鈕組 --- */
+        .action-row { display: flex; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid oklch(0% 0 0 / 5%); }
+        .btn-mini {
+            flex: 1; padding: 12px; border-radius: 14px; border: none;
+            font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-edit { background: var(--primary-light); color: var(--primary); }
+        .btn-del { background: #FFF1F2; color: #E11D48; }
+        .btn-mini:active { transform: scale(0.94); }
+
+        /* --- 底部懸浮導航 --- */
+        .bottom-nav {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+            background: oklch(25% 0.02 240 / 88%); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 8px; border-radius: 50px;
+            display: flex; gap: 4px; box-shadow: 0 20px 48px oklch(0% 0 0 / 25%); 
+            z-index: 1000; width: fit-content;
+        }
+        .nav-item {
+            padding: 12px 28px; border-radius: 40px; color: white; opacity: 0.5;
+            font-size: 15px; font-weight: 700; border: none; background: none; transition: 0.3s;
+        }
+        .nav-item.active { background: white; color: var(--midnight); opacity: 1; }
+
+        /* --- 物理按壓 FAB --- */
+        .fab {
+            position: fixed; bottom: 105px; right: 24px;
+            width: 64px; height: 64px; border-radius: 22px;
+            background: var(--midnight); color: white; border: none;
+            font-size: 32px; box-shadow: var(--shadow-fab);
+            display: flex; align-items: center; justify-content: center; z-index: 900;
+            transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .fab:active { transform: scale(0.85) rotate(90deg); }
+
+        /* --- 模態框 Premium --- */
         .modal {
-            background: rgba(26, 28, 32, 0.5);
-            backdrop-filter: blur(24px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            padding: 32px;
+            position: fixed; inset: 0; background: oklch(0% 0 0 / 30%);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: none; align-items: flex-end; justify-content: center; 
+            z-index: 2000; opacity: 0; transition: 0.3s;
         }
-        
-        .modal.show { display: flex; }
+        .modal.active { display: flex; opacity: 1; }
         
         .modal-content {
-            background: var(--surface-solid);
-            border-radius: 36px;
-            box-shadow: var(--shadow-soft);
-            padding: 32px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
+            background: white; border-radius: 32px 32px 0 0; padding: 32px 24px 48px;
+            width: 100%; max-width: 500px; transform: translateY(100%);
+            transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1);
         }
-        
-        .confirm-icon { font-size: 52px; margin-bottom: 18px; }
-        .confirm-title { font-size: 24px; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.01em; }
-        .confirm-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 28px; }
-        
-        .confirm-btns { display: flex; flex-direction: column; gap: 14px; }
-        
-        .confirm-btn {
-            width: 100%;
-            padding: 20px 32px;
-            border: none;
-            border-radius: 28px;
-            font-size: 16px; font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .confirm-btn.danger { background: var(--midnight); color: white; }
-        .confirm-btn.danger:hover { background: #2563EB; }
-        
-        .confirm-btn.cancel { background: var(--glacier); color: var(--text-secondary); }
-        
-        /* === PORTAL === */
-        .portal-btn {
-            background: var(--surface-solid);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            padding: 26px 28px;
-            display: flex; align-items: center;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        
-        .portal-btn:hover {
-            background: #FFFFFF;
-            box-shadow: var(--shadow-hover);
-            transform: translateX(8px);
-        }
-        
-        .portal-icon {
-            width: 64px; height: 64px;
-            border-radius: 24px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-right: 20px;
-        }
-        
-        .portal-icon.cleaner { background: var(--glacier); }
-        .portal-icon.host { background: #FEF3C7; }
-        .portal-icon.admin { background: #EDE9FE; }
-        
-        .portal-text h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
-        .portal-text p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
-        
-        /* === LOGIN === */
-        .login-screen { background: var(--bg-main); }
-        .login-logo { background: var(--surface-solid); box-shadow: var(--shadow-soft); }
-        .login-container { max-width: 360px; margin: 0 auto; padding: 60px 28px; }
-        
-        /* === TOAST === */
-        .toast {
-            background: var(--midnight);
-            border-radius: 18px;
-            padding: 18px 24px;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        
-        /* === STAGGERED ANIMATION === */
-        .card:nth-child(n) {
-            animation: fadeInBlur 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
-        }
-        
-        .card:nth-child(1) { animation-delay: 0.0s; }
-        .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.2s; }
-        .card:nth-child(4) { animation-delay: 0.3s; }
-        .card:nth-child(5) { animation-delay: 0.4s; }
-        
-        /* === CONTENT === */
-        .content { padding-bottom: 120px; }
-        
-        .form-group { margin-bottom: 18px; }
-        
-        .form-label { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; display: block; }
-        
-        .btn-secondary {
-            background: var(--glacier);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 18px;
-            width: 100%;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 16px;
-        }
-        
-        .empty { color: var(--text-muted); text-align: center; padding: 60px 28px; font-size: 15px; }
+        .modal.active .modal-content { transform: translateY(0); }
 
+        /* --- 表單 --- */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); margin-left: 4px; }
+        .input-premium {
+            width: 100%; padding: 16px; background: var(--bg-main);
+            border: 2px solid transparent; border-radius: var(--radius-md);
+            font-size: 16px; font-weight: 600; transition: 0.3s;
+        }
+        .input-premium:focus { background: white; border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-light); }
+
+        .btn-submit {
+            background: var(--midnight); color: white; width: 100%;
+            padding: 18px; border-radius: 50px; font-weight: 700; font-size: 16px;
+            border: none; cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .btn-submit:active { transform: scale(0.96); }
+
+        .toast {
+            position: fixed; bottom: 120px; left: 50%; transform: translate(-50%, 40px);
+            background: var(--midnight); color: white; padding: 14px 28px;
+            border-radius: 50px; font-size: 14px; font-weight: 700; 
+            opacity: 0; transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1); z-index: 3000;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
     </style>
 </head>
 <body>
+
     <header>
-        <h1>🏠 房東</h1>
-        <button class="header-logout" onclick="logout()">登出</button>
+        <h1>物业管理</h1>
+        <button class="logout-btn" onclick="logout()">登出系统</button>
     </header>
-    
-    <div class="nav-tabs">
-        <button class="nav-tab active" id="navOrders" onclick="showPage('orders')">📋 發布</button>
-        <button class="nav-tab" id="navProperties" onclick="showPage('properties')">🏡 房源</button>
+
+    <div class="container">
+        <main id="pageOrders" class="page">
+            <h2 class="page-title">當前訂單</h2>
+            <div id="hostOrdersList"></div>
+        </main>
+
+        <main id="pageProperties" class="page" style="display:none">
+            <h2 class="page-title">房源管理</h2>
+            <div id="myPropertiesList"></div>
+        </main>
     </div>
-    
-    <div id="pageOrders" class="content">
-        <div id="hostOrdersList"></div>
-        <button class="fab" onclick="showAddOrder()">+</button>
-    </div>
-    
-    <div id="pageProperties" class="content" style="display:none">
-        <div id="myPropertiesList"></div>
-        <button class="fab" onclick="showAddProperty()">+</button>
-    </div>
-    
-    <div class="modal" id="modalOrder">
+
+    <button class="fab" id="mainFab" onclick="handleFabClick()">+</button>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="btnNavOrders" onclick="switchPage('orders')">📋<br>訂單</button>
+        <button class="nav-item" id="btnNavProperties" onclick="switchPage('properties')">🏡<br>房源</button>
+    </nav>
+
+    <div class="modal" id="globalModal">
         <div class="modal-content">
-            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">📝 發布訂單</h2>
-            <div class="form-group"><label class="form-label">選擇房源</label><select id="orderProperty" class="input-premium"></select></div>
-            <div class="form-group"><label class="form-label">清潔時間</label><input type="datetime-local" id="orderTime" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">價格 ($)</label><input type="number" id="orderPrice" class="input-premium" placeholder="輸入金額"></div>
-            <button class="btn-primary" onclick="addOrder()">發布訂單</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+            <h2 id="modalTitle" style="margin-bottom:28px; text-align:center; font-size:22px; font-weight:850;"></h2>
+            <div id="modalBody"></div>
+            <button class="btn-submit" id="modalSubmit">確認提交</button>
+            <button style="width:100%; background:none; border:none; color:var(--text-muted); font-weight:700; margin-top:16px; cursor:pointer;" onclick="closeModal()">取消</button>
         </div>
     </div>
-    
-    <div class="modal" id="modalProperty">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">🏡 添加房源</h2>
-            <div class="form-group"><label class="form-label">房源名稱</label><input type="text" id="propName" class="input-premium" placeholder="例：市中心豪華公寓"></div>
-            <div class="form-group"><label class="form-label">地址</label><input type="text" id="propAddress" class="input-premium" placeholder="完整地址"></div>
-            <div class="form-row">
-                <div class="form-group"><label class="form-label">臥室</label><input type="number" id="propBedrooms" class="input-premium" placeholder="數量"></div>
-                <div class="form-group"><label class="form-label">衛浴</label><input type="number" id="propBathrooms" class="input-premium" placeholder="數量"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label class="form-label">樓層</label><input type="number" id="propFloor" class="input-premium" placeholder="樓層"></div>
-                <div class="form-group"><label class="form-label">面積</label><input type="number" id="propArea" class="input-premium" placeholder="sqft"></div>
-            </div>
-            <button class="btn-primary" onclick="addProperty()">添加房源</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
-        </div>
-    </div>
-    
-    <div class="modal" id="modalEditOrder">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">✏️ 編輯訂單</h2>
-            <input type="hidden" id="editOrderId">
-            <div class="form-group"><label class="form-label">選擇房源</label><select id="editOrderProperty" class="input-premium"></select></div>
-            <div class="form-group"><label class="form-label">清潔時間</label><input type="datetime-local" id="editOrderTime" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">價格 ($)</label><input type="number" id="editOrderPrice" class="input-premium"></div>
-            <button class="btn-primary" onclick="saveOrder()">保存修改</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
-        </div>
-    </div>
-    
-    <div class="modal" id="modalEditProperty">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:22px;font-weight:700;margin-bottom:24px">✏️ 編輯房源</h2>
-            <input type="hidden" id="editPropertyId">
-            <div class="form-group"><label class="form-label">房源名稱</label><input type="text" id="editPropertyName" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">地址</label><input type="text" id="editPropertyAddress" class="input-premium"></div>
-            <div class="form-row">
-                <div class="form-group"><label class="form-label">臥室</label><input type="number" id="editPropertyBedrooms" class="input-premium"></div>
-                <div class="form-group"><label class="form-label">衛浴</label><input type="number" id="editPropertyBathrooms" class="input-premium"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label class="form-label">樓層</label><input type="number" id="editPropertyFloor" class="input-premium"></div>
-                <div class="form-group"><label class="form-label">面積</label><input type="number" id="editPropertyArea" class="input-premium"></div>
-            </div>
-            <button class="btn-primary" onclick="saveProperty()">保存修改</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
-        </div>
-    </div>
-    
+
     <div class="toast" id="toast"></div>
-    
-    <div id="confirmModal" class="confirm-overlay">
-        <div class="confirm-box">
-            <div class="confirm-icon">⚠️</div>
-            <div class="confirm-title" id="confirmTitle">確認刪除</div>
-            <div class="confirm-desc" id="confirmDesc">確定要刪除嗎？</div>
-            <div class="confirm-btns">
-                <button class="confirm-btn cancel" onclick="closeConfirm()">取消</button>
-                <button class="confirm-btn danger" id="confirmBtn">刪除</button>
-            </div>
-        </div>
-    </div>
-    
+
     <script>
-        var API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
-        var hostPhone = localStorage.getItem('host_phone');
-        
-        function haptic() { if (navigator.vibrate) navigator.vibrate(20); }
-        if (!hostPhone) { showToast('請先登錄'); location.href = 'index.html'; }
+        const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
+        const hostPhone = localStorage.getItem('host_phone');
+        let currentPage = 'orders';
+
+        if (!hostPhone) { location.href = 'index.html'; }
         function logout() { localStorage.clear(); location.href = 'index.html'; }
-        
-        function formatTime(dateStr) {
-            if (!dateStr) return '-';
-            var d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
-            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-        }
-        
-        function showConfirm(title, desc, onConfirm) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmDesc').textContent = desc;
-            document.getElementById('confirmBtn').onclick = function() { closeConfirm(); onConfirm(); };
-            document.getElementById('confirmModal').classList.add('show');
-        }
-        function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
-        
-        function showToast(msg) {
-            var t = document.getElementById('toast');
-            t.textContent = msg;
-            setTimeout(function() { t.classList.add('show'); }, 10);
-            setTimeout(function() { t.classList.remove('show'); }, 2500);
+
+        function haptic() { if (navigator.vibrate) navigator.vibrate(20); }
+
+        function switchPage(page) {
             haptic();
+            currentPage = page;
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.getElementById(`page${page.charAt(0).toUpperCase() + page.slice(1)}`).style.display = 'block';
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`btnNav${page.charAt(0).toUpperCase() + page.slice(1)}`).classList.add('active');
+            
+            page === 'orders' ? loadOrders() : loadProperties();
         }
-        
-        function showPage(page) {
-            document.getElementById('navOrders').className = page === 'orders' ? 'nav-tab active' : 'nav-tab';
-            document.getElementById('navProperties').className = page === 'properties' ? 'nav-tab active' : 'nav-tab';
-            document.getElementById('pageOrders').style.display = page === 'orders' ? 'block' : 'none';
-            document.getElementById('pageProperties').style.display = page === 'properties' ? 'block' : 'none';
-            if (page === 'orders') loadOrders();
-            if (page === 'properties') loadProperties();
-        }
-        
+
         async function loadOrders() {
-            var res = await fetch(API + '/orders');
-            var data = await res.json();
-            var orders = data.data ? data.data.filter(function(o) { return o.host_phone === hostPhone; }) : [];
-            
-            document.getElementById('hostOrdersList').innerHTML = orders.map(function(o) {
-                var status = o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成';
-                var badgeClass = o.status === 'open' ? 'badge-open' : o.status === 'accepted' ? 'badge-accepted' : 'badge-completed';
-                var actions = o.status === 'open' ? '<div style="display:flex;gap:10px;margin-top:14px"><button class="btn-action btn-edit" onclick="showEditOrder(' + o.id + ', \'' + (o.property_name || '') + '\', \'' + (o.property_address || '') + '\', \'' + formatTime(o.checkout_time) + '\', ' + o.price + ')">✏️ 修改</button><button class="btn-action btn-delete" onclick="deleteOrder(' + o.id + ')">🗑️</button></div>' : '';
-                return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:17px;font-weight:700;margin-bottom:4px">' + (o.property_name || '未知房源') + '</div><div style="font-size:13px;color:#64748B;margin-top:4px">🕐 ' + formatTime(o.checkout_time) + '</div></div><div class="price">$' + o.price + '</div></div><span class="badge ' + badgeClass + '" style="margin-top:12px;display:inline-block">' + status + '</span>' + actions + '</div>';
-            }).join('') || '<div class="empty">暫無發布的訂單</div>';
+            try {
+                const res = await fetch(`${API}/orders`);
+                const data = await res.json();
+                const orders = (data.data || []).filter(o => o.host_phone === hostPhone);
+                
+                document.getElementById('hostOrdersList').innerHTML = orders.map(o => `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="badge status-${o.status}">${translateStatus(o.status)}</span>
+                            <div class="price-display">${o.price}</div>
+                        </div>
+                        <div class="card-title">${o.property_name || '未命名房源'}</div>
+                        <div class="info-row">📍 ${o.property_address || '無地址資訊'}</div>
+                        <div class="info-row">🕐 退房時間: ${o.checkout_time}</div>
+                        ${o.status === 'open' ? `
+                            <div class="action-row">
+                                <button class="btn-mini btn-edit" onclick="editOrder(${o.id})">✏️ 編輯</button>
+                                <button class="btn-mini btn-del" onclick="deleteOrder(${o.id})">🗑️ 刪除</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('') || '<div style="text-align:center; padding:60px; color:gray; font-weight:600;">☕ 暫無訂單，點擊 + 號發布</div>';
+            } catch(e) { showToast('加載失敗'); }
         }
-        
+
         async function loadProperties() {
-            var res = await fetch(API + '/properties');
-            var data = await res.json();
+            try {
+                const res = await fetch(API + '/properties');
+                const data = await res.json();
+                const properties = data.data || [];
+                
+                if (properties.length === 0) {
+                    document.getElementById('myPropertiesList').innerHTML = '<div class="empty-state">尚未添加房源<br>點擊下方+按鈕添加</div>';
+                    return;
+                }
+                
+                document.getElementById('myPropertiesList').innerHTML = properties.map(p => `
+                    <div class="card">
+                        <div class="card-title">${p.name}</div>
+                        <div class="info-row">📍 ${p.address}</div>
+                        <div class="property-meta">
+                            <span class="meta-tag">🛏️ ${p.bedrooms || 0} 臥室</span>
+                            <span class="meta-tag">🚿 ${p.bathrooms || 0} 衛浴</span>
+                            <span class="meta-tag">📐 ${p.area || 0} sqft</span>
+                        </div>
+                        <div class="action-row">
+                            <button class="btn-mini btn-edit" onclick="editProperty(${p.id})">✏️ 修改資訊</button>
+                            <button class="btn-mini btn-del" onclick="deleteProperty(${p.id})">🗑️ 移除</button>
+                        </div>
+                    </div>
+                `).join('') || '<div style="text-align:center; padding:60px; color:gray; font-weight:600;">🏡 點擊 + 號新增您的房源</div>';
+            } catch(e) { showToast('加載房源失敗'); }
+        }
+
+        async function deleteProperty(id) {
+            if (!confirm('確定要刪除這個房源嗎？')) return;
+            try {
+                const res = await fetch(API + '/properties/' + id, { method: 'DELETE' });
+                if (res.ok) {
+                    showToast('房源已刪除');
+                    loadProperties();
+                } else {
+                    showToast('刪除失敗');
+                }
+            } catch(e) { showToast('刪除失敗'); }
+        }
+
+        function handleFabClick() {
+            haptic();
+            if (currentPage === 'orders') {
+                showOrderModal();
+            } else {
+                showPropertyModal();
+            }
+        }
+
+        function showOrderModal() {
+            document.getElementById('modalTitle').textContent = "發布新清潔任務";
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">選擇房源</label>
+                    <select class="input-premium" id="orderPropId"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">退房時間</label>
+                    <input type="datetime-local" class="input-premium" id="orderTime">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">清潔報價 (TWD)</label>
+                    <input type="number" class="input-premium" id="orderPrice" placeholder="1200">
+                </div>
+            `;
+            // 填充房源下拉菜單
+            fetch(API + '/properties').then(r => r.json()).then(d => {
+                const props = d.data || [];
+                document.getElementById('orderPropId').innerHTML = props.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            });
             
-            document.getElementById('myPropertiesList').innerHTML = (data.data || []).map(function(p) {
-                return '<div class="card"><div style="font-size:17px;font-weight:700;margin-bottom:4px">' + p.name + '</div><div style="font-size:13px;color:#64748B;margin-top:4px">' + p.address + '</div><div style="font-size:13px;color:#64748B;margin-top:4px">🛏️ ' + p.bedrooms + ' | 🚿 ' + p.bathrooms + ' | 🏢 ' + (p.floor || '-') + ' | 📐 ' + (p.area || '-') + ' sqft</div><div style="display:flex;gap:10px;margin-top:14px"><button class="btn-action btn-edit" onclick="showEditProperty(' + p.id + ', \'' + p.name + '\', \'' + p.address + '\', ' + p.bedrooms + ', ' + p.bathrooms + ', ' + (p.floor || 0) + ', ' + (p.area || 0) + ')">✏️ 修改</button><button class="btn-action btn-delete" onclick="deleteProperty(' + p.id + ')">🗑️</button></div></div>';
-            }).join('') || '<div class="empty">暫無房源</div>';
-            
-            document.getElementById('orderProperty').innerHTML = (data.data || []).map(function(p) { return '<option value="' + p.id + '">' + p.name + '</option>'; }).join('');
+            document.getElementById('modalSubmit').onclick = async () => {
+                const body = {
+                    property_id: parseInt(document.getElementById('orderPropId').value),
+                    checkout_time: document.getElementById('orderTime').value,
+                    price: parseInt(document.getElementById('orderPrice').value),
+                    host_phone: hostPhone,
+                    status: 'open'
+                };
+                const res = await fetch(`${API}/orders`, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(body) 
+                });
+                if(res.ok) { showToast('任務已發布！'); closeModal(); loadOrders(); }
+            };
+            openModal();
         }
-        
-        function showAddOrder() { document.getElementById('modalOrder').classList.add('show'); }
-        function showAddProperty() { document.getElementById('modalProperty').classList.add('show'); }
-        function closeModal() { document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('show'); }); }
-        
-        async function addOrder() {
-            await fetch(API + '/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: parseInt(document.getElementById('orderProperty').value, checkout_time: document.getElementById('orderTime').value, price: document.getElementById('orderPrice').value, host_name: '房東', host_phone: hostPhone }) });
-            closeModal(); loadOrders(); showToast('發布成功');
+
+        function showPropertyModal() {
+            document.getElementById('modalTitle').textContent = "新增房源資訊";
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">房源名稱</label>
+                    <input type="text" class="input-premium" id="propName" placeholder="例如：信義區景觀套房">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">完整地址</label>
+                    <input type="text" class="input-premium" id="propAddr" placeholder="請輸入詳細地址">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px">
+                    <div class="form-group">
+                        <label class="form-label">臥室</label>
+                        <input type="number" class="input-premium" id="propBed" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">衛浴</label>
+                        <input type="number" class="input-premium" id="propBath" value="1">
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalSubmit').onclick = async () => {
+                const body = {
+                    name: document.getElementById('propName').value,
+                    address: document.getElementById('propAddr').value,
+                    bedrooms: parseInt(document.getElementById('propBed').value),
+                    bathrooms: parseInt(document.getElementById('propBath').value),
+                    host_phone: hostPhone
+                };
+                const res = await fetch(`${API}/properties`, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(body) 
+                });
+                if(res.ok) { showToast('房源已添加'); closeModal(); loadProperties(); }
+            };
+            openModal();
         }
-        
-        async function addProperty() {
-            await fetch(API + '/properties', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('propName').value, address: document.getElementById('propAddress').value, bedrooms: parseInt(document.getElementById('propBedrooms').value) || 1, bathrooms: parseInt(document.getElementById('propBathrooms').value) || 1, floor: parseInt(document.getElementById('propFloor').value) || 0, area: parseInt(document.getElementById('propArea').value) || 0 }) });
-            closeModal(); loadProperties(); showToast('添加成功');
+
+        async function deleteOrder(id) {
+            if(!confirm('確定要取消此訂單嗎？')) return;
+            await fetch(`${API}/orders/${id}`, { method: 'DELETE' });
+            showToast('已取消訂單');
+            loadOrders();
         }
-        
-        function deleteOrder(id) { showConfirm('確認刪除', '確定要刪除這個訂單嗎？', function() { fetch(API + '/orders/' + id, { method: 'DELETE' }).then(function() { loadOrders(); showToast('已刪除'); }); }); }
-        function deleteProperty(id) { showConfirm('確認刪除', '確定要刪除這個房源嗎？', function() { fetch(API + '/properties/' + id, { method: 'DELETE' }).then(function() { loadProperties(); showToast('已刪除'); }); }); }
-        
-        function showEditProperty(id, name, address, bedrooms, bathrooms, floor, area) {
-            document.getElementById('editPropertyId').value = id;
-            document.getElementById('editPropertyName').value = name;
-            document.getElementById('editPropertyAddress').value = address;
-            document.getElementById('editPropertyBedrooms').value = bedrooms;
-            document.getElementById('editPropertyBathrooms').value = bathrooms;
-            document.getElementById('editPropertyFloor').value = floor || 0;
-            document.getElementById('editPropertyArea').value = area || 0;
-            document.getElementById('modalEditProperty').classList.add('show');
+
+        function translateStatus(s) {
+            return { 'open': '待接單', 'accepted': '工作中', 'completed': '已完成' }[s] || s;
         }
-        
-        async function saveProperty() {
-            var id = document.getElementById('editPropertyId').value;
-            await fetch(API + '/properties/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('editPropertyName').value, address: document.getElementById('editPropertyAddress').value, bedrooms: parseInt(document.getElementById('editPropertyBedrooms').value) || 1, bathrooms: parseInt(document.getElementById('editPropertyBathrooms').value) || 1, floor: parseInt(document.getElementById('editPropertyFloor').value) || 0, area: parseInt(document.getElementById('editPropertyArea').value) || 0 }) });
-            closeModal(); loadProperties(); showToast('修改成功');
+
+        function openModal() { document.getElementById('globalModal').classList.add('active'); }
+        function closeModal() { document.getElementById('globalModal').classList.remove('active'); }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
         }
-        
-        async function showEditOrder(id, propertyName, propertyAddress, checkoutTime, price) {
-            var res = await fetch(API + '/properties');
-            var data = await res.json();
-            document.getElementById('editOrderProperty').innerHTML = (data.data || []).map(function(p) { return '<option value="' + p.id + '">' + p.name + '</option>'; }).join('');
-            document.getElementById('editOrderId').value = id;
-            document.getElementById('editOrderTime').value = checkoutTime;
-            document.getElementById('editOrderPrice').value = price;
-            document.getElementById('modalEditOrder').classList.add('show');
-        }
-        
-        async function saveOrder() {
-            var id = document.getElementById('editOrderId').value;
-            await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ property_id: parseInt(document.getElementById('editOrderProperty').value, checkout_time: document.getElementById('editOrderTime').value, price: document.getElementById('editOrderPrice').value }) });
-            closeModal(); loadOrders(); showToast('修改成功');
-        }
-        
+
+        // 初始化
         loadOrders();
-        loadProperties();
     </script>
 </body>
 </html>

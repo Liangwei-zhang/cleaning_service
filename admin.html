@@ -2,1168 +2,290 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>📊 短租清潔 - 管理員</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SmartClean CP | 2026 旗艦管理端</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
     <style>
-    
-
-    
         :root {
-            /* === 2026 FLAGSHIP + INTERACTION === */
-            --bg-main: #FAFBFF;
-            --surface: rgba(255, 255, 255, 0.92);
-            --surface-solid: #FFFFFF;
-            
-            --midnight: #1A1C20;
-            --midnight-light: #2D2F33;
-            --glacier: #E8F4FC;
-            --glacier-dark: #B8DCF0;
-            --champagne: #B48C4F;
-            
-            --text-primary: #1A1C20;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            
-            --shadow-soft: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.04);
-            --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
-            
-            --radius-lg: 32px;
-            --radius-md: 24px;
-            --radius-sm: 16px;
-            
-            body {
-                background: var(--bg-main);
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-                color: var(--text-primary);
-                min-height: 100vh;
-                -webkit-font-smoothing: antialiased;
-            }
+            /* OKLCH 旗艦色彩空間 */
+            --bg-canvas: oklch(98.5% 0.005 240);
+            --primary: oklch(60% 0.2 250);
+            --midnight: oklch(25% 0.04 245);
+            --glass-card: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --shadow-lux: 0 20px 40px -15px oklch(0% 0 0 / 8%);
+            --spring: cubic-bezier(0.3, 1.5, 0.5, 1);
         }
-        
-        /* === FADE & BLUR ANIMATION === */
-        @keyframes fadeInBlur {
-            from { 
-                opacity: 0; 
-                transform: translateY(16px); 
-                filter: blur(10px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-                filter: blur(0); 
-            }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--bg-canvas);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--midnight);
+            padding-bottom: env(safe-area-inset-bottom);
+            background-image: 
+                radial-gradient(circle at 0% 0%, oklch(85% 0.08 250 / 20%), transparent 40%),
+                radial-gradient(circle at 100% 100%, oklch(85% 0.12 320 / 15%), transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
-        
-        /* === HAPTIC BUTTON === */
-        .btn, .btn-primary, .btn-accept, .btn-action, .confirm-btn, .fab, .nav-tab, .portal-btn {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .btn:active, .btn-primary:active, .btn-accept:active, 
-        .btn-action:active, .confirm-btn:active, .fab:active,
-        .nav-tab:active, .portal-btn:active {
-            transform: scale(0.96);
-        }
-        
-        /* === CARD HOVER - Subtle color shift === */
-        .card, .portal-btn, .stat-main, .stat-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover, .portal-btn:hover {
-            background: #F8FAFC;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-3px);
-        }
-        
-        /* === LAYOUT === */
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        /* === HEADER === */
+
+        /* 導航列 */
         header {
-            background: var(--surface);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: sticky; top: 0; z-index: 100;
+            padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        
-        .header-avatar {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--midnight), var(--midnight-light));
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 600; font-size: 16px;
+
+        .logo { font-size: 20px; font-weight: 800; letter-spacing: -1px; }
+
+        /* 統計區 */
+        .dashboard { padding: 20px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; }
+        .hero-card {
+            background: var(--midnight); color: white; border-radius: 28px;
+            padding: 28px 20px; box-shadow: 0 25px 50px -12px oklch(25% 0.04 245 / 30%);
+            position: relative; overflow: hidden;
         }
-        
-        .header-title { font-size: 18px; font-weight: 600; }
-        .header-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
-        .header-right { display: flex; align-items: center; gap: 14px; }
-        
-        .header-btn {
-            background: var(--glacier);
-            border: none;
-            color: var(--text-secondary);
-            font-size: 14px; font-weight: 500;
-            cursor: pointer; padding: 10px 16px;
+        .hero-card::after {
+            content: ''; position: absolute; top: -20%; right: -20%; width: 120px; height: 120px;
+            background: var(--primary); filter: blur(50px); opacity: 0.4;
+        }
+
+        .side-stats { display: grid; grid-template-rows: 1fr 1fr; gap: 10px; }
+        .mini-glass {
+            background: var(--glass-card); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 12px; text-align: center; box-shadow: var(--shadow-lux);
+        }
+
+        /* 導覽切換 */
+        .tab-nav {
+            display: flex; gap: 8px; padding: 0 20px 20px; overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tab-btn {
+            padding: 10px 20px; border-radius: 50px; border: none; font-weight: 700;
+            background: oklch(93% 0.01 240); color: oklch(50% 0.01 240);
+            white-space: nowrap; transition: 0.3s var(--spring);
+        }
+        .tab-btn.active { background: var(--midnight); color: white; transform: scale(1.05); }
+
+        /* 列表：名片化樣式 */
+        .list-wrap { padding: 0 20px 100px; display: flex; flex-direction: column; gap: 16px; }
+
+        .id-card {
+            background: var(--glass-card);
+            backdrop-filter: blur(25px) saturate(200%);
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
-        }
-        
-        /* === BENTO STATS === */
-        .stats {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 18px;
-            padding: 22px;
-            margin-bottom: 18px;
-        }
-        
-        .stat-main {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 24px;
-            display: flex; flex-direction: column;
-            justify-content: space-between;
-            min-height: 120px;
-        }
-        
-        .stat-main-label {
-            font-size: 12px; font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-        
-        .stat-main-num {
-            font-size: 38px; font-weight: 700;
-            color: var(--champagne);
-            letter-spacing: -0.02em;
-        }
-        
-        .stat-side { display: flex; flex-direction: column; gap: 18px; }
-        
-        .stat-item {
-            background: var(--surface-solid);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-card);
             padding: 20px;
-            flex: 1;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center;
+            box-shadow: var(--shadow-lux);
+            animation: slideUp 0.5s var(--spring) both;
         }
-        
-        .stat-item.highlight { background: var(--midnight); }
-        
-        .stat-item-num {
-            font-size: 24px; font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .stat-item.highlight .stat-item-num { color: white; }
-        
-        .stat-item-label {
-            font-size: 11px; font-weight: 600;
-            color: var(--text-muted); margin-top: 4px;
-        }
-        
-        .stat-item.highlight .stat-item-label { color: rgba(255,255,255,0.7); }
-        
-        /* === TAB === */
-        .nav-tabs {
-            display: flex;
-            background: var(--surface-solid);
-            padding: 8px;
-            border-radius: var(--radius-md);
-            margin: 0 22px 22px;
-            box-shadow: var(--shadow-card);
-        }
-        
-        .nav-tab {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 24px;
-            font-size: 15px; font-weight: 600;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            background: transparent;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-        
-        .nav-tab.active {
-            background: var(--midnight);
-            color: white;
-        }
-        
-        /* === CARD === */
-        .card {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            margin: 0 22px 18px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            background: #F8FAFC;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-3px);
-        }
-        
-        .card-inner { padding: 24px; }
-        
-        .card-header {
-            display: flex; justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 18px;
-        }
-        
-        .card-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px; font-weight: 600;
-            letter-spacing: 0.04em;
-            margin-bottom: 10px;
-        }
-        
-        .badge-hot { background: #FEF3C7; color: #D97706; }
-        
-        .card-title {
-            font-size: 18px; font-weight: 600;
-            color: var(--text-primary);
-            line-height: 1.35;
-        }
-        
-        .card-price { text-align: right; }
-        
-        .card-price-old {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-decoration: line-through;
-        }
-        
-        .price {
-            font-size: 26px; font-weight: 700;
-            color: var(--champagne);
-        }
-        
-        .card-info {
-            display: flex; align-items: center;
-            gap: 18px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
-        
-        .card-info span { display: flex; align-items: center; gap: 6px; }
-        
-        /* === BADGE === */
-        .badge {
-            display: inline-block;
-            border-radius: 14px;
-            font-size: 12px; font-weight: 500;
-            padding: 5px 12px;
-        }
-        
-        .badge-open { background: #FEF3C7; color: #D97706; }
-        .badge-accepted { background: var(--glacier); color: #0369A1; }
-        .badge-completed { background: #D1FAE5; color: #059669; }
-        
-        /* === ACTIONS === */
-        .card-actions { padding: 0 24px 24px; }
-        
-        .btn-primary, .btn-accept {
-            background: var(--midnight);
-            color: white;
-            border-radius: 28px;
-            border: none;
-            font-weight: 600;
-            padding: 18px 28px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            width: 100%;
-            font-size: 15px;
-            display: flex; align-items: center;
-            justify-content: center; gap: 10px;
-        }
-        
-        .btn-primary:hover, .btn-accept:hover {
-            background: #2563EB;
-            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.25);
-        }
-        
-        .btn-action {
-            padding: 12px 16px;
-            border-radius: 14px;
-            font-size: 13px; font-weight: 500;
-            border: none; cursor: pointer;
-        }
-        
-        .btn-edit { background: var(--glacier); color: var(--text-secondary); }
-        .btn-delete { background: #FEE2E2; color: #DC2626; }
-        
-        .card-actions-row { display: flex; gap: 12px; }
-        .card-actions-row .btn-action { flex: 1; }
-        
-        /* === FLOATING NAV === */
-        .bottom-nav, .nav {
-            position: fixed;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 28, 32, 0.95);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-radius: 36px;
-            padding: 12px 18px;
-            display: flex; gap: 6px;
-            box-shadow: 0 24px 56px rgba(0, 0, 0, 0.22);
-            z-index: 1000;
-        }
-        
-        .nav-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 14px 24px;
-            border-radius: 28px;
-            font-size: 14px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent; border: none;
-        }
-        
-        .nav-item.active { background: white; color: var(--midnight); }
-        .nav-item:hover:not(.active) { color: rgba(255, 255, 255, 0.8); }
-        
-        /* === FAB === */
-        .fab {
-            background: var(--midnight);
-            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
-            border-radius: 28px;
-            border: none;
-            width: 56px; height: 56px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 24px; color: white;
-        }
-        
-        /* === INPUT === */
-        .input-premium {
-            background: var(--glacier);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 16px 18px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-            color: var(--text-primary);
-        }
-        
-        .input-premium::placeholder { color: var(--text-muted); }
-        
-        /* === MODAL === */
-        .modal {
-            background: rgba(26, 28, 32, 0.5);
-            backdrop-filter: blur(24px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            padding: 28px;
-        }
-        
-        .modal.show { display: flex; }
-        
-        .modal-content {
-            background: var(--surface-solid);
-            border-radius: 32px;
-            box-shadow: var(--shadow-soft);
-            padding: 30px;
-            width: 90%;
-            max-width: 380px;
-            text-align: center;
-        }
-        
-        .confirm-icon { font-size: 48px; margin-bottom: 16px; }
-        .confirm-title { font-size: 22px; font-weight: 600; margin-bottom: 12px; }
-        .confirm-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 26px; }
-        
-        .confirm-btns { display: flex; flex-direction: column; gap: 12px; }
-        
-        .confirm-btn {
-            width: 100%;
-            padding: 18px 28px;
-            border: none;
-            border-radius: 24px;
-            font-size: 16px; font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .confirm-btn.danger { background: var(--midnight); color: white; }
-        .confirm-btn.danger:hover { background: #2563EB; }
-        
-        .confirm-btn.cancel { background: var(--glacier); color: var(--text-secondary); }
-        
-        /* === PORTAL === */
-        .portal-btn {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 22px 24px;
-            display: flex; align-items: center;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 18px;
-            box-sizing: border-box;
-        }
-        
-        .portal-btn:hover {
-            background: #F8FAFC;
-            box-shadow: var(--shadow-hover);
-            transform: translateX(6px);
-        }
-        
-        .portal-icon {
-            width: 56px; height: 56px;
-            border-radius: 20px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 18px;
-        }
-        
-        .portal-icon.cleaner { background: var(--glacier); }
-        .portal-icon.host { background: #FEF3C7; }
-        .portal-icon.admin { background: #EDE9FE; }
-        
-        .portal-text h3 { font-size: 17px; font-weight: 600; }
-        .portal-text p { font-size: 14px; color: var(--text-muted); margin-top: 3px; }
-        
-        /* === LOGIN === */
-        .login-screen { background: var(--bg-main); }
-        .login-logo { background: var(--surface-solid); box-shadow: var(--shadow-soft); }
-        .login-container { max-width: 340px; margin: 0 auto; padding: 56px 24px; }
-        
-        /* === TOAST === */
-        .toast {
-            background: var(--midnight);
-            border-radius: 16px;
-            padding: 16px 22px;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        
-        /* === ANIMATIONS === */
-        .card:nth-child(n) {
-            animation: fadeInBlur 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
-        }
-        
-        .card:nth-child(1) { animation-delay: 0.0s; }
-        .card:nth-child(2) { animation-delay: 0.08s; }
-        .card:nth-child(3) { animation-delay: 0.16s; }
-        .card:nth-child(4) { animation-delay: 0.24s; }
-        
-        /* === CONTENT === */
-        .content { padding-bottom: 110px; }
-        
-        .form-group { margin-bottom: 16px; }
-        
-        .form-label { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; display: block; }
-        
-        .btn-secondary {
-            background: var(--glacier);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            width: 100%;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 14px;
-        }
-        
-        .empty { color: var(--text-muted); text-align: center; padding: 56px 24px; font-size: 15px; }
 
-    
-        :root {
-            /* === 2026 REFINED === */
-            --bg-main: #FAFBFF;
-            --surface: rgba(255, 255, 255, 0.95);
-            --surface-solid: #FFFFFF;
-            
-            --midnight: #1A1C20;
-            --midnight-light: #2D2F33;
-            --glacier: #E8F4FC;
-            --glacier-dark: #B8DCF0;
-            --champagne: #B48C4F;
-            
-            --text-primary: #1A1C20;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            
-            --shadow-soft: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.03);
-            --shadow-hover: 0 14px 34px rgba(0, 0, 0, 0.06);
-            
-            --radius-xl: 40px;
-            --radius-lg: 32px;
-            --radius-md: 24px;
-            --radius-sm: 20px;
-            
-            body {
-                background: var(--bg-main);
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
-                color: var(--text-primary);
-                min-height: 100vh;
-                -webkit-font-smoothing: antialiased;
-            }
-        }
-        
-        /* === ANIMATIONS === */
-        @keyframes fadeInBlur {
-            from { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-        
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        /* === HAPTIC BUTTON === */
-        * { -webkit-tap-highlight-color: transparent; }
-        
-        .btn, .btn-primary, .btn-accept, .btn-action, .confirm-btn, .fab, .nav-tab, .portal-btn {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .btn:active, .btn-primary:active, .btn-accept:active, 
-        .btn-action:active, .confirm-btn:active, .fab:active,
-        .nav-tab:active, .portal-btn:active {
-            transform: scale(0.98);
-        }
-        
-        /* === CARD HOVER === */
-        .card, .portal-btn, .stat-main, .stat-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover, .portal-btn:hover {
-            background: #FFFFFF;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-3px) scale(1.01);
-        }
-        
-        /* === LAYOUT === */
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        /* === HEADER === */
-        header {
-            background: var(--surface);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            padding: 20px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        
-        .header-avatar {
-            width: 48px; height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--midnight), var(--midnight-light));
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 600; font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-        .header-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-        .header-right { display: flex; align-items: center; gap: 14px; }
-        
-        .header-btn {
-            background: var(--glacier);
-            border: none;
-            color: var(--text-secondary);
-            font-size: 14px; font-weight: 500;
-            cursor: pointer; padding: 10px 18px;
-            border-radius: 24px;
-        }
-        
-        /* === BENTO STATS === */
-        .stats {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-main {
-            background: var(--surface-solid);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            padding: 28px;
-            display: flex; flex-direction: column;
-            justify-content: space-between;
-            min-height: 140px;
-        }
-        
-        .stat-main-label {
-            font-size: 11px; font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-        }
-        
-        .stat-main-num {
-            font-size: 42px; font-weight: 800;
-            color: var(--champagne);
-            letter-spacing: -0.03em;
-            line-height: 1;
-        }
-        
-        .stat-side { display: flex; flex-direction: column; gap: 20px; }
-        
-        .stat-item {
-            background: var(--surface-solid);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-card);
-            padding: 24px;
-            flex: 1;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center;
-        }
-        
-        .stat-item.highlight { background: var(--midnight); }
-        
-        .stat-item-num {
-            font-size: 28px; font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.02em;
-        }
-        
-        .stat-item.highlight .stat-item-num { color: white; }
-        
-        .stat-item-label {
-            font-size: 11px; font-weight: 600;
-            color: var(--text-muted); margin-top: 6px;
-            letter-spacing: 0.05em;
-        }
-        
-        .stat-item.highlight .stat-item-label { color: rgba(255,255,255,0.7); }
-        
-        /* === TAB === */
-        .nav-tabs {
-            display: flex;
-            background: var(--surface-solid);
-            padding: 10px;
-            border-radius: var(--radius-lg);
-            margin: 0 24px 24px;
-            box-shadow: var(--shadow-card);
-        }
-        
-        .nav-tab {
-            flex: 1;
-            padding: 16px 24px;
-            border-radius: 28px;
-            font-size: 15px; font-weight: 600;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            background: transparent;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-        
-        .nav-tab.active {
-            background: var(--midnight);
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        /* === CARD === */
-        .card {
-            background: var(--surface-solid);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            margin: 0 24px 20px;
-            overflow: hidden;
-            transition: all 0.35s ease;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-4px) scale(1.01);
-            border-color: rgba(0,0,0,0.05);
-        }
-        
-        .card-inner { padding: 28px; }
-        
-        .card-header {
-            display: flex; justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-        
-        .card-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 24px;
-            font-size: 11px; font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-bottom: 12px;
-        }
-        
-        .badge-hot { background: #E8F0FE; color: #2563EB; }
-        
-        .card-title {
-            font-size: 20px; font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.3;
-            letter-spacing: -0.01em;
-        }
-        
-        .card-price { text-align: right; }
-        
-        .card-price-old {
-            font-size: 14px;
-            color: var(--text-muted);
-            text-decoration: line-through;
-        }
-        
-        .price {
-            font-size: 30px; font-weight: 800;
-            color: var(--champagne);
-            letter-spacing: -0.02em;
-        }
-        
-        .card-info {
-            display: flex; align-items: center;
-            gap: 20px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-        
-        .card-info span { display: flex; align-items: center; gap: 6px; }
-        
-        /* === BADGE === */
-        .badge {
-            display: inline-block;
-            border-radius: 16px;
-            font-size: 12px; font-weight: 600;
-            padding: 6px 14px;
-        }
-        
-        .badge-open { background: #FEF3C7; color: #D97706; }
-        .badge-accepted { background: var(--glacier); color: #0369A1; }
-        .badge-completed { background: #D1FAE5; color: #059669; }
-        
-        /* === ACTIONS === */
-        .card-actions { padding: 0 28px 28px; }
-        
-        .btn-primary, .btn-accept {
-            background: var(--midnight);
-            color: white;
-            border-radius: 32px;
-            border: none;
-            font-weight: 600;
-            padding: 20px 32px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            width: 100%;
-            font-size: 15px;
-            letter-spacing: 0.02em;
-            display: flex; align-items: center;
-            justify-content: center; gap: 10px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-        }
-        
-        .btn-primary:hover, .btn-accept:hover {
-            background: #2563EB;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
-            transform: translateY(-2px);
-        }
-        
-        .btn-action {
-            padding: 14px 18px;
-            border-radius: 16px;
-            font-size: 14px; font-weight: 600;
-            border: none; cursor: pointer;
-        }
-        
-        .btn-edit { background: var(--glacier); color: var(--text-secondary); }
-        .btn-delete { background: #FEE2E2; color: #DC2626; }
-        
-        .card-actions-row { display: flex; gap: 14px; }
-        .card-actions-row .btn-action { flex: 1; }
-        
-        /* === FLOATING NAV === */
-        .bottom-nav, .nav {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26, 28, 32, 0.95);
-            backdrop-filter: blur(48px);
-            -webkit-backdrop-filter: blur(48px);
-            border-radius: 40px;
-            padding: 14px 20px;
-            display: flex; gap: 8px;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
-            justify-content: space-around;
-        }
-        
-        .nav-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 14px 24px;
-            border-radius: 28px;
-            font-size: 14px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent; border: none;
-        }
-        
-        .nav-item.active { background: white; color: var(--midnight); }
-        .nav-item:hover:not(.active) { color: rgba(255, 255, 255, 0.8); }
-        
-        /* === FAB === */
-        .fab {
-            background: var(--midnight);
-            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22);
-            border-radius: 28px;
-            border: none;
-            width: 60px; height: 60px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 26px; color: white;
-        }
-        
-        /* === INPUT === */
-        .input-premium {
-            background: var(--glacier);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 18px 20px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-            color: var(--text-primary);
-        }
-        
-        .input-premium::placeholder { color: var(--text-muted); }
-        
-        /* === MODAL === */
-        .modal {
-            background: rgba(26, 28, 32, 0.5);
-            backdrop-filter: blur(24px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            padding: 32px;
-        }
-        
-        .modal.show { display: flex; }
-        
-        .modal-content {
-            background: var(--surface-solid);
-            border-radius: 36px;
-            box-shadow: var(--shadow-soft);
-            padding: 32px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-        
-        .confirm-icon { font-size: 52px; margin-bottom: 18px; }
-        .confirm-title { font-size: 24px; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.01em; }
-        .confirm-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 28px; }
-        
-        .confirm-btns { display: flex; flex-direction: column; gap: 14px; }
-        
-        .confirm-btn {
-            width: 100%;
-            padding: 20px 32px;
-            border: none;
-            border-radius: 28px;
-            font-size: 16px; font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .confirm-btn.danger { background: var(--midnight); color: white; }
-        .confirm-btn.danger:hover { background: #2563EB; }
-        
-        .confirm-btn.cancel { background: var(--glacier); color: var(--text-secondary); }
-        
-        /* === PORTAL === */
-        .portal-btn {
-            background: var(--surface-solid);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            padding: 26px 28px;
-            display: flex; align-items: center;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        
-        .portal-btn:hover {
-            background: #FFFFFF;
-            box-shadow: var(--shadow-hover);
-            transform: translateX(8px);
-        }
-        
-        .portal-icon {
-            width: 64px; height: 64px;
-            border-radius: 24px;
-            display: flex; align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-right: 20px;
-        }
-        
-        .portal-icon.cleaner { background: var(--glacier); }
-        .portal-icon.host { background: #FEF3C7; }
-        .portal-icon.admin { background: #EDE9FE; }
-        
-        .portal-text h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
-        .portal-text p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
-        
-        /* === LOGIN === */
-        .login-screen { background: var(--bg-main); }
-        .login-logo { background: var(--surface-solid); box-shadow: var(--shadow-soft); }
-        .login-container { max-width: 360px; margin: 0 auto; padding: 60px 28px; }
-        
-        /* === TOAST === */
-        .toast {
-            background: var(--midnight);
-            border-radius: 18px;
-            padding: 18px 24px;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        
-        /* === STAGGERED ANIMATION === */
-        .card:nth-child(n) {
-            animation: fadeInBlur 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
-        }
-        
-        .card:nth-child(1) { animation-delay: 0.0s; }
-        .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.2s; }
-        .card:nth-child(4) { animation-delay: 0.3s; }
-        .card:nth-child(5) { animation-delay: 0.4s; }
-        
-        /* === CONTENT === */
-        .content { padding-bottom: 120px; }
-        
-        .form-group { margin-bottom: 18px; }
-        
-        .form-label { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; display: block; }
-        
-        .btn-secondary {
-            background: var(--glacier);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 18px;
-            width: 100%;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 16px;
-        }
-        
-        .empty { color: var(--text-muted); text-align: center; padding: 60px 28px; font-size: 15px; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        .card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .pfp {
+            width: 50px; height: 50px; border-radius: 16px; background: var(--primary);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 800; box-shadow: 0 8px 16px oklch(60% 0.2 250 / 20%);
+        }
+
+        .card-body h3 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+        .card-body p { font-size: 14px; opacity: 0.6; font-weight: 600; }
+
+        .key-row {
+            background: rgba(255, 255, 255, 0.4); padding: 10px 14px; border-radius: 14px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+        }
+        .key-label { font-size: 11px; font-weight: 800; color: oklch(50% 0.01 240); }
+        .key-val { font-family: monospace; font-weight: 800; color: var(--primary); font-size: 15px; }
+
+        /* 按鈕優化：支援自動換行 */
+        .card-btns {
+            display: flex; flex-wrap: wrap; gap: 10px;
+        }
+        .btn {
+            flex: 1 1 120px; /* 寬度不足時自動換行 */
+            padding: 14px; border-radius: 14px; border: none;
+            font-size: 14px; font-weight: 800; cursor: pointer;
+            transition: 0.2s; text-align: center;
+        }
+        .btn-edit { background: var(--midnight); color: white; }
+        .btn-del { background: oklch(92% 0.04 25); color: oklch(55% 0.2 25); }
+        .btn:active { transform: scale(0.96); opacity: 0.8; }
+
+        /* 模態框修正 */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+            display: none; align-items: flex-end; z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-body {
+            background: white; width: 100%; padding: 30px 20px calc(30px + env(safe-area-inset-bottom));
+            border-radius: 30px 30px 0 0; animation: sheetUp 0.4s var(--spring);
+        }
+        @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .input-box { margin-bottom: 15px; }
+        .input-box label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; opacity: 0.5; }
+        .input-box input {
+            width: 100%; padding: 15px; border-radius: 14px; border: 2px solid oklch(95% 0.01 240);
+            background: oklch(98% 0.01 240); font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>📊 管理員</h1>
-        <button class="header-logout" onclick="logout()">登出</button>
-    </header>
-    
-    <div class="stats">
-        <div class="stat"><div class="stat-num" id="statProperties">0</div><div class="stat-label">房源</div></div>
-        <div class="stat"><div class="stat-num" id="statCleaners">0</div><div class="stat-label">清潔工</div></div>
-        <div class="stat"><div class="stat-num" id="statHosts">0</div><div class="stat-label">房東</div></div>
-        <div class="stat"><div class="stat-num" id="statOrders">0</div><div class="stat-label">訂單</div></div>
+
+<header>
+    <div class="logo">SmartClean <span style="color:var(--primary)">CP</span></div>
+    <button onclick="location.href='index.html'" style="border:none; background:none; font-weight:700; opacity:0.5;">登出系統</button>
+</header>
+
+<div class="dashboard">
+    <div class="hero-card">
+        <p style="font-size:12px; opacity:0.6; font-weight:700;">TOTAL REVENUE</p>
+        <div id="statTotal" style="font-size:38px; font-weight:800; margin-top:5px;">$0</div>
     </div>
-    
-    <div class="nav-tabs">
-        <button class="nav-tab active" id="navCleaners" onclick="showPage('cleaners')">👷 清潔工</button>
-        <button class="nav-tab" id="navHosts" onclick="showPage('hosts')">🏠 房東</button>
-        <button class="nav-tab" id="navOrders" onclick="showPage('orders')">📋 訂單</button>
-    </div>
-    
-    <div id="pageCleaners" class="content">
-        <div id="cleanersList"></div>
-        <button class="fab" onclick="showAddCleaner()">+</button>
-    </div>
-    
-    <div id="pageHosts" class="content" style="display:none">
-        <div id="hostsList"></div>
-        <button class="fab" onclick="showAddHost()">+</button>
-    </div>
-    
-    <div id="pageOrders" class="content" style="display:none">
-        <div id="ordersList"></div>
-    </div>
-    
-    <div class="modal" id="modalCleaner">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:20px">👷 添加清潔工</h2>
-            <div class="form-group"><label class="form-label">姓名</label><input type="text" id="cleanerName" class="input-premium" placeholder="輸入姓名"></div>
-            <div class="form-group"><label class="form-label">電話</label><input type="text" id="cleanerPhone" class="input-premium" placeholder="輸入電話"></div>
-            <button class="btn-primary" onclick="addCleaner()">添加</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+    <div class="side-stats">
+        <div class="mini-glass">
+            <div id="statOrders" style="font-weight:800; font-size:18px;">0</div>
+            <div style="font-size:10px; opacity:0.6; font-weight:700;">總訂單</div>
+        </div>
+        <div class="mini-glass" style="background:var(--primary); border:none; color:white;">
+            <div id="statActive" style="font-weight:800; font-size:18px;">0</div>
+            <div style="font-size:10px; opacity:0.8; font-weight:700;">規模</div>
         </div>
     </div>
-    
-    <div class="modal" id="modalEditCleaner">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:20px">✏️ 編輯清潔工</h2>
-            <input type="hidden" id="editCleanerId">
-            <div class="form-group"><label class="form-label">姓名</label><input type="text" id="editCleanerName" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">電話</label><input type="text" id="editCleanerPhone" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">驗證碼</label><input type="text" id="editCleanerCode" class="input-premium" maxlength="6"></div>
-            <button class="btn-primary" onclick="saveCleaner()">保存</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+</div>
+
+<nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('cleaners', this)">🧽 清潔夥伴</button>
+    <button class="tab-btn" onclick="switchTab('hosts', this)">🏠 房東客戶</button>
+    <button class="tab-btn" onclick="switchTab('orders', this)">📑 訂單管理</button>
+</nav>
+
+<main id="listContainer" class="list-wrap"></main>
+
+<div id="editModal" class="modal">
+    <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h2 id="modalTitle" style="font-size:22px; font-weight:800;">編輯資訊</h2>
+            <button onclick="toggleModal('editModal', false)" style="background:none; border:none; font-size:20px;">✕</button>
         </div>
-    </div>
-    
-    <div class="modal" id="modalHost">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:20px">🏠 添加房東</h2>
-            <div class="form-group"><label class="form-label">姓名</label><input type="text" id="hostName" class="input-premium" placeholder="輸入姓名"></div>
-            <div class="form-group"><label class="form-label">電話</label><input type="text" id="hostPhone" class="input-premium" placeholder="輸入電話"></div>
-            <button class="btn-primary" onclick="addHost()">添加</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+        <input type="hidden" id="editId">
+        <input type="hidden" id="editType">
+        <div class="input-box">
+            <label>名稱</label>
+            <input type="text" id="editName">
         </div>
-    </div>
-    
-    <div class="modal" id="modalEditHost">
-        <div class="modal-content">
-            <h2 style="text-align:center;font-size:20px;font-weight:700;margin-bottom:20px">✏️ 編輯房東</h2>
-            <input type="hidden" id="editHostId">
-            <div class="form-group"><label class="form-label">姓名</label><input type="text" id="editHostName" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">電話</label><input type="text" id="editHostPhone" class="input-premium"></div>
-            <div class="form-group"><label class="form-label">驗證碼</label><input type="text" id="editHostCode" class="input-premium" maxlength="6"></div>
-            <button class="btn-primary" onclick="saveHost()">保存</button>
-            <button class="btn-secondary" onclick="closeModal()">取消</button>
+        <div class="input-box">
+            <label>電話</label>
+            <input type="text" id="editPhone">
         </div>
-    </div>
-    
-    <div class="toast" id="toast"></div>
-    
-    <div id="confirmModal" class="confirm-overlay">
-        <div class="confirm-box">
-            <div class="confirm-icon">⚠️</div>
-            <div class="confirm-title" id="confirmTitle">確認刪除</div>
-            <div class="confirm-desc" id="confirmDesc">確定要刪除嗎？</div>
-            <div class="confirm-btns">
-                <button class="confirm-btn cancel" onclick="closeConfirm()">取消</button>
-                <button class="confirm-btn danger" id="confirmBtn">刪除</button>
-            </div>
+        <div class="input-box">
+            <label>驗證代碼</label>
+            <input type="text" id="editCode">
         </div>
+        <button onclick="handleSave()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--midnight); color:white; font-weight:800; font-size:16px; margin-top:10px;">儲存並更新</button>
     </div>
-    
-    <script>
-        var API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
-        function haptic() { if (navigator.vibrate) navigator.vibrate(20); }
-        function showConfirm(title, desc, onConfirm) { document.getElementById('confirmTitle').textContent = title; document.getElementById('confirmDesc').textContent = desc; document.getElementById('confirmBtn').onclick = function() { closeConfirm(); onConfirm(); }; document.getElementById('confirmModal').classList.add('show'); }
-        function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
-        function formatTime(dateStr) { if (!dateStr) return '-'; var d = new Date(dateStr); if (isNaN(d.getTime())) return dateStr; return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
-        function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; setTimeout(function() { t.classList.add('show'); }, 10); setTimeout(function() { t.classList.remove('show'); }, 2500); haptic(); }
-        function logout() { location.href = 'index.html'; }
-        
-        function showPage(page) {
-            document.getElementById('navCleaners').className = page === 'cleaners' ? 'nav-tab active' : 'nav-tab';
-            document.getElementById('navHosts').className = page === 'hosts' ? 'nav-tab active' : 'nav-tab';
-            document.getElementById('navOrders').className = page === 'orders' ? 'nav-tab active' : 'nav-tab';
-            document.getElementById('pageCleaners').style.display = page === 'cleaners' ? 'block' : 'none';
-            document.getElementById('pageHosts').style.display = page === 'hosts' ? 'block' : 'none';
-            document.getElementById('pageOrders').style.display = page === 'orders' ? 'block' : 'none';
-        }
-        
-        async function loadData() {
-            var stats = await fetch(API + '/stats').then(function(r) { return r.json(); });
-            var cleaners = await fetch(API + '/cleaners').then(function(r) { return r.json(); });
-            var hosts = await fetch(API + '/hosts').then(function(r) { return r.json(); });
-            var orders = await fetch(API + '/orders').then(function(r) { return r.json(); });
-            
-            document.getElementById('statProperties').textContent = stats.properties;
-            document.getElementById('statCleaners').textContent = stats.available_cleaners;
-            document.getElementById('statHosts').textContent = hosts.data ? hosts.data.length : 0;
-            document.getElementById('statOrders').textContent = orders.data ? orders.data.length : 0;
-            
-            document.getElementById('cleanersList').innerHTML = (cleaners.data || []).map(function(c) {
-                return '<div class="card"><div style="font-size:16px;font-weight:700;margin-bottom:4px">' + c.name + '</div><div style="font-size:13px;color:#64748B">📞 ' + (c.phone || '-') + ' | ⭐ ' + c.rating + ' | 總訂單: ' + c.total_jobs + '</div><div style="font-size:13px;color:#64748B">🔑 Code: ' + c.code + '</div><div style="display:flex;gap:10px;margin-top:14px"><button class="btn-action btn-edit" onclick="showEditCleaner(' + c.id + ', \'' + c.name + '\', \'' + (c.phone || '') + '\', \'' + c.code + '\')">✏️ 修改</button><button class="btn-action btn-delete" onclick="deleteCleaner(' + c.id + ')">🗑️</button></div></div>';
-            }).join('') || '<div class="empty">暫無清潔工</div>';
-            
-            document.getElementById('hostsList').innerHTML = (hosts.data || []).map(function(h) {
-                return '<div class="card"><div style="font-size:16px;font-weight:700;margin-bottom:4px">' + h.name + '</div><div style="font-size:13px;color:#64748B">📞 ' + h.phone + '</div><div style="font-size:13px;color:#64748B">🔑 Code: ' + h.code + '</div><div style="display:flex;gap:10px;margin-top:14px"><button class="btn-action btn-edit" onclick="showEditHost(' + h.id + ', \'' + h.name + '\', \'' + h.phone + '\', \'' + h.code + '\')">✏️ 修改</button><button class="btn-action btn-delete" onclick="deleteHost(' + h.id + ')">🗑️</button></div></div>';
-            }).join('') || '<div class="empty">暫無房東</div>';
-            
-            document.getElementById('ordersList').innerHTML = (orders.data || []).slice(0, 20).map(function(o) {
-                return '<div class="card"><div style="font-size:16px;font-weight:700;margin-bottom:4px">' + (o.property_name || '未知') + ' - $' + o.price + '</div><div style="font-size:13px;color:#64748B">🏠 ' + o.host_name + ' | 📅 ' + formatTime(o.checkout_time) + '</div><div style="font-size:13px;color:#64748B">狀態: ' + (o.status === 'open' ? '待接單' : o.status === 'accepted' ? '已接單' : '已完成') + '</div></div>';
-            }).join('') || '<div class="empty">暫無訂單</div>';
-        }
-        
-        function showAddCleaner() { document.getElementById('modalCleaner').classList.add('active'); }
-        function showAddHost() { document.getElementById('modalHost').classList.add('active'); }
-        function closeModal() { document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('active'); }); }
-        
-        async function addCleaner() { var name = document.getElementById('cleanerName').value; var phone = document.getElementById('cleanerPhone').value; if (!name) { showToast('請輸入姓名'); return; } await fetch(API + '/cleaners/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone }) }); closeModal(); loadData(); showToast('添加成功'); }
-        async function addHost() { var name = document.getElementById('hostName').value; var phone = document.getElementById('hostPhone').value; if (!name || !phone) { showToast('請輸入姓名和電話'); return; } await fetch(API + '/hosts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone }) }); closeModal(); loadData(); showToast('添加成功'); }
-        
-        function showEditCleaner(id, name, phone, code) { document.getElementById('editCleanerId').value = id; document.getElementById('editCleanerName').value = name; document.getElementById('editCleanerPhone').value = phone; document.getElementById('editCleanerCode').value = code; document.getElementById('modalEditCleaner').classList.add('active'); }
-        function showEditHost(id, name, phone, code) { document.getElementById('editHostId').value = id; document.getElementById('editHostName').value = name; document.getElementById('editHostPhone').value = phone; document.getElementById('editHostCode').value = code; document.getElementById('modalEditHost').classList.add('active'); }
-        
-        async function saveCleaner() { var id = document.getElementById('editCleanerId').value; await fetch(API + '/cleaners/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('editCleanerName').value, phone: document.getElementById('editCleanerPhone').value, code: document.getElementById('editCleanerCode').value }) }); closeModal(); loadData(); showToast('修改成功'); }
-        async function saveHost() { var id = document.getElementById('editHostId').value; await fetch(API + '/hosts/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: document.getElementById('editHostName').value, phone: document.getElementById('editHostPhone').value, code: document.getElementById('editHostCode').value }) }); closeModal(); loadData(); showToast('修改成功'); }
-        
-        function deleteCleaner(id) { showConfirm('確認刪除', '確定要刪除這個清潔工嗎？', function() { fetch(API + '/cleaners/' + id, { method: 'DELETE' }).then(function() { loadData(); showToast('已刪除'); }); }); }
-        function deleteHost(id) { showConfirm('確認刪除', '確定要刪除這個房東嗎？', function() { fetch(API + '/hosts/' + id, { method: 'DELETE' }).then(function() { loadData(); showToast('已刪除'); }); }); }
-        
+</div>
+
+<script>
+    const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
+    let currentTab = 'cleaners';
+
+    async function req(path, method = 'GET', body = null) {
+        const opt = { method, headers: { 'Content-Type': 'application/json' } };
+        if (body) opt.body = JSON.stringify(body);
+        try {
+            const res = await fetch(`${API}${path}`, opt);
+            return res.json();
+        } catch (e) { console.error("API Error", e); }
+    }
+
+    function switchTab(tab, el) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
         loadData();
-    </script>
+    }
+
+    async function loadData() {
+        const [users, orders] = await Promise.all([req(`/${currentTab}`), req('/orders')]);
+        if (!users || !orders) return;
+
+        // 更新統計數據
+        const totalRev = (orders.data || []).reduce((s, o) => s + (parseInt(o.price) || 0), 0);
+        document.getElementById('statTotal').textContent = `$${totalRev.toLocaleString()}`;
+        document.getElementById('statOrders').textContent = (orders.data || []).length;
+        document.getElementById('statActive').textContent = (users.data || []).length;
+
+        // 渲染列表 (修復標籤引號問題)
+        const container = document.getElementById('listContainer');
+        container.innerHTML = (users.data || []).map((u, i) => `
+            <div class="id-card" style="animation-delay: ${i * 0.05}s">
+                <div class="card-top">
+                    <div class="pfp">${u.name.charAt(0)}</div>
+                    <div class="card-body">
+                        <h3>${u.name}</h3>
+                        <p>📞 ${u.phone}</p>
+                    </div>
+                </div>
+                <div class="key-row">
+                    <span class="key-label">ACCESS KEY</span>
+                    <span class="key-val"># ${u.code}</span>
+                </div>
+                <div class="card-btns">
+                    <button class="btn btn-edit" onclick="openEdit('${currentTab}', ${u.id}, '${u.name}', '${u.phone}', '${u.code}')">編輯內容</button>
+                    <button class="btn btn-del" onclick="handleDelete(${u.id})">刪除帳號</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleModal(id, show) {
+        document.getElementById(id).classList.toggle('active', show);
+    }
+
+    function openEdit(type, id, name, phone, code) {
+        document.getElementById('modalTitle').textContent = type === 'cleaners' ? '編輯清潔夥伴' : '編輯房東客戶';
+        document.getElementById('editType').value = type;
+        document.getElementById('editId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editPhone').value = phone;
+        document.getElementById('editCode').value = code;
+        toggleModal('editModal', true);
+    }
+
+    async function handleSave() {
+        const type = document.getElementById('editType').value;
+        const id = document.getElementById('editId').value;
+        const body = {
+            name: document.getElementById('editName').value,
+            phone: document.getElementById('editPhone').value,
+            code: document.getElementById('editCode').value
+        };
+        await req(`/${type}/${id}`, 'PUT', body);
+        toggleModal('editModal', false);
+        loadData();
+    }
+
+    async function handleDelete(id) {
+        if (confirm('確定要永久刪除此帳號嗎？')) {
+            await req(`/${currentTab}/${id}`, 'DELETE');
+            loadData();
+        }
+    }
+
+    loadData();
+</script>
+
 </body>
 </html>

@@ -34,6 +34,10 @@ class CleaningAPI:
         if path in ["/host.html", "/cleaner.html", "/admin.html"]:
             return {"static": path.lstrip("/")}
         
+        # CSS 文件
+        if path.startswith("/css/"):
+            return {"static": path.lstrip("/")}
+        
         # ========== 統計 ==========
         if path == "/api/stats":
             return self.repo.get_stats()
@@ -542,6 +546,7 @@ class CleaningAPI:
         return {"message": "Order completed"}
     
     def _update_order(self, order_id, data):
+        print(f"DEBUG: _update_order called with order_id={order_id}, data={data}")
         conn = self.db._get_connection()
         cursor = conn.cursor()
         updates = []
@@ -558,6 +563,16 @@ class CleaningAPI:
         if data.get("price"):
             updates.append("price = ?")
             params.append(data["price"])
+        
+        if data.get("status"):
+            updates.append("status = ?")
+            params.append(data["status"])
+        
+        if data.get("cleaner_id"):
+            updates.append("assigned_cleaner_id = ?")
+            params.append(data["cleaner_id"])
+        
+        print(f"DEBUG: updates={updates}, params={params}")
         
         if updates:
             params.append(order_id)
@@ -629,8 +644,23 @@ class APIHandler(BaseHTTPRequestHandler):
                 with open(static_file, "r", encoding="utf-8") as f:
                     content = f.read()
                 
+                # MIME 類型檢測
+                content_type = "text/html; charset=utf-8"
+                if static_file.endswith(".css"):
+                    content_type = "text/css; charset=utf-8"
+                elif static_file.endswith(".js"):
+                    content_type = "application/javascript; charset=utf-8"
+                elif static_file.endswith(".json"):
+                    content_type = "application/json; charset=utf-8"
+                elif static_file.endswith(".png"):
+                    content_type = "image/png"
+                elif static_file.endswith(".jpg") or static_file.endswith(".jpeg"):
+                    content_type = "image/jpeg"
+                elif static_file.endswith(".svg"):
+                    content_type = "image/svg+xml"
+                
                 self.send_response(200)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Type", content_type)
                 self.end_headers()
                 self.wfile.write(content.encode("utf-8"))
                 return
