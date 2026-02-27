@@ -4314,6 +4314,431 @@
             font-size: 15px;
         }
 
+    
+        :root {
+            /* === APPLE HUMAN INTERFACE === */
+            --apple-bg: #F2F2F7;
+            --apple-surface: #FFFFFF;
+            --apple-blue: #007AFF;
+            --apple-blue-light: #E5F0FF;
+            --apple-green: #34C759;
+            --apple-orange: #FF9500;
+            --apple-red: #FF3B30;
+            
+            --apple-text: #000000;
+            --apple-text-secondary: #3C3C43;
+            --apple-text-tertiary: #8E8E93;
+            
+            --apple-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --apple-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+            
+            --apple-radius-sm: 10px;
+            --apple-radius-md: 14px;
+            --apple-radius-lg: 20px;
+            --apple-radius-xl: 24px;
+            
+            body {
+                background: var(--apple-bg);
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', sans-serif;
+                color: var(--apple-text);
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+                -webkit-text-size-adjust: 100%;
+            }
+        }
+        
+        /* === LAYOUT === */
+        .container { max-width: 500px; margin: 0 auto; }
+        
+        /* === HEADER === */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        
+        .header-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--apple-blue), #5AC8FA);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 15px;
+        }
+        
+        .header-title { font-size: 17px; font-weight: 600; color: var(--apple-text); }
+        
+        .header-right { display: flex; align-items: center; }
+        
+        .header-btn {
+            background: transparent;
+            border: none;
+            color: var(--apple-blue);
+            font-size: 17px;
+            font-weight: 400;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        
+        /* === SEGMENTED CONTROL === */
+        .nav-tabs {
+            display: flex;
+            background: rgba(118, 118, 128, 0.12);
+            border-radius: var(--apple-radius-sm);
+            padding: 3px;
+            margin: 16px 20px;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: var(--apple-text-secondary);
+            transition: all 0.2s ease;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: var(--apple-text);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* === APPLE CARD === */
+        .card {
+            background: white;
+            border-radius: var(--apple-radius-lg);
+            box-shadow: var(--apple-shadow);
+            margin: 0 16px 12px;
+            overflow: hidden;
+        }
+        
+        .card-inner { padding: 18px; }
+        
+        .card-header {
+            display: flex; justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--apple-text);
+            flex: 1;
+            padding-right: 12px;
+        }
+        
+        .price {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--apple-text);
+        }
+        
+        .card-info {
+            color: var(--apple-text-secondary);
+            font-size: 15px;
+            margin-bottom: 14px;
+        }
+        
+        .card-info span { display: flex; align-items: center; gap: 6px; }
+        
+        /* === BADGE === */
+        .badge {
+            display: inline-block;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 4px 10px;
+            margin-top: 0;
+        }
+        
+        .badge-open { background: #FFF3E0; color: #FF9500; }
+        .badge-accepted { background: var(--apple-blue-light); color: var(--apple-blue); }
+        .badge-completed { background: #E8F5E9; color: #34C759; }
+        
+        /* === APPLE BUTTON === */
+        .card-actions { padding: 0 18px 18px; }
+        
+        .btn-primary, .btn-accept {
+            background: var(--apple-blue);
+            color: white;
+            border-radius: var(--apple-radius-md);
+            border: none;
+            font-weight: 600;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-size: 17px;
+            font-family: inherit;
+        }
+        
+        .btn-primary:active, .btn-accept:active {
+            opacity: 0.7;
+            transform: scale(0.98);
+        }
+        
+        .btn-action {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 400;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-edit { background: rgba(118, 118, 128, 0.12); color: var(--apple-text-secondary); }
+        .btn-delete { background: #FFE5E5; color: var(--apple-red); }
+        
+        .card-actions-row { display: flex; gap: 10px; }
+        .card-actions-row .btn-action { flex: 1; }
+        
+        /* === STATS === */
+        .stats {
+            background: white;
+            border-radius: var(--apple-radius-lg);
+            box-shadow: var(--apple-shadow);
+            padding: 18px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 16px;
+        }
+        
+        .stat-item { text-align: center; }
+        
+        .stat-num {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--apple-text);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--apple-text-tertiary);
+            margin-top: 2px;
+        }
+        
+        /* === TAB BAR === */
+        .bottom-nav, .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+            padding: 10px 20px 30px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: var(--apple-text-tertiary);
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 12px;
+            border: none;
+            background: transparent;
+        }
+        
+        .nav-item.active { color: var(--apple-blue); }
+        .nav-item-icon { font-size: 22px; }
+        
+        /* === FAB === */
+        .fab {
+            background: var(--apple-blue);
+            border-radius: 50%;
+            border: none;
+            width: 50px; height: 50px;
+            display: flex; align-items: center;
+            justify-content: center;
+            font-size: 24px; color: white;
+            box-shadow: var(--apple-shadow-lg);
+        }
+        
+        /* === INPUT === */
+        .input-premium {
+            background: rgba(118, 118, 128, 0.08);
+            border: none;
+            border-radius: var(--apple-radius-md);
+            padding: 14px 16px;
+            font-size: 17px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+            color: var(--apple-text);
+        }
+        
+        .input-premium::placeholder { color: var(--apple-text-tertiary); }
+        
+        /* === MODAL === */
+        .modal {
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            padding: 20px;
+        }
+        
+        .modal.show { display: flex; }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--apple-radius-xl);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+        
+        .confirm-icon { font-size: 48px; margin-bottom: 12px; }
+        
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--apple-text);
+            margin-bottom: 8px;
+        }
+        
+        .confirm-desc {
+            font-size: 15px;
+            color: var(--apple-text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .confirm-btns { display: flex; flex-direction: column; gap: 10px; }
+        
+        .confirm-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: var(--apple-radius-md);
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .confirm-btn.danger { background: var(--apple-red); color: white; }
+        .confirm-btn.cancel { background: rgba(118, 118, 128, 0.12); color: var(--apple-text); }
+        
+        /* === PORTAL === */
+        .portal-btn {
+            background: white;
+            border-radius: var(--apple-radius-lg);
+            box-shadow: var(--apple-shadow);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+        
+        .portal-icon {
+            width: 50px; height: 50px;
+            border-radius: 14px;
+            display: flex; align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-right: 14px;
+        }
+        
+        .portal-icon.cleaner { background: var(--apple-blue-light); }
+        .portal-icon.host { background: #FFF3E0; }
+        .portal-icon.admin { background: #F3E8FF; }
+        
+        .portal-text h3 { font-size: 17px; font-weight: 600; color: var(--apple-text); }
+        .portal-text p { font-size: 14px; color: var(--apple-text-tertiary); margin-top: 2px; }
+        
+        /* === LOGIN === */
+        .login-screen { background: var(--apple-bg); }
+        .login-logo { background: white; box-shadow: var(--apple-shadow-lg); }
+        .login-container { max-width: 320px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* === TOAST === */
+        .toast {
+            background: var(--apple-text);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-weight: 500;
+            font-size: 15px;
+            color: white;
+        }
+        
+        /* === ANIMATION === */
+        @keyframes appleIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card:nth-child(n) {
+            animation: appleIn 0.35s ease forwards;
+            opacity: 0;
+        }
+        
+        /* === CONTENT === */
+        .content { padding: 0 4px 120px; }
+        
+        .form-group { margin-bottom: 14px; padding: 0 16px; }
+        
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--apple-text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .btn-secondary {
+            background: rgba(118, 118, 128, 0.12);
+            color: var(--apple-text);
+            border: none;
+            border-radius: var(--apple-radius-md);
+            padding: 16px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 17px;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .empty {
+            color: var(--apple-text-tertiary);
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 15px;
+        }
+
     </style>
 </head>
 <body>
