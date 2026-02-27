@@ -4510,6 +4510,91 @@
             z-index: 1000;
         }
 
+    
+        /* === MODAL - Better hierarchy === */
+        .modal {
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            padding: 20px;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .confirm-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .confirm-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1A1D21;
+            margin-bottom: 8px;
+        }
+        
+        .confirm-desc {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .confirm-btns {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .confirm-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .confirm-btn.cancel {
+            background: #F3F4F6;
+            color: #4B5563;
+        }
+        
+        .confirm-btn.cancel:hover {
+            background: #E5E7EB;
+        }
+        
+        .confirm-btn.danger {
+            background: #DC2626;
+            color: white;
+        }
+        
+        .confirm-btn.danger:hover {
+            background: #B91C1C;
+        }
+        
+        .confirm-btn:active {
+            transform: scale(0.97);
+        }
+
     </style>
 </head>
 <body>
