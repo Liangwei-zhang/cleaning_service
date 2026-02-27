@@ -4657,7 +4657,13 @@
         }
         
         async function acceptOrder(id) { var cleanerId = localStorage.getItem('cleaner_id'); await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'accepted', cleaner_id: cleanerId }) }); showToast('接單成功'); loadOpenOrders(); }
-        async function completeOrder(id) { await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'completed' }) }); showToast('完成清潔'); loadMyOrders(); loadStats(); }
+        async function completeOrder(id) { 
+            var cleanerId = localStorage.getItem('cleaner_id'); 
+            await fetch(API + '/orders/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'completed', cleaner_id: parseInt(cleanerId) }) }); 
+            showToast('完成清潔'); 
+            loadMyOrders(); 
+            loadStats(); 
+        }
         
         loadStats(); loadOpenOrders();
     </script>
