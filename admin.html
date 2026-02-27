@@ -173,6 +173,11 @@
 
 <main id="listContainer" class="list-wrap"></main>
 
+<!-- 浮動新增按鈕 -->
+<button class="fab" onclick="openAdd(currentTab)" style="position:fixed; bottom:100px; right:24px; width:60px; height:60px; border-radius:50%; background:var(--midnight); color:white; border:none; font-size:28px; font-weight:300; box-shadow:0 4px 16px rgba(0,0,0,0.3); z-index:1000; cursor:pointer;">+</button>
+
+<main id="listContainer" class="list-wrap"></main>
+
 <div id="editModal" class="modal">
     <div class="modal-body">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
@@ -189,11 +194,8 @@
             <label>電話</label>
             <input type="text" id="editPhone">
         </div>
-        <div class="input-box">
-            <label>驗證代碼</label>
-            <input type="text" id="editCode">
-        </div>
-        <button onclick="handleSave()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--midnight); color:white; font-weight:800; font-size:16px; margin-top:10px;">儲存並更新</button>
+        <p style="font-size:12px; color:#666; margin-top:8px;">※ 驗證碼將由系統自動生成</p>
+        <button id="saveBtn" onclick="handleSave()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--midnight); color:white; font-weight:800; font-size:16px; margin-top:10px;">儲存</button>
     </div>
 </div>
 
@@ -218,18 +220,67 @@
     }
 
     async function loadData() {
-        const [users, orders] = await Promise.all([req(`/${currentTab}`), req('/orders')]);
-        if (!users || !orders) return;
+        const orders = await req('/orders');
+        if (!orders) return;
 
         // 更新統計數據
         const totalRev = (orders.data || []).reduce((s, o) => s + (parseInt(o.price) || 0), 0);
         document.getElementById('statTotal').textContent = `$${totalRev.toLocaleString()}`;
         document.getElementById('statOrders').textContent = (orders.data || []).length;
-        document.getElementById('statActive').textContent = (users.data || []).length;
 
-        // 渲染列表 (修復標籤引號問題)
         const container = document.getElementById('listContainer');
-        container.innerHTML = (users.data || []).map((u, i) => `
+
+        // 訂單列表
+        if (currentTab === 'orders') {
+            const users = await req('/cleaners');
+            const hosts = await req('/hosts');
+            const cleaners = users?.data || [];
+            const hostsList = hosts?.data || [];
+            document.getElementById('statActive').textContent = cleaners.length + hostsList.length;
+            
+            container.innerHTML = (orders.data || []).map((o, i) => {
+                const statusBadge = o.status === 'open' ? 'status-open' : o.status === 'accepted' ? 'status-accepted' : 'status-completed';
+                const statusText = o.status === 'open' ? '待接單' : o.status === 'accepted' ? '工作中' : '已完成';
+                return `
+                <div class="id-card" style="animation-delay: ${i * 0.05}s">
+                    <div class="card-top">
+                        <div class="pfp" style="background: ${o.status === 'open' ? 'oklch(75% 0.15 45)' : o.status === 'accepted' ? 'oklch(60% 0.18 220)' : 'oklch(70% 0.18 150)'}">${(o.property_name || '訂').charAt(0)}</div>
+                        <div class="card-body">
+                            <h3>${o.property_name || '未命名房源'}</h3>
+                            <p>📍 ${o.property_address || '無地址'}</p>
+                        </div>
+                    </div>
+                    <div class="key-row">
+                        <span class="key-label">狀態</span>
+                        <span class="key-val" style="color: ${o.status === 'open' ? 'oklch(55% 0.15 45)' : o.status === 'accepted' ? 'oklch(55% 0.15 220)' : 'oklch(55% 0.15 150)'}">${statusText}</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:16px;">
+                        <div class="key-row" style="margin:0;">
+                            <span class="key-label">退房時間</span>
+                            <span class="key-val">${o.checkout_time || '-'}</span>
+                        </div>
+                        <div class="key-row" style="margin:0;">
+                            <span class="key-label">價格</span>
+                            <span class="key-val" style="color:oklch(65% 0.15 85)">$${o.price || 0}</span>
+                        </div>
+                    </div>
+                    <div class="key-row">
+                        <span class="key-label">清潔夥伴</span>
+                        <span class="key-val">${o.cleaner_name || '待接單'}</span>
+                    </div>
+                    <div class="card-btns">
+                        <button class="btn btn-edit" onclick="deleteOrder(${o.id})">❌ 刪除訂單</button>
+                    </div>
+                </div>
+            `}).join('') || '<div style="text-align:center; padding:60px; color:gray;">暫無訂單</div>';
+            return;
+        }
+
+        // 清潔夥伴或房東列表
+        const users = await req(`/${currentTab}`);
+        document.getElementById('statActive').textContent = (users?.data || []).length;
+
+        container.innerHTML = (users?.data || []).map((u, i) => `
             <div class="id-card" style="animation-delay: ${i * 0.05}s">
                 <div class="card-top">
                     <div class="pfp">${u.name.charAt(0)}</div>
@@ -243,15 +294,31 @@
                     <span class="key-val"># ${u.code}</span>
                 </div>
                 <div class="card-btns">
-                    <button class="btn btn-edit" onclick="openEdit('${currentTab}', ${u.id}, '${u.name}', '${u.phone}', '${u.code}')">編輯內容</button>
+                    <button class="btn btn-edit" data-type="${currentTab}" data-id="${u.id}" data-name="${u.name}" data-phone="${u.phone}" data-code="${u.code}" onclick="var d=this.dataset;openEdit(d.type,Number(d.id),d.name,d.phone,d.code)">編輯內容</button>
                     <button class="btn btn-del" onclick="handleDelete(${u.id})">刪除帳號</button>
                 </div>
             </div>
         `).join('');
     }
 
+    async function deleteOrder(id) {
+        if (!confirm('確定要刪除此訂單嗎？')) return;
+        await req(`/orders/${id}`, 'DELETE');
+        loadData();
+    }
+
     function toggleModal(id, show) {
         document.getElementById(id).classList.toggle('active', show);
+    }
+
+    function openAdd(type) {
+        document.getElementById('modalTitle').textContent = type === 'cleaners' ? '新增清潔夥伴' : '新增房東';
+        document.getElementById('editType').value = type;
+        document.getElementById('editId').value = '';
+        document.getElementById('editName').value = '';
+        document.getElementById('editPhone').value = '';
+        document.getElementById('saveBtn').textContent = '新增';
+        toggleModal('editModal', true);
     }
 
     function openEdit(type, id, name, phone, code) {
@@ -260,20 +327,32 @@
         document.getElementById('editId').value = id;
         document.getElementById('editName').value = name;
         document.getElementById('editPhone').value = phone;
-        document.getElementById('editCode').value = code;
+        document.getElementById('saveBtn').textContent = '儲存';
         toggleModal('editModal', true);
     }
 
     async function handleSave() {
         const type = document.getElementById('editType').value;
         const id = document.getElementById('editId').value;
+        
         const body = {
             name: document.getElementById('editName').value,
-            phone: document.getElementById('editPhone').value,
-            code: document.getElementById('editCode').value
+            phone: document.getElementById('editPhone').value
         };
-        await req(`/${type}/${id}`, 'PUT', body);
-        toggleModal('editModal', false);
+        
+        if (id) {
+            // 編輯
+            await req(`/${type}/${id}`, 'PUT', body);
+            toggleModal('editModal', false);
+        } else {
+            // 新增 - 自動生成驗證碼
+            const result = await req(`/${type}`, 'POST', body);
+            if (result.error) {
+                alert(result.error);
+            } else {
+                toggleModal('editModal', false);
+            }
+        }
         loadData();
     }
 

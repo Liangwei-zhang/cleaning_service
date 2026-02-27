@@ -50,6 +50,14 @@ class CleaningAPI:
                     return self.repo.get_cleaner_stats(int(cleaner_id))
             return {"error": "Missing cleaner_id"}
         
+        # ========== 地址 geocoding ==========
+        if path == "/api/geocode":
+            if method == "GET":
+                address = query.get("address", [""])[0]
+                if address:
+                    return self._geocode_address(address)
+                return {"error": "Missing address"}
+        
         # ========== 房源 ==========
         if path == "/api/properties":
             if method == "GET":
@@ -59,7 +67,10 @@ class CleaningAPI:
                 return self._add_property(json.loads(body) if body else {})
         
         if path.startswith("/api/properties/"):
-            prop_id = int(path.split("/")[-1])
+            try:
+                prop_id = int(path.split("/")[-1])
+            except ValueError:
+                return {"error": "Invalid property ID", "code": 400}
             if method == "GET":
                 prop = self.repo.get_property(prop_id)
                 return {"data": self._property_to_dict(prop)} if prop else {"error": "Not found", "code": 404}
@@ -79,8 +90,8 @@ class CleaningAPI:
                 try:
                     cleaner_id = int(parts[3])
                     return self._get_cleaner(cleaner_id)
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid cleaner ID", "code": 400}
         
         # ========== 房東 CRUD ==========
         if path == "/api/hosts/login":
@@ -108,8 +119,8 @@ class CleaningAPI:
                 try:
                     host_id = int(parts[3])
                     return self._get_host(host_id)
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid host ID", "code": 400}
         
         if path.startswith("/api/hosts/") and method == "PUT":
             parts = path.split("/")
@@ -117,8 +128,8 @@ class CleaningAPI:
                 try:
                     host_id = int(parts[3])
                     return self._update_host(host_id, json.loads(body) if body else {})
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid host ID", "code": 400}
         
         # ========== 房源 CRUD ==========
         if path == "/api/properties" and method == "POST":
@@ -130,8 +141,8 @@ class CleaningAPI:
                 try:
                     prop_id = int(parts[3])
                     return self._update_property(prop_id, json.loads(body) if body else {})
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid property ID", "code": 400}
         
         if path.startswith("/api/properties/") and method == "DELETE":
             parts = path.split("/")
@@ -139,8 +150,8 @@ class CleaningAPI:
                 try:
                     prop_id = int(parts[3])
                     return self._delete_property(prop_id)
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid property ID", "code": 400}
         
         if path.startswith("/api/hosts/") and method == "DELETE":
             parts = path.split("/")
@@ -148,8 +159,8 @@ class CleaningAPI:
                 try:
                     host_id = int(parts[3])
                     return self._delete_host(host_id)
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid host ID", "code": 400}
         
         if path.startswith("/api/cleaners/") and method == "PUT":
             parts = path.split("/")
@@ -157,8 +168,8 @@ class CleaningAPI:
                 try:
                     cleaner_id = int(parts[3])
                     return self._update_cleaner(cleaner_id, json.loads(body) if body else {})
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid cleaner ID", "code": 400}
         
         if path.startswith("/api/cleaners/") and method == "DELETE":
             parts = path.split("/")
@@ -166,8 +177,8 @@ class CleaningAPI:
                 try:
                     cleaner_id = int(parts[3])
                     return self._delete_cleaner(cleaner_id)
-                except:
-                    pass
+                except ValueError:
+                    return {"error": "Invalid cleaner ID", "code": 400}
         
         # ========== 訂單 ==========
         if path == "/api/orders":
@@ -222,14 +233,64 @@ class CleaningAPI:
         
         return {"error": "Not Found", "code": 404}
     
+    def _geocode_address(self, address: str) -> Dict[str, Any]:
+        """使用 Nominatim (OpenStreetMap) 進行地址解析"""
+        import urllib.request
+        import urllib.parse
+        
+        try:
+            # 編碼地址
+            encoded_addr = urllib.parse.quote(address)
+            url = f"https://nominatim.openstreetmap.org/search?format=json&q={encoded_addr}&addressdetails=1"
+            
+            req = urllib.request.Request(url, headers={
+                'User-Agent': 'CleaningService/1.0'
+            })
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                data = json.loads(response.read().decode('utf-8'))
+            
+            if not data:
+                return {"error": "無法找到該地址", "code": 404}
+            
+            result = data[0]
+            address_parts = result.get('address', {})
+            
+            # 解析地址組件
+            province = address_parts.get('state', address_parts.get('province', ''))
+            city = address_parts.get('city', address_parts.get('town', address_parts.get('village', '')))
+            street = address_parts.get('road', '')
+            house_number = address_parts.get('house_number', '')
+            postcode = address_parts.get('postcode', '')
+            
+            return {
+                "success": True,
+                "formatted": result.get('display_name', ''),
+                "province": province,
+                "city": city,
+                "street": street,
+                "house_number": house_number,
+                "postcode": postcode,
+                "lat": result.get('lat', ''),
+                "lon": result.get('lon', '')
+            }
+        except Exception as e:
+            return {"error": str(e), "code": 500}
+    
     def _property_to_dict(self, prop):
         if not prop:
             return {}
         return {
             "id": prop.id, "name": prop.name, "address": prop.address,
+            "postal_code": getattr(prop, 'postal_code', ''),
             "bedrooms": prop.bedrooms, "bathrooms": prop.bathrooms,
             "floor": getattr(prop, 'floor', 0),
             "area": getattr(prop, 'area', 0),
+            "province": getattr(prop, 'province', ''),
+            "city": getattr(prop, 'city', ''),
+            "street": getattr(prop, 'street', ''),
+            "house_number": getattr(prop, 'house_number', ''),
+            "host_phone": getattr(prop, 'host_phone', ''),
             "cleaning_time_minutes": prop.cleaning_time_minutes
         }
     
@@ -255,14 +316,32 @@ class CleaningAPI:
         if not data.get("name"):
             return {"error": "name required", "code": 400}
         
-        code = str(random.randint(100000, 999999))
+        phone = data.get("phone", "")
+        # 檢查電話是否已存在
+        conn = self.db._get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM cleaners WHERE phone = ?", (phone,))
+        if cursor.fetchone():
+            conn.close()
+            return {"error": "電話號碼已存在", "code": 400}
+        cursor.execute("SELECT id FROM hosts WHERE phone = ?", (phone,))
+        if cursor.fetchone():
+            conn.close()
+            return {"error": "電話號碼已被房東使用", "code": 400}
         
-        cleaner = Cleaner(name=data["name"], phone=data.get("phone", ""), email=data.get("email", ""))
+        # 生成唯一驗證碼
+        while True:
+            code = str(random.randint(100000, 999999))
+            cursor.execute("SELECT id FROM cleaners WHERE code = ?", (code,))
+            if not cursor.fetchone():
+                cursor.execute("SELECT id FROM hosts WHERE code = ?", (code,))
+                if not cursor.fetchone():
+                    break
+        
+        cleaner = Cleaner(name=data["name"], phone=phone, email=data.get("email", ""))
         cleaner_id = self.repo.add_cleaner(cleaner)
         
         # 更新 code
-        conn = self.db._get_connection()
-        cursor = conn.cursor()
         cursor.execute("UPDATE cleaners SET code = ? WHERE id = ?", (code, cleaner_id))
         conn.commit()
         conn.close()
@@ -366,12 +445,30 @@ class CleaningAPI:
         if not data.get("name") or not data.get("phone"):
             return {"error": "name and phone required", "code": 400}
         
-        code = str(random.randint(100000, 999999))
-        
+        phone = data.get("phone")
+        # 檢查電話是否已存在
         conn = self.db._get_connection()
         cursor = conn.cursor()
+        cursor.execute("SELECT id FROM hosts WHERE phone = ?", (phone,))
+        if cursor.fetchone():
+            conn.close()
+            return {"error": "電話號碼已存在", "code": 400}
+        cursor.execute("SELECT id FROM cleaners WHERE phone = ?", (phone,))
+        if cursor.fetchone():
+            conn.close()
+            return {"error": "電話號碼已被清潔夥伴使用", "code": 400}
+        
+        # 生成唯一驗證碼
+        while True:
+            code = str(random.randint(100000, 999999))
+            cursor.execute("SELECT id FROM cleaners WHERE code = ?", (code,))
+            if not cursor.fetchone():
+                cursor.execute("SELECT id FROM hosts WHERE code = ?", (code,))
+                if not cursor.fetchone():
+                    break
+        
         cursor.execute("INSERT INTO hosts (name, phone, code) VALUES (?, ?, ?)", 
-                     (data["name"], data["phone"], code))
+                     (data["name"], phone, code))
         host_id = cursor.lastrowid
         conn.commit()
         conn.close()
@@ -423,11 +520,14 @@ class CleaningAPI:
         
         conn = self.db._get_connection()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO properties (name, address, bedrooms, bathrooms, floor, area, cleaning_time_minutes, cleaning_checklist, notes)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        cursor.execute("""INSERT INTO properties (name, address, postal_code, bedrooms, bathrooms, floor, area, province, city, street, house_number, cleaning_time_minutes, cleaning_checklist, notes)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                      (data.get("name"), data.get("address"), 
+                      data.get("postal_code", ""),
                       data.get("bedrooms", 1), data.get("bathrooms", 1),
                       data.get("floor", 0), data.get("area", 0),
+                      data.get("province", ""), data.get("city", ""),
+                      data.get("street", ""), data.get("house_number", ""),
                       data.get("cleaning_time_minutes", 120), 
                       data.get("cleaning_checklist", ""), data.get("notes", "")))
         prop_id = cursor.lastrowid
@@ -441,7 +541,9 @@ class CleaningAPI:
         updates = []
         params = []
         
-        for field in ["name", "address", "bedrooms", "bathrooms", "floor", "area", "cleaning_time_minutes", "cleaning_checklist", "notes"]:
+        for field in ["name", "address", "postal_code", "bedrooms", "bathrooms", "floor", "area", 
+                      "province", "city", "street", "house_number", "host_phone",
+                      "cleaning_time_minutes", "cleaning_checklist", "notes"]:
             if data.get(field) is not None:
                 updates.append(f"{field} = ?")
                 params.append(data[field])
@@ -468,6 +570,8 @@ class CleaningAPI:
         
         query = """
             SELECT o.*, p.name as property_name, p.address as property_address,
+                   p.province as property_province, p.city as property_city,
+                   p.street as property_street, p.house_number as property_house_number,
                    c.name as cleaner_name
             FROM orders o
             LEFT JOIN properties p ON o.property_id = p.id

@@ -69,15 +69,22 @@ class Database:
 
 
 class Property:
-    def __init__(self, id=None, name="", address="", bedrooms=1, bathrooms=1, floor=0, area=0,
-                 cleaning_time_minutes=120, cleaning_checklist="", notes="", status="active", created_at=None):
+    def __init__(self, id=None, name="", address="", postal_code="", bedrooms=1, bathrooms=1, floor=0, area=0,
+                 cleaning_time_minutes=120, cleaning_checklist="", notes="", status="active", created_at=None,
+                 province="", city="", street="", house_number="", host_phone=""):
         self.id = id
         self.name = name
         self.address = address
+        self.postal_code = postal_code
         self.bedrooms = bedrooms
         self.bathrooms = bathrooms
         self.floor = floor
         self.area = area
+        self.province = province
+        self.city = city
+        self.street = street
+        self.house_number = house_number
+        self.host_phone = host_phone
         self.cleaning_time_minutes = cleaning_time_minutes
         self.cleaning_checklist = cleaning_checklist
         self.notes = notes
@@ -127,9 +134,10 @@ class CleaningRepository:
         conn = self.db._get_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO properties (name, address, bedrooms, bathrooms, cleaning_time_minutes, cleaning_checklist, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (prop.name, prop.address, prop.bedrooms, prop.bathrooms, 
+            INSERT INTO properties (name, address, postal_code, bedrooms, bathrooms, floor, area, province, city, street, house_number, cleaning_time_minutes, cleaning_checklist, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (prop.name, prop.address, prop.postal_code, prop.bedrooms, prop.bathrooms, prop.floor, prop.area,
+              prop.province, prop.city, prop.street, prop.house_number,
               prop.cleaning_time_minutes, prop.cleaning_checklist, prop.notes))
         job_id = cursor.lastrowid
         conn.commit()

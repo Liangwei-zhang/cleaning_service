@@ -208,7 +208,7 @@
         <div class="modal-content">
             <h2 id="modalTitle" style="margin-bottom:28px; text-align:center; font-size:22px; font-weight:850;"></h2>
             <div id="modalBody"></div>
-            <button class="btn-submit" id="modalSubmit">確認提交</button>
+            <button class="btn-submit" id="modalSubmit" onclick="submitProperty()">確認提交</button>
             <button style="width:100%; background:none; border:none; color:var(--text-muted); font-weight:700; margin-top:16px; cursor:pointer;" onclick="closeModal()">取消</button>
         </div>
     </div>
@@ -267,7 +267,8 @@
             try {
                 const res = await fetch(API + '/properties');
                 const data = await res.json();
-                const properties = data.data || [];
+                // 只顯示當前用戶的房源
+                const properties = (data.data || []).filter(p => p.host_phone === hostPhone);
                 
                 if (properties.length === 0) {
                     document.getElementById('myPropertiesList').innerHTML = '<div class="empty-state">尚未添加房源<br>點擊下方+按鈕添加</div>';
@@ -303,6 +304,107 @@
                     showToast('刪除失敗');
                 }
             } catch(e) { showToast('刪除失敗'); }
+        }
+
+        async function editProperty(id) {
+            try {
+                const res = await fetch(API + '/properties/' + id);
+                const data = await res.json();
+                const p = data.data;
+                if (!p) { showToast('房源不存在'); return; }
+                
+                document.getElementById('modalTitle').textContent = "修改房源資訊";
+                document.getElementById('modalBody').innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label">房源名稱</label>
+                        <input type="text" class="input-premium" id="propName" value="${p.name || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">完整地址</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" class="input-premium" id="propAddr" value="${p.address || ''}" style="flex:1;">
+                            <button type="button" onclick="verifyAddress()" style="padding:0 16px; border-radius:16px; border:none; background:var(--primary); color:white; font-weight:700; white-space:nowrap;">驗證</button>
+                        </div>
+                        <div id="addrStatus" style="font-size:12px; margin-top:6px; font-weight:600;"></div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px">
+                        <div class="form-group">
+                            <label class="form-label">省/州</label>
+                            <input type="text" class="input-premium" id="propProvince" value="${p.province || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">市/區</label>
+                            <input type="text" class="input-premium" id="propCity" value="${p.city || ''}">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px">
+                        <div class="form-group">
+                            <label class="form-label">街道</label>
+                            <input type="text" class="input-premium" id="propStreet" value="${p.street || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">門牌</label>
+                            <input type="text" class="input-premium" id="propHouseNum" value="${p.house_number || ''}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">郵遞區號</label>
+                        <input type="text" class="input-premium" id="propPostal" value="${p.postal_code || ''}">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px">
+                        <div class="form-group">
+                            <label class="form-label">臥室</label>
+                            <input type="number" class="input-premium" id="propBed" value="${p.bedrooms || 1}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">衛浴</label>
+                            <input type="number" class="input-premium" id="propBath" value="${p.bathrooms || 1}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">樓層</label>
+                            <input type="number" class="input-premium" id="propFloor" value="${p.floor || 1}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">面積 (sqft)</label>
+                        <input type="number" class="input-premium" id="propArea" value="${p.area || 800}">
+                    </div>
+                `;
+                
+                document.getElementById('modalSubmit').onclick = async () => {
+                    const body = {
+                        name: document.getElementById('propName').value.trim(),
+                        address: document.getElementById('propAddr').value.trim(),
+                        province: document.getElementById('propProvince').value.trim(),
+                        city: document.getElementById('propCity').value.trim(),
+                        street: document.getElementById('propStreet').value.trim(),
+                        house_number: document.getElementById('propHouseNum').value.trim(),
+                        postal_code: document.getElementById('propPostal').value.trim(),
+                        bedrooms: parseInt(document.getElementById('propBed').value) || 1,
+                        bathrooms: parseInt(document.getElementById('propBath').value) || 1,
+                        floor: parseInt(document.getElementById('propFloor').value) || 1,
+                        area: parseInt(document.getElementById('propArea').value) || 800
+                    };
+                    
+                    const putRes = await fetch(API + '/properties/' + id, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(body)
+                    });
+                    
+                    if (putRes.ok) {
+                        showToast('房源已更新');
+                        closeModal();
+                        loadProperties();
+                    } else {
+                        showToast('更新失敗');
+                    }
+                };
+                
+                openModal();
+            } catch(e) {
+                showToast('載入失敗');
+            }
         }
 
         function handleFabClick() {
@@ -363,9 +465,37 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">完整地址</label>
-                    <input type="text" class="input-premium" id="propAddr" placeholder="請輸入詳細地址">
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" class="input-premium" id="propAddr" placeholder="請輸入詳細地址" style="flex:1;">
+                        <button type="button" onclick="verifyAddress()" style="padding:0 16px; border-radius:16px; border:none; background:var(--primary); color:white; font-weight:700; white-space:nowrap;">驗證</button>
+                    </div>
+                    <div id="addrStatus" style="font-size:12px; margin-top:6px; font-weight:600;"></div>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px">
+                    <div class="form-group">
+                        <label class="form-label">省/州</label>
+                        <input type="text" class="input-premium" id="propProvince" placeholder="例如：臺北市">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">市/區</label>
+                        <input type="text" class="input-premium" id="propCity" placeholder="例如：信義區">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px">
+                    <div class="form-group">
+                        <label class="form-label">街道</label>
+                        <input type="text" class="input-premium" id="propStreet" placeholder="例如：忠孝東路">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">門牌</label>
+                        <input type="text" class="input-premium" id="propHouseNum" placeholder="例如：123">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">郵遞區號</label>
+                    <input type="text" class="input-premium" id="propPostal" placeholder="例如：110">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px">
                     <div class="form-group">
                         <label class="form-label">臥室</label>
                         <input type="number" class="input-premium" id="propBed" value="1">
@@ -374,14 +504,38 @@
                         <label class="form-label">衛浴</label>
                         <input type="number" class="input-premium" id="propBath" value="1">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">樓層</label>
+                        <input type="number" class="input-premium" id="propFloor" value="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">面積 (sqft)</label>
+                    <input type="number" class="input-premium" id="propArea" value="800">
                 </div>
             `;
             document.getElementById('modalSubmit').onclick = async () => {
+                const name = document.getElementById('propName').value.trim();
+                const address = document.getElementById('propAddr').value.trim();
+                if (!name) { showToast('請輸入房源名稱'); return; }
+                if (!address) { showToast('請輸入地址'); return; }
+                
+                const btn = document.getElementById('modalSubmit');
+                btn.disabled = true;
+                btn.textContent = '提交中...';
+                
                 const body = {
-                    name: document.getElementById('propName').value,
-                    address: document.getElementById('propAddr').value,
-                    bedrooms: parseInt(document.getElementById('propBed').value),
-                    bathrooms: parseInt(document.getElementById('propBath').value),
+                    name: name,
+                    address: address,
+                    province: document.getElementById('propProvince').value.trim(),
+                    city: document.getElementById('propCity').value.trim(),
+                    street: document.getElementById('propStreet').value.trim(),
+                    house_number: document.getElementById('propHouseNum').value.trim(),
+                    postal_code: document.getElementById('propPostal').value.trim(),
+                    bedrooms: parseInt(document.getElementById('propBed').value) || 1,
+                    bathrooms: parseInt(document.getElementById('propBath').value) || 1,
+                    floor: parseInt(document.getElementById('propFloor').value) || 1,
+                    area: parseInt(document.getElementById('propArea').value) || 800,
                     host_phone: hostPhone
                 };
                 const res = await fetch(`${API}/properties`, { 
@@ -390,8 +544,40 @@
                     body: JSON.stringify(body) 
                 });
                 if(res.ok) { showToast('房源已添加'); closeModal(); loadProperties(); }
+                else { const err = await res.json(); showToast(err.error || '添加失敗'); btn.disabled = false; btn.textContent = '確認提交'; }
             };
             openModal();
+        }
+
+        async function verifyAddress() {
+            const addr = document.getElementById('propAddr').value.trim();
+            const status = document.getElementById('addrStatus');
+            if (!addr) { showToast('請先輸入地址'); return; }
+            
+            status.textContent = '🔄 驗證中...';
+            status.style.color = 'var(--text-muted)';
+            
+            try {
+                const res = await fetch(`${API}/geocode?address=${encodeURIComponent(addr)}`);
+                const data = await res.json();
+                if (data.success) {
+                    status.textContent = '✅ 地址驗證成功';
+                    status.style.color = 'oklch(70% 0.18 150)';
+                    
+                    // 自動填充省、市、街道、門牌、郵遞區號
+                    if (data.province) document.getElementById('propProvince').value = data.province;
+                    if (data.city) document.getElementById('propCity').value = data.city;
+                    if (data.street) document.getElementById('propStreet').value = data.street;
+                    if (data.house_number) document.getElementById('propHouseNum').value = data.house_number;
+                    if (data.postcode) document.getElementById('propPostal').value = data.postcode;
+                } else {
+                    status.textContent = '❌ ' + (data.error || '地址無法識別');
+                    status.style.color = 'oklch(55% 0.18 25)';
+                }
+            } catch(e) {
+                status.textContent = '⚠️ 驗證失敗，請重試';
+                status.style.color = 'oklch(55% 0.18 25)';
+            }
         }
 
         async function deleteOrder(id) {
@@ -401,6 +587,68 @@
             loadOrders();
         }
 
+        async function editOrder(id) {
+            try {
+                const res = await fetch(API + '/orders');
+                const data = await res.json();
+                const order = (data.data || []).find(o => o.id === id);
+                if (!order) { showToast('訂單不存在'); return; }
+                
+                // 獲取房源列表
+                const propsRes = await fetch(API + '/properties');
+                const propsData = await propsRes.json();
+                const properties = propsData.data || [];
+                
+                document.getElementById('modalTitle').textContent = "修改訂單";
+                document.getElementById('modalBody').innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label">選擇房源</label>
+                        <select class="input-premium" id="orderPropId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">退房時間</label>
+                        <input type="datetime-local" class="input-premium" id="orderTime" value="${order.checkout_time || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">清潔報價 (TWD)</label>
+                        <input type="number" class="input-premium" id="orderPrice" value="${order.price || 100}">
+                    </div>
+                `;
+                
+                // 填充房源下拉菜單並選中當前
+                const propSelect = document.getElementById('orderPropId');
+                propSelect.innerHTML = properties.map(p => 
+                    `<option value="${p.id}" ${p.id === order.property_id ? 'selected' : ''}>${p.name}</option>`
+                ).join('');
+                
+                document.getElementById('modalSubmit').onclick = async () => {
+                    const body = {
+                        property_id: parseInt(document.getElementById('orderPropId').value),
+                        checkout_time: document.getElementById('orderTime').value,
+                        price: parseInt(document.getElementById('orderPrice').value)
+                    };
+                    
+                    const putRes = await fetch(API + '/orders/' + id, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(body)
+                    });
+                    
+                    if (putRes.ok) {
+                        showToast('訂單已更新');
+                        closeModal();
+                        loadOrders();
+                    } else {
+                        showToast('更新失敗');
+                    }
+                };
+                
+                openModal();
+            } catch(e) {
+                showToast('載入失敗');
+            }
+        }
+
         function translateStatus(s) {
             return { 'open': '待接單', 'accepted': '工作中', 'completed': '已完成' }[s] || s;
         }
@@ -408,7 +656,86 @@
         function openModal() { document.getElementById('globalModal').classList.add('active'); }
         function closeModal() { document.getElementById('globalModal').classList.remove('active'); }
 
-        function showToast(msg) {
+        async function submitProperty() {
+            const name = document.getElementById("propName").value.trim();
+            const address = document.getElementById("propAddr").value.trim();
+            if (!name) { showToast("請輸入房源名稱"); return; }
+            if (!address) { showToast("請輸入地址"); return; }
+            const btn = document.getElementById("modalSubmit");
+            btn.disabled = true;
+            btn.textContent = "提交中...";
+            const res = await fetch(API + "/properties", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    name: name,
+                    address: address,
+                    bedrooms: parseInt(document.getElementById("propBed").value) || 1,
+                    bathrooms: parseInt(document.getElementById("propBath").value) || 1,
+                    floor: parseInt(document.getElementById("propFloor").value) || 1,
+                    area: parseInt(document.getElementById("propArea").value) || 800,
+                    host_phone: hostPhone
+                })
+            });
+            if (res.ok) { showToast("房源已添加"); closeModal(); loadProperties(); }
+            else { const err = await res.json(); showToast(err.error || "添加失敗"); btn.disabled = false; btn.textContent = "確認提交"; }
+        }
+
+                async function submitProperty() {
+            const name = document.getElementById('propName').value.trim();
+            const address = document.getElementById('propAddr').value.trim();
+            if (!name) { showToast('請輸入房源名稱'); return; }
+            if (!address) { showToast('請輸入地址'); return; }
+            const btn = document.getElementById('modalSubmit');
+            btn.disabled = true;
+            btn.textContent = '提交中...';
+            const res = await fetch(API + '/properties', { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({
+                    name: name,
+                    address: address,
+                    bedrooms: parseInt(document.getElementById('propBed').value) || 1,
+                    bathrooms: parseInt(document.getElementById('propBath').value) || 1,
+                    floor: parseInt(document.getElementById('propFloor').value) || 1,
+                    area: parseInt(document.getElementById('propArea').value) || 800,
+                    host_phone: hostPhone
+                })
+            });
+            if (res.ok) { showToast('房源已添加'); closeModal(); loadProperties(); } 
+            else { const err = await res.json(); showToast(err.error || '添加失敗'); btn.disabled = false; btn.textContent = '確認提交'; }
+        }
+
+function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        async function submitProperty() {
+            const name = document.getElementById('propName').value.trim();
+            const address = document.getElementById('propAddr').value.trim();
+            if (!name) { showToast('請輸入房源名稱'); return; }
+            if (!address) { showToast('請輸入地址'); return; }
+            const btn = document.getElementById('modalSubmit');
+            btn.disabled = true;
+            btn.textContent = '提交中...';
+            const res = await fetch(API + '/properties', { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({
+                    name: name,
+                    address: address,
+                    bedrooms: parseInt(document.getElementById('propBed').value) || 1,
+                    bathrooms: parseInt(document.getElementById('propBath').value) || 1,
+                    floor: parseInt(document.getElementById('propFloor').value) || 1,
+                    area: parseInt(document.getElementById('propArea').value) || 800,
+                    host_phone: hostPhone
+                })
+            });
+            if (res.ok) { showToast('房源已添加'); closeModal(); loadProperties(); } 
+            else { const err = await res.json(); showToast(err.error || '添加失敗'); btn.disabled = false; btn.textContent = '確認提交'; }
             const t = document.getElementById('toast');
             t.textContent = msg;
             t.classList.add('show');
@@ -417,6 +744,7 @@
 
         // 初始化
         loadOrders();
+    
     </script>
 </body>
 </html>

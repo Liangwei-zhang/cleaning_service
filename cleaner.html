@@ -248,7 +248,7 @@
                         <div class="prop-name">${o.property_name || '未命名房源'}</div>
                         <div class="price">$${o.price}</div>
                     </div>
-                    <div class="info-row">📍 ${o.property_address || '無地址資訊'}</div>
+                    <div class="info-row">📍 ${shortAddr(o)}</div>
                     <div class="info-row">🕐 退房時間: ${o.checkout_time}</div>
                     <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.property_address)}" class="map-link" target="_blank">↗️ 查看導航地圖</a>
                     <button class="btn-grab" onclick="acceptOrder(${o.id})">✋ 立即搶單</button>
@@ -268,10 +268,10 @@
                             <div class="prop-name">${o.property_name}</div>
                             <div class="price">$${o.price}</div>
                         </div>
-                        <div class="info-row">📍 ${o.property_address}</div>
+                        <div class="info-row">📍 ${fullAddr(o)}</div>
                         <div class="info-row">🕐 ${o.checkout_time}</div>
                         <div class="info-row">📊 狀態: <span class="badge badge-${o.status === 'accepted' ? 'accepted' : 'completed'}">${o.status === 'accepted' ? '進行中' : '已完成'}</span></div>
-                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.property_address)}" class="map-link" target="_blank">↗️ 查看地圖導航</a>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddr(o))}" class="map-link" target="_blank">↗️ 查看地圖導航</a>
                         ${o.status === 'accepted' ? `<button class="btn-done" onclick="completeOrder(${o.id})">✅ 我已完成清潔</button>` : ''}
                     </div>
                 `).join('') || '<div class="empty-state">尚無任務紀錄</div>';
@@ -316,6 +316,34 @@
             t.textContent = msg;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // 隱藏門牌號 - 只顯示街道、城市、省
+        function shortAddr(item) {
+            // 訂單對象
+            if (item.property_province !== undefined || item.property_city !== undefined) {
+                const parts = [];
+                if (item.property_street) parts.push(item.property_street);
+                if (item.property_city) parts.push(item.property_city);
+                if (item.property_province) parts.push(item.property_province);
+                if (parts.length > 0) return parts.join(', ');
+                // 沒有拆分字段時使用原地址
+                if (item.property_address) return item.property_address;
+            }
+            return '無地址';
+        }
+        
+        // 完整地址 - 用於導航
+        function fullAddr(item) {
+            if (item.property_province || item.property_city || item.property_street) {
+                const parts = [];
+                if (item.property_house_number) parts.push(item.property_house_number);
+                if (item.property_street) parts.push(item.property_street);
+                if (item.property_city) parts.push(item.property_city);
+                if (item.property_province) parts.push(item.property_province);
+                return parts.join(', ');
+            }
+            return item.property_address || item.address || '無地址';
         }
 
         loadStats();
