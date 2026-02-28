@@ -803,7 +803,7 @@
                         orders
                             .map(
                                 (o) => `
-                    <div class="card" onclick="${o.status === "completed" ? `viewOrderPhotos(${o.id}, '${encodeURIComponent(JSON.stringify(o.completion_photos || []))}', ${o.accepted_by_host || 0})` : ""}" style="${o.status === "completed" ? "cursor:pointer" : ""}">
+                    <div class="card" onclick="${o.status === "completed" ? `viewOrderPhotos(${o.id}, '${encodeURIComponent(JSON.stringify(o.completion_photos ? JSON.parse(o.completion_photos) : []))}', ${o.accepted_by_host || 0})` : ""}" style="${o.status === "completed" ? "cursor:pointer" : ""}">
                         <div class="card-header">
                             <span class="badge ${o.status === 'completed' && o.accepted_by_host ? 'status-completed-accepted' : 'status-' + o.status}">${translateStatus(o.status, o.accepted_by_host)}</span>
                             <div class="price-display">${o.price}</div>
