@@ -742,7 +742,11 @@
                     // 根據篩選條件過濾
                     if (filter !== "all") {
                         if (filter === "accepted_by_host") {
+                            // 已驗收：status=completed 且 accepted_by_host=1
                             orders = orders.filter(o => o.status === 'completed' && o.accepted_by_host === 1);
+                        } else if (filter === "completed") {
+                            // 待驗收：status=completed 且 accepted_by_host≠1
+                            orders = orders.filter(o => o.status === 'completed' && o.accepted_by_host !== 1);
                         } else {
                             orders = orders.filter(o => o.status === filter);
                         }
