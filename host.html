@@ -1077,11 +1077,11 @@
                 // 初始化錄音
                 initRecorder();
 
-                // 填充房源下拉菜單
+                // 填充房源下拉菜單（只顯示當前用戶的房源）
                 fetch(API + "/properties")
                     .then((r) => r.json())
                     .then((d) => {
-                        const props = d.data || [];
+                        const props = (d.data || []).filter(p => p.host_phone === hostPhone);
                         document.getElementById("orderPropId").innerHTML = props
                             .map(
                                 (p) =>
@@ -1318,10 +1318,10 @@
                         return;
                     }
 
-                    // 獲取房源列表
+                    // 獲取房源列表（只顯示當前用戶的房源）
                     const propsRes = await fetch(API + "/properties");
                     const propsData = await propsRes.json();
-                    const properties = propsData.data || [];
+                    const properties = (propsData.data || []).filter(p => p.host_phone === hostPhone);
 
                     document.getElementById("modalTitle").textContent =
                         "修改訂單";
