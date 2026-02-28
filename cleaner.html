@@ -167,6 +167,23 @@
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+        /* 完工上傳 */
+        .photo-upload-modal { position: fixed; inset: 0; background: oklch(0% 0 0 / 50%); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .photo-upload-modal.active { display: flex; }
+        .photo-upload-box { background: white; border-radius: 24px; padding: 24px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
+        .photo-upload-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; text-align: center; }
+        .photo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+        .photo-slot { aspect-ratio: 1; border-radius: 12px; border: 2px dashed #ddd; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; overflow: hidden; position: relative; background: #f9f9f9; }
+        .photo-slot.has-photo { border-style: solid; border-color: var(--primary); }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-slot .del-photo { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: #E53935; color: white; border: none; border-radius: 50%; font-size: 12px; cursor: pointer; display: none; }
+        .photo-slot.has-photo .del-photo { display: flex; align-items: center; justify-content: center; }
+        .photo-input { display: none; }
+        .photo-actions { display: flex; gap: 12px; }
+        .photo-actions button { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; border: none; }
+        .btn-photo-submit { background: var(--primary); color: white; }
+        .btn-photo-cancel { background: #f0f0f0; color: #666; }
+
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
         .empty-icon { font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.3; }
 
@@ -252,6 +269,19 @@
     </main>
 
     <div class="toast" id="toast"></div>
+
+    <!-- 完工上傳Modal -->
+    <div class="photo-upload-modal" id="photoModal">
+        <div class="photo-upload-box">
+            <div class="photo-upload-title">📸 上傳完工照片（最多5張）</div>
+            <div class="photo-grid" id="photoGrid"></div>
+            <input type="file" class="photo-input" id="photoInput" accept="image/*" multiple>
+            <div class="photo-actions">
+                <button class="btn-photo-submit" onclick="submitCompletion()">✅ 確認提交</button>
+                <button class="btn-photo-cancel" onclick="closePhotoModal()">取消</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
@@ -369,6 +399,7 @@
                             </div>
                         ` : ''}
                         <div class="info-row">📊 狀態: <span class="badge badge-${o.status === 'accepted' ? 'accepted' : 'completed'}">${o.status === 'accepted' ? '進行中' : '已完成'}</span></div>
+                        ${o.status === 'completed' ? renderCompletionPhotos(o.completion_photos) : ''}
                         <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddr(o))}" class="map-link" target="_blank">↗️ 查看地圖導航</a>
                         ${o.status === 'accepted' ? `<button class="btn-done" onclick="completeOrder(${o.id})">✅ 我已完成清潔</button>` : ''}
                     </div>
@@ -394,26 +425,104 @@
             } catch(e) { showToast('請求失敗'); }
         }
 
-        async function completeOrder(id) {
-            if(!confirm('確認已完成所有清潔流程？')) return;
-            haptic();
-            try {
-                await fetch(`${API}/orders/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'completed', cleaner_id: parseInt(cleanerId) })
-                });
-                showToast('✅ 任務已完成！');
-                loadMyOrders();
-                loadStats();
-            } catch(e) { showToast('提交失敗'); }
-        }
-
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // 完工照片上傳
+        let currentOrderId = null;
+        let uploadedPhotos = [];
+        
+        function completeOrder(id) {
+            console.log('completeOrder called with id:', id);
+            currentOrderId = id;
+            uploadedPhotos = [];
+            renderPhotoGrid();
+            document.getElementById('photoModal').classList.add('active');
+        }
+        
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.remove('active');
+            currentOrderId = null;
+            uploadedPhotos = [];
+        }
+        
+        function renderPhotoGrid() {
+            const grid = document.getElementById('photoGrid');
+            let html = '';
+            for (let i = 0; i < 5; i++) {
+                if (uploadedPhotos[i]) {
+                    html += `<div class="photo-slot has-photo">
+                        <img src="${uploadedPhotos[i]}">
+                        <button class="del-photo" onclick="deletePhoto(${i})">×</button>
+                    </div>`;
+                } else {
+                    html += `<div class="photo-slot" onclick="triggerPhotoUpload(${i})">+</div>`;
+                }
+            }
+            grid.innerHTML = html;
+        }
+        
+        function triggerPhotoUpload(index) {
+            const input = document.getElementById('photoInput');
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        uploadedPhotos[index] = ev.target.result;
+                        renderPhotoGrid();
+                    };
+                    reader.readAsDataURL(file);
+                }
+                input.value = '';
+            };
+            input.click();
+        }
+        
+        function deletePhoto(index) {
+            uploadedPhotos.splice(index, 1);
+            renderPhotoGrid();
+        }
+        
+        async function submitCompletion() {
+            const orderId = currentOrderId;
+            console.log('submitCompletion called, currentOrderId:', orderId);
+            if (!orderId) {
+                showToast('訂單ID無效，請重試');
+                return;
+            }
+            // Save photos BEFORE closing modal
+            const validPhotos = uploadedPhotos.filter(p => p && p.length > 0);
+            console.log('Valid photos:', validPhotos.length);
+            
+            // Close modal
+            document.getElementById('photoModal').classList.remove('active');
+            
+            console.log('Submitting completion, orderId:', orderId, 'photos:', validPhotos.length);
+            showToast('正在提交...');
+            try {
+                const bodyData = { 
+                    status: 'completed', 
+                    cleaner_id: parseInt(cleanerId),
+                    completion_photos: JSON.stringify(validPhotos)
+                };
+                const res = await fetch(`${API}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+                if (res.ok) {
+                    showToast('✅ 任務已完成！');
+                    loadMyOrders();
+                    loadStats();
+                } else {
+                    showToast('提交失敗');
+                }
+            } catch(e) { showToast('提交失敗'); }
         }
 
         function playVoice(btn, url) {
@@ -460,6 +569,25 @@
                 return parts.join(', ');
             }
             return item.property_address || item.address || '無地址';
+        }
+        
+        function renderCompletionPhotos(photosJson) {
+            try {
+                let photos = typeof photosJson === 'string' ? JSON.parse(photosJson) : photosJson;
+                if (!photos || !Array.isArray(photos)) photos = [];
+                photos = photos.filter(p => p && p.length > 0); // Filter empty
+                if (photos.length === 0) return '';
+                return `<div style="margin-top:12px;">
+                    <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:8px;">📸 完工照片</div>
+                    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;">
+                        ${photos.map(p => `<img src="${p}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;flex-shrink:0;cursor:pointer;" onclick="viewPhoto('${p}')">`).join('')}
+                    </div>
+                </div>`;
+            } catch(e) { return ''; }
+        }
+        
+        function viewPhoto(url) {
+            window.open(url, '_blank');
         }
 
         loadStats();

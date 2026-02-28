@@ -676,10 +676,12 @@ class CleaningAPI:
         if data.get("status"):
             updates.append("status = ?")
             params.append(data["status"])
+            print(f"DEBUG: setting status to {data['status']}")
         
         if data.get("cleaner_id"):
             updates.append("assigned_cleaner_id = ?")
             params.append(data["cleaner_id"])
+            print(f"DEBUG: setting cleaner_id to {data['cleaner_id']}")
         
         # voice_url 支持更新和刪除
         if "voice_url" in data:
@@ -689,6 +691,18 @@ class CleaningAPI:
             elif data["voice_url"]:
                 updates.append("voice_url = ?")
                 params.append(data["voice_url"])
+        
+        # completion_photos 支持更新
+        if "completion_photos" in data:
+            photos_str = data["completion_photos"]
+            print(f"DEBUG: completion_photos received, length: {len(photos_str) if photos_str else 0}")
+            updates.append("completion_photos = ?")
+            params.append(photos_str)
+        
+        # accepted_by_host 支持更新
+        if "accepted_by_host" in data:
+            updates.append("accepted_by_host = ?")
+            params.append(data["accepted_by_host"])
         
         print(f"DEBUG: updates={updates}, params={params}")
         

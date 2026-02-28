@@ -113,7 +113,8 @@
         }
         .status-open { background: oklch(96% 0.1 85); color: oklch(50% 0.15 45); }
         .status-accepted { background: oklch(93% 0.08 240); color: oklch(55% 0.15 250); }
-        .status-completed { background: oklch(94% 0.08 160); color: oklch(50% 0.15 155); }
+        .status-completed { background: oklch(96% 0.15 45); color: oklch(55% 0.18 45); }
+        .status-accepted_by_host { background: oklch(94% 0.08 160); color: oklch(50% 0.15 155); }
 
         .property-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
         .meta-tag {
@@ -308,6 +309,18 @@
         </div>
     </div>
 
+    <!-- 完工照片画廊Modal -->
+    <div class="modal" id="photoGalleryModal" style="background:rgba(0,0,0,0.9);">
+        <div style="width:100%;height:100%;display:flex;flex-direction:column;">
+            <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="color:white;font-size:18px;font-weight:800;">📸 完工照片</span>
+                <button onclick="closePhotoGallery()" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;">✕</button>
+            </div>
+            <div id="photoGalleryContent" style="flex:1;overflow:auto;padding:16px;"></div>
+            <div id="photoGalleryActions" style="padding:16px;"></div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -339,7 +352,7 @@
                 const orders = (data.data || []).filter(o => o.host_phone === hostPhone);
                 
                 document.getElementById('hostOrdersList').innerHTML = orders.map(o => `
-                    <div class="card">
+                    <div class="card" onclick="${o.status === 'completed' ? `viewOrderPhotos(${o.id}, '${encodeURIComponent(JSON.stringify(o.completion_photos || []))}', ${o.accepted_by_host || 0})` : ''}" style="${o.status === 'completed' ? 'cursor:pointer' : ''}">
                         <div class="card-header">
                             <span class="badge status-${o.status}">${translateStatus(o.status)}</span>
                             <div class="price-display">${o.price}</div>
@@ -373,6 +386,13 @@
                                     🎤 按住錄音（最長20秒）
                                 </button>
                             `}
+                        </div>
+                        ` : ''}
+                        
+                        ${o.status === 'completed' ? `
+                        <div class="completion-section">
+                            <div class="info-row" style="margin-top:12px;">📸 完工照片</div>
+                            ${renderHostCompletionPhotos(o.completion_photos, o.id, o.accepted_by_host || 0)}
                         </div>
                         ` : ''}
                         
@@ -791,7 +811,108 @@
         }
 
         function translateStatus(s) {
-            return { 'open': '待接單', 'accepted': '工作中', 'completed': '已完成' }[s] || s;
+            return { 'open': '待接單', 'accepted': '工作中', 'completed': '待驗收', 'accepted_by_host': '已驗收' }[s] || s;
+        }
+        
+        function renderHostCompletionPhotos(photosJson, orderId, acceptedByHost) {
+            if (!photosJson) return '<div style="color:#999;font-size:13px;">暫無照片</div>';
+            try {
+                const photos = typeof photosJson === 'string' ? JSON.parse(photosJson) : photosJson;
+                if (!photos || photos.length === 0) return '<div style="color:#999;font-size:13px;">暫無照片</div>';
+                const accepted = acceptedByHost === 1;
+                return `
+                    <div style="display:flex;gap:6px;overflow-x:auto;padding:8px 0;">
+                        ${photos.map(p => `<img src="${p}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;flex-shrink:0;" onclick="viewPhoto('${p}')">`).join('')}
+                    </div>
+                    ${accepted ? `
+                        <div style="padding:12px;background:#E8F5E9;border-radius:12px;text-align:center;color:#2E7D32;font-weight:700;">
+                            ✅ 已驗收
+                        </div>
+                    ` : `
+                        <button class="btn-accept" onclick="acceptCompletion(${orderId})" style="width:100%;padding:14px;margin-top:8px;border-radius:14px;border:none;background:var(--primary);color:white;font-weight:700;font-size:15px;cursor:pointer;">
+                            ✅ 驗收完成
+                        </button>
+                    `}
+                `;
+            } catch(e) { return '<div style="color:#999;">載入失敗</div>'; }
+        }
+        
+        async function acceptCompletion(orderId) {
+            if (!confirm('確認驗收此訂單？')) return;
+            try {
+                const res = await fetch(`${API}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accepted_by_host: 1 })
+                });
+                if (res.ok) {
+                    showToast('✅ 驗收成功！');
+                    loadOrders();
+                } else {
+                    showToast('驗收失敗');
+                }
+            } catch(e) { showToast('驗收失敗'); }
+        }
+        
+        function viewPhoto(url) {
+            window.open(url, '_blank');
+        }
+        
+        let currentViewOrderId = null;
+        
+        function viewOrderPhotos(orderId, photosJson, acceptedByHost) {
+            console.log('viewOrderPhotos:', orderId, photosJson, acceptedByHost);
+            currentViewOrderId = orderId;
+            let photos = [];
+            try {
+                // Handle both string and object
+                if (!photosJson) {
+                    photos = [];
+                } else if (typeof photosJson === 'string') {
+                    const decoded = decodeURIComponent(photosJson);
+                    const parsed = JSON.parse(decoded);
+                    photos = typeof parsed === 'string' ? JSON.parse(parsed) : parsed;
+                } else if (Array.isArray(photosJson)) {
+                    photos = photosJson;
+                } else if (typeof photosJson === 'object') {
+                    // Already parsed
+                    photos = Object.values(photosJson);
+                }
+            } catch(e) { 
+                console.error('Parse photos error:', e);
+                photos = []; 
+            }
+            
+            console.log('Parsed photos:', photos);
+            
+            // Filter empty
+            if (photos && Array.isArray(photos)) {
+                photos = photos.filter(p => p && p.length > 0);
+            }
+            
+            const content = document.getElementById('photoGalleryContent');
+            const actions = document.getElementById('photoGalleryActions');
+            
+            if (!photos || !Array.isArray(photos) || photos.length === 0) {
+                content.innerHTML = '<div style="color:white;text-align:center;padding:40px;">暫無照片</div>';
+            } else {
+                content.innerHTML = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+                    ${photos.map(p => `<img src="${p}" style="width:100%;border-radius:12px;cursor:pointer;" onclick="viewPhoto('${p}')">`).join('')}
+                </div>`;
+            }
+            
+            if (acceptedByHost === 1) {
+                actions.innerHTML = `<div style="padding:16px;background:#E8F5E9;border-radius:16px;text-align:center;color:#2E7D32;font-weight:700;font-size:16px;">✅ 已驗收</div>`;
+            } else {
+                actions.innerHTML = `<button onclick="acceptCompletion(${orderId});closePhotoGallery();" style="width:100%;padding:18px;border-radius:16px;border:none;background:var(--primary);color:white;font-weight:700;font-size:16px;cursor:pointer;">✅ 驗收完成</button>`;
+            }
+            
+            document.getElementById('photoGalleryModal').classList.add('active');
+        }
+        
+        function closePhotoGallery() {
+            document.getElementById('photoGalleryModal').classList.remove('active');
+            currentViewOrderId = null;
         }
 
         function openModal() { document.getElementById('globalModal').classList.add('active'); }
