@@ -176,8 +176,6 @@
 <!-- 浮動新增按鈕 -->
 <button class="fab" onclick="openAdd(currentTab)" style="position:fixed; bottom:100px; right:24px; width:60px; height:60px; border-radius:50%; background:var(--midnight); color:white; border:none; font-size:28px; font-weight:300; box-shadow:0 4px 16px rgba(0,0,0,0.3); z-index:1000; cursor:pointer;">+</button>
 
-<main id="listContainer" class="list-wrap"></main>
-
 <div id="editModal" class="modal">
     <div class="modal-body">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
@@ -216,6 +214,13 @@
         currentTab = tab;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
+        
+        // 訂單管理時隱藏新增按鈕
+        const addBtn = document.querySelector('.fab');
+        if (addBtn) {
+            addBtn.style.display = tab === 'orders' ? 'none' : 'block';
+        }
+        
         loadData();
     }
 
