@@ -523,14 +523,15 @@ class CleaningAPI:
         
         conn = self.db._get_connection()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO properties (name, address, postal_code, bedrooms, bathrooms, floor, area, province, city, street, house_number, cleaning_time_minutes, cleaning_checklist, notes)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        cursor.execute("""INSERT INTO properties (name, address, postal_code, bedrooms, bathrooms, floor, area, province, city, street, house_number, host_phone, cleaning_time_minutes, cleaning_checklist, notes)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                      (data.get("name"), data.get("address"), 
                       data.get("postal_code", ""),
                       data.get("bedrooms", 1), data.get("bathrooms", 1),
                       data.get("floor", 0), data.get("area", 0),
                       data.get("province", ""), data.get("city", ""),
                       data.get("street", ""), data.get("house_number", ""),
+                      data.get("host_phone", ""),
                       data.get("cleaning_time_minutes", 120), 
                       data.get("cleaning_checklist", ""), data.get("notes", "")))
         prop_id = cursor.lastrowid
