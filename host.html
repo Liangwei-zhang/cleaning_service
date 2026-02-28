@@ -31,23 +31,42 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background: var(--bg-main);
+            /*background: var(--bg-main);
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: var(--midnight);
             line-height: 1.5;
-            padding-bottom: 120px; /* 為導航留空 */
-            -webkit-font-smoothing: antialiased;
+            padding-bottom: 120px;
+            -webkit-font-smoothing: antialiased;*/
+
+            background: var(--bg-canvas);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--midnight);
+            padding-bottom: env(safe-area-inset-bottom);
+            background-image: radial-gradient(circle at 0% 0%, oklch(85% 0.08 250 / 20%), transparent 40%), radial-gradient(circle at 100% 100%, oklch(85% 0.12 320 / 15%), transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+
         }
 
         /* --- 頂部玻璃感導航 --- */
         header {
-            position: sticky; top: 0; z-index: 1000;
+            /*position: sticky; top: 0; z-index: 1000;
             background: oklch(100% 0 0 / 75%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 18px 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid oklch(0% 0 0 / 5%);
+            border-bottom: 1px solid oklch(0% 0 0 / 5%);*/
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         header h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
         
@@ -77,7 +96,10 @@
         .card:active { transform: scale(0.985); }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .card-title { font-size: 18px; font-weight: 800; color: var(--midnight); flex: 1; }
+        .card-title { 
+            font-size: 18px; font-weight: 800; color: var(--midnight); flex: 1; 
+            word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;
+        }
         
         .price-display { font-size: 22px; font-weight: 850; color: var(--midnight); }
         .price-display::before { content: '$'; font-size: 14px; margin-right: 2px; color: var(--text-muted); }
@@ -156,9 +178,14 @@
         .form-group { margin-bottom: 20px; }
         .form-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); margin-left: 4px; }
         .input-premium {
-            width: 100%; padding: 16px; background: var(--bg-main);
+            width: 100%; padding: 16px; background: #f5f5f5;
             border: 2px solid transparent; border-radius: var(--radius-md);
             font-size: 16px; font-weight: 600; transition: 0.3s;
+            word-wrap: break-word; overflow-wrap: break-word;
+            color: var(--midnight);
+        }
+        .input-premium::placeholder {
+            color: #999;
         }
         .input-premium:focus { background: white; border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-light); }
 
@@ -176,6 +203,74 @@
             opacity: 0; transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1); z-index: 3000;
         }
         .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        /* 錄音按鈕 */
+        .voice-record {
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            padding: 20px; background: var(--bg-main); border-radius: var(--radius-md);
+            margin-bottom: 20px;
+        }
+        .record-btn {
+            width: 72px; height: 72px; border-radius: 50%; border: none;
+            background: linear-gradient(135deg, #FF6B6B, #EE5A5A);
+            color: white; font-size: 28px; cursor: pointer;
+            box-shadow: 0 8px 24px rgba(238, 90, 90, 0.4);
+            transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .record-btn.recording {
+            background: linear-gradient(135deg, #FF4757, #FF3838);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .record-hint { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .audio-preview {
+            display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+            background: white; border-radius: 12px; width: 100%;
+            border: 1.5px solid oklch(90% 0.02 240);
+        }
+        .audio-preview audio { flex: 1; height: 36px; }
+        .audio-preview .del-audio {
+            padding: 8px 12px; border-radius: 8px; border: none;
+            background: #FFF1F2; color: #E11D48; font-weight: 700; cursor: pointer;
+        }
+        
+        /* 訂單內錄音按鈕 */
+        .voice-record-btn {
+            width: 100%; padding: 16px; border-radius: 14px; 
+            border: 2px dashed oklch(80% 0.05 280);
+            background: transparent; color: var(--text-muted); 
+            font-weight: 700; font-size: 14px; cursor: pointer;
+            transition: all 0.3s; user-select: none; -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .voice-record-btn.recording {
+            border-style: solid; background: #FFEBEE; color: #E53935;
+            animation: pulse 1s infinite;
+        }
+        
+        /* 錄音預覽 */
+        .voice-preview-box {
+            padding: 16px; background: white; border-radius: 14px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        /* 已保存的錄音 */
+        .voice-exist {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .voice-exist audio {
+            width: 100%; height: 40px;
+        }
+        .voice-del-btn {
+            width: 100%; padding: 16px; border-radius: 14px; border: none;
+            background: #FFF1F2; color: #E53935; font-size: 16px; font-weight: 700;
+            cursor: pointer; touch-action: manipulation;
+        }
+        .voice-del-btn:active { background: #FFCDD2; }
     </style>
 </head>
 <body>
@@ -252,6 +347,35 @@
                         <div class="card-title">${o.property_name || '未命名房源'}</div>
                         <div class="info-row">📍 ${o.property_address || '無地址資訊'}</div>
                         <div class="info-row">🕐 退房時間: ${o.checkout_time}</div>
+                        
+                        ${o.status === 'open' ? `
+                        <div class="order-voice">
+                            <div class="order-voice-label">🎤 語音備註</div>
+                            ${o.voice_url ? `
+                                <div class="voice-exist">
+                                    <audio controls src="${o.voice_url}"></audio>
+                                    <button class="voice-del-btn" onclick="deleteVoice(${o.id})">🗑️ 刪除錄音</button>
+                                </div>
+                            ` : `
+                                <div class="voice-preview-box" id="preview-${o.id}" style="display:none; margin-bottom:10px;">
+                                    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">🔊 預覽錄音：</div>
+                                    <audio controls id="previewAudio-${o.id}" style="width:100%;"></audio>
+                                    <div style="display:flex;gap:8px;margin-top:8px;">
+                                        <button class="voice-save-btn" onclick="saveVoice(${o.id})" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">✅ 確認保存</button>
+                                        <button class="voice-cancel-btn" onclick="cancelVoice(${o.id})" style="padding:12px;border-radius:10px;border:1px solid #ddd;background:white;color:#666;font-weight:700;cursor:pointer;">✕ 取消</button>
+                                    </div>
+                                </div>
+                                <button class="voice-record-btn" id="recordBtn-${o.id}" 
+                                    onmousedown="event.preventDefault();startRecord(${o.id})" 
+                                    onmouseup="event.preventDefault();stopRecord(${o.id})" 
+                                    ontouchstart="event.preventDefault();startRecord(${o.id})" 
+                                    ontouchend="event.preventDefault();stopRecord(${o.id})">
+                                    🎤 按住錄音（最長20秒）
+                                </button>
+                            `}
+                        </div>
+                        ` : ''}
+                        
                         ${o.status === 'open' ? `
                             <div class="action-row">
                                 <button class="btn-mini btn-edit" onclick="editOrder(${o.id})">✏️ 編輯</button>
@@ -431,7 +555,23 @@
                     <label class="form-label">清潔報價 (TWD)</label>
                     <input type="number" class="input-premium" id="orderPrice" placeholder="1200">
                 </div>
+                <div class="form-group">
+                    <label class="form-label">語音備註（可選）</label>
+                    <div class="voice-record">
+                        <button type="button" class="record-btn" id="recordBtn" onmousedown="startRecord()" onmouseup="stopRecord()" ontouchstart="startRecord()" ontouchend="stopRecord()">🎤</button>
+                        <span class="record-hint" id="recordHint">按住說話</span>
+                        <div class="audio-preview" id="audioPreview" style="display:none">
+                            <audio id="audioPreviewPlayer" controls></audio>
+                            <button type="button" class="del-audio" onclick="deleteAudio()">刪除</button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="orderVoice">
+                </div>
             `;
+            
+            // 初始化錄音
+            initRecorder();
+            
             // 填充房源下拉菜單
             fetch(API + '/properties').then(r => r.json()).then(d => {
                 const props = d.data || [];
@@ -444,7 +584,8 @@
                     checkout_time: document.getElementById('orderTime').value,
                     price: parseInt(document.getElementById('orderPrice').value),
                     host_phone: hostPhone,
-                    status: 'open'
+                    status: 'open',
+                    voice_url: document.getElementById('orderVoice').value || null
                 };
                 const res = await fetch(`${API}/orders`, { 
                     method: 'POST', 
@@ -744,6 +885,293 @@ function showToast(msg) {
 
         // 初始化
         loadOrders();
+
+        // 錄音功能 - 訂單語音備註
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let currentRecordOrderId = null;
+        let recordTimeout = null;
+        let isRecording = false;
+        
+        async function initRecorder() {
+            // 如果已經初始化過，直接返回
+            if (mediaRecorder) return;
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data && event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    console.log('錄音停止, chunks:', audioChunks.length);
+                    const targetOrderId = currentRecordOrderId;
+                    currentRecordOrderId = null;
+                    
+                    if (audioChunks.length === 0) {
+                        const btn = document.getElementById(`recordBtn-${targetOrderId}`);
+                        if (btn) {
+                            btn.textContent = '🎤 按住錄音（最長20秒）';
+                            btn.disabled = false;
+                        }
+                        return;
+                    }
+                    
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = [];
+                    
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64 = reader.result;
+                        console.log('音頻長度:', base64.length);
+                        if (targetOrderId && base64) {
+                            // 顯示預覽
+                            showVoicePreview(targetOrderId, base64);
+                        }
+                    };
+                    reader.readAsDataURL(audioBlob);
+                };
+                
+                console.log('麥克風已初始化');
+            } catch(e) {
+                console.error('麥克風權限被拒絕', e);
+                throw e;
+            }
+        }
+        
+        function startRecord(orderId) {
+            // 防止重複觸發（mousedown + touchstart 同時觸發）
+            if (isRecording) return;
+            
+            // 如果還沒初始化麥克風，嘗試初始化
+            if (!mediaRecorder) {
+                console.log('首次點擊，初始化麥克風...');
+                showToast('正在請求麥克風權限...');
+                initRecorder().then(() => {
+                    if (!mediaRecorder) {
+                        showToast('無法訪問麥克風，請允許權限');
+                        isRecording = false;
+                        return;
+                    }
+                    console.log('麥克風初始化成功，開始錄音');
+                    doStartRecord(orderId);
+                }).catch(e => {
+                    showToast('無法訪問麥克風');
+                    isRecording = false;
+                });
+                return;
+            }
+            
+            doStartRecord(orderId);
+        }
+        
+        function doStartRecord(orderId) {
+            isRecording = true;
+            currentRecordOrderId = orderId;
+            const btn = document.getElementById(`recordBtn-${orderId}`);
+            
+            if (!btn) {
+                isRecording = false;
+                return;
+            }
+            
+            audioChunks = [];
+            try {
+                // 每100ms收集一次數據
+                mediaRecorder.start(100);
+                console.log('開始錄音');
+            } catch(e) {
+                console.error('錄音失敗:', e);
+                showToast('錄音失敗: ' + e.message);
+                isRecording = false;
+                btn.textContent = '🎤 按住錄音（最長20秒）';
+                btn.disabled = false;
+                return;
+            }
+            btn.classList.add('recording');
+            btn.textContent = '🔴 錄音中...';
+            
+            // 20秒自動停止
+            recordTimeout = setTimeout(() => {
+                stopRecord(orderId);
+            }, 20000);
+        }
+        
+        function stopRecord(orderId) {
+            if (!isRecording) return;
+            isRecording = false;
+            
+            // 清除計時器
+            if (recordTimeout) {
+                clearTimeout(recordTimeout);
+                recordTimeout = null;
+            }
+            
+            const btn = document.getElementById(`recordBtn-${orderId}`);
+            if (btn) {
+                btn.classList.remove('recording');
+                btn.textContent = '⏳ 處理中...';
+                btn.disabled = true;
+            }
+            
+            console.log('停止錄音, 當前狀態:', mediaRecorder?.state);
+            
+            // 保存orderId供onstop回調使用
+            const targetOrderId = currentRecordOrderId;
+            
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                try {
+                    // 請求最後的數據
+                    mediaRecorder.requestData();
+                    mediaRecorder.stop();
+                } catch(e) {
+                    console.error('停止錄音失敗:', e);
+                    // 如果停止失敗，手動處理
+                    if (btn) {
+                        btn.textContent = '🎤 按住錄音（最長20秒）';
+                        btn.disabled = false;
+                    }
+                }
+            } else {
+                // 如果沒有在錄音
+                if (btn) {
+                    btn.textContent = '🎤 按住錄音（最長20秒）';
+                    btn.disabled = false;
+                }
+            }
+        }
+        
+        async function updateOrderVoice(orderId, voiceBase64) {
+            console.log('更新訂單語音, orderId:', orderId, 'length:', voiceBase64?.length);
+            if (!voiceBase64 || voiceBase64.length < 100) {
+                showToast('錄音無效，請重試');
+                resetButton(orderId);
+                return;
+            }
+            try {
+                const res = await fetch(`${API}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ voice_url: voiceBase64 })
+                });
+                console.log('API響應:', res.status);
+                if (res.ok) {
+                    showToast('🎤 語音備註已保存');
+                    loadOrders();
+                } else {
+                    const err = await res.json();
+                    console.error('保存失敗:', err);
+                    showToast('保存失敗: ' + (err.error || ''));
+                    resetButton(orderId);
+                }
+            } catch(e) {
+                console.error('保存失敗:', e);
+                showToast('保存失敗');
+                resetButton(orderId);
+            }
+        }
+        
+        function resetButton(orderId) {
+            const btn = document.getElementById(`recordBtn-${orderId}`);
+            if (btn) {
+                btn.textContent = '🎤 按住錄音（最長20秒）';
+                btn.disabled = false;
+            }
+        }
+        
+        // 顯示錄音預覽
+        let pendingVoiceData = {};
+        
+        function showVoicePreview(orderId, base64) {
+            const btn = document.getElementById(`recordBtn-${orderId}`);
+            const preview = document.getElementById(`preview-${orderId}`);
+            const previewAudio = document.getElementById(`previewAudio-${orderId}`);
+            
+            if (btn) btn.style.display = 'none';
+            if (preview) {
+                preview.style.display = 'block';
+                previewAudio.src = base64;
+            }
+            
+            // 保存待提交的音頻數據
+            pendingVoiceData[orderId] = base64;
+        }
+        
+        // 確認保存錄音
+        async function saveVoice(orderId) {
+            const base64 = pendingVoiceData[orderId];
+            if (!base64) {
+                showToast('沒有錄音數據');
+                return;
+            }
+            
+            console.log('saveVoice called, orderId:', orderId, 'base64 length:', base64.length);
+            console.log('Sending to API:', `${API}/orders/${orderId}`);
+            
+            try {
+                const res = await fetch(`${API}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ voice_url: base64 })
+                });
+                console.log('Response status:', res.status);
+                const result = await res.json();
+                console.log('Response:', result);
+                
+                if (res.ok) {
+                    showToast('🎤 語音備註已保存');
+                    delete pendingVoiceData[orderId];
+                    loadOrders();
+                } else {
+                    showToast('保存失敗: ' + (result.error || ''));
+                }
+            } catch(e) {
+                console.error('保存失敗:', e);
+                showToast('保存失敗');
+            }
+        }
+        
+        // 取消錄音
+        function cancelVoice(orderId) {
+            delete pendingVoiceData[orderId];
+            
+            const btn = document.getElementById(`recordBtn-${orderId}`);
+            const preview = document.getElementById(`preview-${orderId}`);
+            
+            if (preview) preview.style.display = 'none';
+            if (btn) {
+                btn.style.display = 'block';
+                btn.textContent = '🎤 按住錄音（最長20秒）';
+                btn.disabled = false;
+            }
+        }
+        
+        async function deleteVoice(orderId) {
+            if (!confirm('確定要刪除這段語音備註嗎？')) return;
+            try {
+                const res = await fetch(`${API}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ voice_url: null })
+                });
+                if (res.ok) {
+                    showToast('語音已刪除');
+                    loadOrders();
+                } else {
+                    showToast('刪除失敗');
+                }
+            } catch(e) {
+                showToast('刪除失敗');
+            }
+        }
+
+        // 初始化
+        loadOrders();
+        initRecorder(); // 初始化麥克風
     
     </script>
 </body>

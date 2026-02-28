@@ -204,8 +204,11 @@ class CleaningAPI:
             if len(parts) >= 4:
                 try:
                     order_id = int(parts[3])
-                    return self._update_order(order_id, json.loads(body) if body else {})
-                except:
+                    data = json.loads(body) if body else {}
+                    print(f"PUT /orders/{order_id}, body keys: {list(data.keys())}")
+                    return self._update_order(order_id, data)
+                except Exception as e:
+                    print(f"Error in PUT: {e}")
                     pass
         
         if path.startswith("/api/orders/") and method == "DELETE":
@@ -598,10 +601,10 @@ class CleaningAPI:
         cursor = conn.cursor()
         
         cursor.execute("""
-            INSERT INTO orders (property_id, host_name, host_phone, checkout_time, price, status)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO orders (property_id, host_name, host_phone, checkout_time, price, status, voice_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (data.get("property_id"), data.get("host_name", ""), data.get("host_phone", ""),
-              data.get("checkout_time"), data.get("price", 100), "open"))
+              data.get("checkout_time"), data.get("price", 100), "open", data.get("voice_url")))
         
         order_id = cursor.lastrowid
         conn.commit()
@@ -650,7 +653,9 @@ class CleaningAPI:
         return {"message": "Order completed"}
     
     def _update_order(self, order_id, data):
-        print(f"DEBUG: _update_order called with order_id={order_id}, data={data}")
+        print(f"DEBUG: _update_order called with order_id={order_id}, data keys={list(data.keys())}")
+        print(f"DEBUG: voice_url present: {'voice_url' in data}, value: {data.get('voice_url')[:50] if data.get('voice_url') else None}...")
+        
         conn = self.db._get_connection()
         cursor = conn.cursor()
         updates = []
@@ -675,6 +680,15 @@ class CleaningAPI:
         if data.get("cleaner_id"):
             updates.append("assigned_cleaner_id = ?")
             params.append(data["cleaner_id"])
+        
+        # voice_url 支持更新和刪除
+        if "voice_url" in data:
+            if data["voice_url"] is None:
+                updates.append("voice_url = ?")
+                params.append(None)
+            elif data["voice_url"]:
+                updates.append("voice_url = ?")
+                params.append(data["voice_url"])
         
         print(f"DEBUG: updates={updates}, params={params}")
         

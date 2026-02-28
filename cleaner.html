@@ -25,18 +25,26 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background: var(--bg-main);
+            /*background: var(--bg-main);
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: var(--text-main);
-            padding-top: 90px; /* 為固定頂部預留空間 */
+            padding-top: 90px; 
             padding-bottom: 60px;
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.5;*/
+
+            background: var(--bg-canvas);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--midnight);
+            padding-bottom: env(safe-area-inset-bottom);
+            background-image: radial-gradient(circle at 0% 0%, oklch(85% 0.08 250 / 20%), transparent 40%), radial-gradient(circle at 100% 100%, oklch(85% 0.12 320 / 15%), transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
 
         /* 頂部標題：固定頂部 + 玻璃擬態 */
         header {
-            position: fixed;
+            /*position: fixed;
             top: 0; left: 0; right: 0;
             padding: 16px 20px;
             display: flex; justify-content: space-between; align-items: center;
@@ -44,7 +52,13 @@
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1.5px solid var(--glass-border);
-            z-index: 1000;
+            z-index: 1000;*/ 
+            position: sticky; top: 0; z-index: 100;
+            padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex; justify-content: space-between; align-items: center;
         }
         header h1 { 
             font-size: 22px; font-weight: 900; letter-spacing: -1px; 
@@ -81,6 +95,18 @@
         .nav-tab.active { 
             background: white; color: var(--text-main); 
             box-shadow: 0 10px 20px oklch(0% 0 0 / 8%);
+        }
+
+        /* 排序工具欄 */
+        .sort-bar {
+            display: flex; align-items: center; gap: 10px; padding: 0 20px 16px;
+        }
+        .sort-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+        .sort-select {
+            flex: 1; padding: 10px 14px; border-radius: 12px; border: 1.5px solid oklch(0% 0 0 / 8%);
+            background: white; font-size: 14px; font-weight: 700; color: var(--text-main);
+            appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center;
         }
 
         /* 訂單卡片 */
@@ -148,15 +174,30 @@
         .badge-accepted { background: #E0F2FE; color: #0369A1; }
         .badge-completed { background: #D1FAE5; color: #059669; }
 
+        /* 語音播放 */
+        .voice-player {
+            display: flex; align-items: center; gap: 10px; margin-top: 16px;
+            padding: 14px 16px; background: oklch(96% 0.05 280);
+            border-radius: 14px; border: 1.5px solid oklch(90% 0.02 280);
+        }
+        .voice-btn {
+            width: 40px; height: 40px; border-radius: 50%; border: none;
+            background: var(--primary); color: white; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .voice-btn.playing { animation: pulse 1s infinite; }
+        .voice-player audio { flex: 1; height: 32px; }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1>SmartClean CP</h1>
-        <button class="logout-btn" onclick="logout()">登出</button>
+        <div class="logo">接单大厅<span style="color:var(--primary)">CP</span></div>
+        <button onclick="location.href='index.html'" style="border:none; background:none; font-weight:700; opacity:0.5;">登出系統</button>
     </header>
-
+    <br>
     <div class="stats-grid">
         <div class="stat-card">
             <span class="stat-val" id="statPending">0</span>
@@ -183,9 +224,28 @@
         </button>
     </nav>
 
+    <div class="sort-bar" id="sortBar" style="display:none">
+        <select class="sort-select" id="sortType" onchange="loadOpenOrders()">
+            <option value="price">💰 金額</option>
+            <option value="time">🕐 時間</option>
+        </select>
+        <select class="sort-select" id="sortOrder" onchange="loadOpenOrders()">
+            <option value="desc">從高到低 ↓</option>
+            <option value="asc">從低到高 ↑</option>
+        </select>
+    </div>
+
     <main id="pageOpen">
         <div id="openOrdersList"></div>
     </main>
+
+    <div class="sort-bar" id="myTaskBar" style="display:none">
+        <select class="sort-select" id="myTaskFilter" onchange="loadMyOrders()">
+            <option value="all">📋 全部</option>
+            <option value="accepted">🔄 進行中</option>
+            <option value="completed">✅ 已完成</option>
+        </select>
+    </div>
 
     <main id="pageMy" style="display:none">
         <div id="myOrdersList"></div>
@@ -209,6 +269,8 @@
             document.getElementById(`nav${page.charAt(0).toUpperCase() + page.slice(1)}`).classList.add('active');
             document.getElementById('pageOpen').style.display = page === 'open' ? 'block' : 'none';
             document.getElementById('pageMy').style.display = page === 'my' ? 'block' : 'none';
+            document.getElementById('sortBar').style.display = page === 'open' ? 'flex' : 'none';
+            document.getElementById('myTaskBar').style.display = page === 'my' ? 'flex' : 'none';
             page === 'open' ? loadOpenOrders() : loadMyOrders();
         }
 
@@ -234,7 +296,23 @@
             try {
                 const res = await fetch(API + '/orders');
                 const data = await res.json();
-                const orders = (data.data || []).filter(o => o.status === 'open' && o.assigned_cleaner_id === null);
+                let orders = (data.data || []).filter(o => o.status === 'open' && o.assigned_cleaner_id === null);
+                
+                // 排序
+                const sortType = document.getElementById('sortType').value;
+                const sortOrder = document.getElementById('sortOrder').value;
+                orders.sort((a, b) => {
+                    if (sortType === 'price') {
+                        const priceA = Number(a.price) || 0;
+                        const priceB = Number(b.price) || 0;
+                        return sortOrder === 'desc' ? priceB - priceA : priceA - priceB;
+                    } else {
+                        // 時間排序 - created_at
+                        const timeA = a.created_at || '';
+                        const timeB = b.created_at || '';
+                        return sortOrder === 'desc' ? timeB.localeCompare(timeA) : timeA.localeCompare(timeB);
+                    }
+                });
                 
                 const list = document.getElementById('openOrdersList');
                 if (orders.length === 0) {
@@ -250,6 +328,13 @@
                     </div>
                     <div class="info-row">📍 ${shortAddr(o)}</div>
                     <div class="info-row">🕐 退房時間: ${o.checkout_time}</div>
+                    ${o.voice_url ? `
+                        <div class="voice-player">
+                            <button class="voice-btn" onclick="playVoice(this, '${o.voice_url}')">▶</button>
+                            <audio src="${o.voice_url}" preload="metadata"></audio>
+                            <span style="font-size:12px;color:var(--text-muted);font-weight:600;">房東語音備註</span>
+                        </div>
+                    ` : ''}
                     <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.property_address)}" class="map-link" target="_blank">↗️ 查看導航地圖</a>
                     <button class="btn-grab" onclick="acceptOrder(${o.id})">✋ 立即搶單</button>
                 </div>`).join('');
@@ -260,7 +345,13 @@
             try {
                 const res = await fetch(API + '/orders');
                 const data = await res.json();
-                const orders = (data.data || []).filter(o => Number(o.assigned_cleaner_id) === cleanerId && o.status !== 'open');
+                const filter = document.getElementById('myTaskFilter').value;
+                let orders = (data.data || []).filter(o => Number(o.assigned_cleaner_id) === cleanerId && o.status !== 'open');
+                
+                // 過濾
+                if (filter !== 'all') {
+                    orders = orders.filter(o => o.status === filter);
+                }
                 
                 document.getElementById('myOrdersList').innerHTML = orders.reverse().map(o => `
                     <div class="card">
@@ -270,6 +361,13 @@
                         </div>
                         <div class="info-row">📍 ${fullAddr(o)}</div>
                         <div class="info-row">🕐 ${o.checkout_time}</div>
+                        ${o.voice_url ? `
+                            <div class="voice-player">
+                                <button class="voice-btn" onclick="playVoice(this, '${o.voice_url}')">▶</button>
+                                <audio src="${o.voice_url}" preload="metadata"></audio>
+                                <span style="font-size:12px;color:var(--text-muted);font-weight:600;">房東語音備註</span>
+                            </div>
+                        ` : ''}
                         <div class="info-row">📊 狀態: <span class="badge badge-${o.status === 'accepted' ? 'accepted' : 'completed'}">${o.status === 'accepted' ? '進行中' : '已完成'}</span></div>
                         <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddr(o))}" class="map-link" target="_blank">↗️ 查看地圖導航</a>
                         ${o.status === 'accepted' ? `<button class="btn-done" onclick="completeOrder(${o.id})">✅ 我已完成清潔</button>` : ''}
@@ -316,6 +414,24 @@
             t.textContent = msg;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function playVoice(btn, url) {
+            const audio = btn.parentElement.querySelector('audio');
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = '⏸';
+                btn.classList.add('playing');
+                audio.onended = () => {
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                };
+            } else {
+                audio.pause();
+                audio.currentTime = 0;
+                btn.textContent = '▶';
+                btn.classList.remove('playing');
+            }
         }
 
         // 隱藏門牌號 - 只顯示街道、城市、省
