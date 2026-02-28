@@ -761,33 +761,65 @@ class CleaningAPI:
         if str(row["code"]) != str(code):
             return {"error": "Invalid code", "code": 400}
         
-        # 高並發保護：使用 IMMEDIATE 事務 + 樂觀鎖
+        # 高並發保護：使用鎖表實現互斥
         conn = self.db._get_connection()
         cursor = conn.cursor()
         
-        # 檢查訂單狀態（確保未被搶走）
-        cursor.execute("SELECT status FROM orders WHERE id = ?", (order_id,))
-        order_row = cursor.fetchone()
-        
-        if not order_row:
-            conn.close()
-            return {"error": "Order not found", "code": 404}
-        
-        if order_row[0] != "open":
-            conn.close()
-            return {"error": f"Order already taken (status: {order_row[0]})", "code": 409}
-        
-        # 原子更新：只有在 status='open' 時才搶單
-        cursor.execute("""
-            UPDATE orders SET assigned_cleaner_id = ?, status = 'accepted', assigned_at = CURRENT_TIMESTAMP
-            WHERE id = ? AND status = 'open'
-        """, (cleaner_id, order_id))
-        
+        # 嘗試獲取鎖（原子操作）
+        cursor.execute("INSERT OR IGNORE INTO order_locks (order_id) VALUES (?)", (order_id,))
         if cursor.rowcount == 0:
+            # 已經被鎖定
             conn.close()
-            return {"error": "Order already taken by another cleaner", "code": 409}
+            return {"error": "Order already being processed", "code": 409}
         
-        conn.commit()
+        try:
+            # 檢查訂單狀態
+            cursor.execute("SELECT status FROM orders WHERE id = ?", (order_id,))
+            row = cursor.fetchone()
+            if not row:
+                conn.execute("DELETE FROM order_locks WHERE order_id = ?", (order_id,))
+                conn.commit()
+                conn.close()
+                return {"error": "Order not found", "code": 404}
+            
+            if row[0] != 'open':
+                conn.execute("DELETE FROM order_locks WHERE order_id = ?", (order_id,))
+                conn.commit()
+                conn.close()
+                return {"error": f"Order already taken (status: {row[0]})", "code": 409}
+            
+            # 執行搶單
+            cursor.execute("""
+                UPDATE orders 
+                SET assigned_cleaner_id = ?, status = 'accepted', assigned_at = CURRENT_TIMESTAMP
+                WHERE id = ? AND status = 'open'
+            """, (cleaner_id, order_id))
+            
+            # 確認更新成功
+            cursor.execute("SELECT status, assigned_cleaner_id FROM orders WHERE id = ?", (order_id,))
+            result = cursor.fetchone()
+            
+            if result and result[0] == 'accepted' and result[1] == cleaner_id:
+                conn.commit()
+            else:
+                conn.execute("DELETE FROM order_locks WHERE order_id = ?", (order_id,))
+                conn.commit()
+                conn.close()
+                return {"error": "Failed to grab order", "code": 409}
+            
+            # 釋放鎖
+            conn.execute("DELETE FROM order_locks WHERE order_id = ?", (order_id,))
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            try:
+                conn.execute("DELETE FROM order_locks WHERE order_id = ?", (order_id,))
+                conn.commit()
+            except:
+                pass
+            conn.close()
+            return {"error": str(e), "code": 500}
+        
         conn.close()
         
         # 清除緩存
