@@ -279,18 +279,19 @@
     }
 
     async function loadData() {
-        const orders = await req('/orders');
-        if (!orders) return;
-
-        // 更新統計數據
-        const totalRev = (orders.data || []).reduce((s, o) => s + (parseInt(o.price) || 0), 0);
-        document.getElementById('statTotal').textContent = `$${totalRev.toLocaleString()}`;
-        document.getElementById('statOrders').textContent = (orders.data || []).length;
-
         const container = document.getElementById('listContainer');
 
         // 訂單列表
         if (currentTab === 'orders') {
+            showLoading();
+            const orders = await req('/orders');
+            if (!orders) return;
+
+            // 更新統計數據
+            const totalRev = (orders.data || []).reduce((s, o) => s + (parseInt(o.price) || 0), 0);
+            document.getElementById('statTotal').textContent = `$${totalRev.toLocaleString()}`;
+            document.getElementById('statOrders').textContent = (orders.data || []).length;
+
             const users = await req('/cleaners');
             const hosts = await req('/hosts');
             const cleaners = users?.data || [];
