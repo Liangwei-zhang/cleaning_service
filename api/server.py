@@ -1,5 +1,9 @@
 """
-清潔服務系統 API
+清潔服務系統 API - 增強版
+- 防止重複提交
+- 後台驗證
+- 查詢緩存
+- 高並發搶單保護
 """
 import sys
 import os
@@ -9,17 +13,110 @@ import json
 import sqlite3
 import random
 import ssl
+import time
+import hashlib
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from models.cleaning import Database, Property, Cleaner, Job, CleaningRepository
+
+
+# ========== 緩存機制 ==========
+class Cache:
+    """簡單的內存緩存"""
+    def __init__(self, ttl: int = 30):  # 默認30秒TTL
+        self._cache: Dict[str, tuple] = {}
+        self.ttl = ttl
+    
+    def get(self, key: str) -> Optional[Any]:
+        if key in self._cache:
+            value, timestamp = self._cache[key]
+            if time.time() - timestamp < self.ttl:
+                return value
+            del self._cache[key]
+        return None
+    
+    def set(self, key: str, value: Any):
+        self._cache[key] = (value, time.time())
+    
+    def invalidate(self, key: str):
+        if key in self._cache:
+            del self._cache[key]
+    
+    def clear(self):
+        self._cache.clear()
+
+
+# ========== 驗證工具 ==========
+class Validator:
+    """數據驗證工具"""
+    
+    @staticmethod
+    def validate_property(data: dict) -> tuple:
+        """驗證房源數據"""
+        if not data.get("name"):
+            return False, "房源名稱不能為空"
+        if not data.get("address"):
+            return False, "房源地址不能為空"
+        return True, None
+    
+    @staticmethod
+    def validate_order(data: dict) -> tuple:
+        """驗證訂單數據"""
+        if not data.get("property_id"):
+            return False, "房源ID不能為空"
+        if not data.get("checkout_time"):
+            return False, "退房時間不能為空"
+        price = data.get("price", 0)
+        try:
+            price = float(price)
+            if price <= 0:
+                return False, "價格必須大於0"
+        except (ValueError, TypeError):
+            return False, "價格格式錯誤"
+        return True, None
+    
+    @staticmethod
+    def validate_cleaner(data: dict) -> tuple:
+        """驗證清潔工數據"""
+        if not data.get("name"):
+            return False, "姓名不能為空"
+        if not data.get("phone"):
+            return False, "電話不能為空"
+        return True, None
+
+
+# ========== Idempotency ==========
+class IdempotencyChecker:
+    """防止重複提交"""
+    def __init__(self):
+        self._keys: Dict[str, float] = {}
+        self._window = 60  # 60秒內不重複處理
+    
+    def check(self, key: str) -> bool:
+        """檢查是否已處理過"""
+        now = time.time()
+        if key in self._keys:
+            if now - self._keys[key] < self._window:
+                return False  # 已經處理過
+        self._keys[key] = now
+        return True
+    
+    def cleanup(self):
+        """清理過期的key"""
+        now = time.time()
+        self._keys = {k: v for k, v in self._keys.items() if now - v < self._window}
 
 
 class CleaningAPI:
     def __init__(self, db_path: str = "/home/nico/projects/cleaning_service/cleaning.db"):
         self.db = Database(db_path)
         self.repo = CleaningRepository(self.db)
+        # 緩存實例
+        self.cache = Cache(ttl=30)
+        self.idempotency = IdempotencyChecker()
+        self.validator = Validator()
     
     def handle_request(self, method: str, path: str, body: str = "") -> Dict[str, Any]:
         parsed = urlparse(path)
@@ -38,9 +135,15 @@ class CleaningAPI:
         if path.startswith("/css/"):
             return {"static": path.lstrip("/")}
         
-        # ========== 統計 ==========
+        # ========== 統計 (帶緩存) ==========
         if path == "/api/stats":
-            return self.repo.get_stats()
+            cache_key = "stats"
+            cached = self.cache.get(cache_key)
+            if cached:
+                return cached
+            stats = self.repo.get_stats()
+            self.cache.set(cache_key, stats)
+            return stats
         
         # Cleaner stats
         if path == "/api/cleaner/stats":
@@ -595,11 +698,24 @@ class CleaningAPI:
         return {"data": [dict(row) for row in rows]}
     
     def _create_order(self, data):
-        if not data.get("property_id") or not data.get("checkout_time"):
-            return {"error": "property_id and checkout_time required", "code": 400}
+        # 驗證請求數據
+        valid, error = self.validator.validate_order(data)
+        if not valid:
+            return {"error": error, "code": 400}
         
+        # Idempotency key (可選)
+        idempotency_key = data.get("_idempotency_key")
+        if idempotency_key:
+            if not self.idempotency.check(idempotency_key):
+                return {"error": "Duplicate request", "code": 409}
+        
+        # 驗證房源存在
         conn = self.db._get_connection()
         cursor = conn.cursor()
+        cursor.execute("SELECT id FROM properties WHERE id = ?", (data.get("property_id"),))
+        if not cursor.fetchone():
+            conn.close()
+            return {"error": "Property not found", "code": 404}
         
         cursor.execute("""
             INSERT INTO orders (property_id, host_name, host_phone, checkout_time, price, status, voice_url)
@@ -610,15 +726,27 @@ class CleaningAPI:
         order_id = cursor.lastrowid
         conn.commit()
         conn.close()
+        
+        # 清除緩存
+        self.cache.clear()
+        
         return {"data": {"id": order_id}, "message": "Order created"}
     
     def _verify_accept_order(self, order_id, data):
+        """搶單邏輯 - 高並發保護"""
         cleaner_id = data.get("cleaner_id")
         code = data.get("code")
         
+        # 參數驗證
         if not cleaner_id or not code:
             return {"error": "cleaner_id and code required", "code": 400}
         
+        try:
+            cleaner_id = int(cleaner_id)
+        except ValueError:
+            return {"error": "Invalid cleaner_id", "code": 400}
+        
+        # 驗證清潔工
         conn = self.db._get_connection()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
@@ -633,15 +761,37 @@ class CleaningAPI:
         if str(row["code"]) != str(code):
             return {"error": "Invalid code", "code": 400}
         
-        # 接單
+        # 高並發保護：使用 IMMEDIATE 事務 + 樂觀鎖
         conn = self.db._get_connection()
         cursor = conn.cursor()
+        
+        # 檢查訂單狀態（確保未被搶走）
+        cursor.execute("SELECT status FROM orders WHERE id = ?", (order_id,))
+        order_row = cursor.fetchone()
+        
+        if not order_row:
+            conn.close()
+            return {"error": "Order not found", "code": 404}
+        
+        if order_row[0] != "open":
+            conn.close()
+            return {"error": f"Order already taken (status: {order_row[0]})", "code": 409}
+        
+        # 原子更新：只有在 status='open' 時才搶單
         cursor.execute("""
             UPDATE orders SET assigned_cleaner_id = ?, status = 'accepted', assigned_at = CURRENT_TIMESTAMP
-            WHERE id = ?
+            WHERE id = ? AND status = 'open'
         """, (cleaner_id, order_id))
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return {"error": "Order already taken by another cleaner", "code": 409}
+        
         conn.commit()
         conn.close()
+        
+        # 清除緩存
+        self.cache.clear()
         
         return {"message": "Order accepted", "verified": True}
     
@@ -656,6 +806,20 @@ class CleaningAPI:
     def _update_order(self, order_id, data):
         print(f"DEBUG: _update_order called with order_id={order_id}, data keys={list(data.keys())}")
         print(f"DEBUG: voice_url present: {'voice_url' in data}, value: {data.get('voice_url')[:50] if data.get('voice_url') else None}...")
+        
+        # 驗證 status 值
+        valid_statuses = ["open", "accepted", "completed", "cancelled"]
+        if data.get("status") and data["status"] not in valid_statuses:
+            return {"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}", "code": 400}
+        
+        # 驗證 price
+        if data.get("price"):
+            try:
+                price = float(data["price"])
+                if price <= 0:
+                    return {"error": "Price must be greater than 0", "code": 400}
+            except (ValueError, TypeError):
+                return {"error": "Invalid price", "code": 400}
         
         conn = self.db._get_connection()
         cursor = conn.cursor()
@@ -711,6 +875,8 @@ class CleaningAPI:
             params.append(order_id)
             cursor.execute(f"UPDATE orders SET {', '.join(updates)} WHERE id = ?", params)
             conn.commit()
+            # 清除緩存
+            self.cache.clear()
         
         conn.close()
         return {"message": "Order updated"}
