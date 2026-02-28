@@ -10,6 +10,46 @@
         <title>👷 接單員控制台 - SmartClean</title>
         <style>
             /* --- 2026 極致視覺重構 --- */
+            /* 加載遮罩 */
+            .loading-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+            .loading-overlay.active {
+                display: flex;
+            }
+            body.no-scroll {
+                overflow: hidden !important;
+            }
+            .loading-spinner {
+                width: 48px;
+                height: 48px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #fff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            .loading-text {
+                color: #fff;
+                margin-top: 16px;
+                font-size: 16px;
+                font-weight: 600;
+            }
+
             :root {
                 --primary: oklch(60% 0.18 255); /* 數位科技藍 */
                 --midnight: oklch(15% 0.02 250);
@@ -834,6 +874,12 @@
         </style>
     </head>
     <body>
+        <!-- 加載遮罩 -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">載入中...</div>
+        </div>
+
         <header>
             <div class="logo">
                 接单大厅<span style="color: var(--primary)">CP</span>
@@ -1019,6 +1065,7 @@
 
             async function loadOpenOrders() {
                 try {
+                    showLoading();
                     const res = await fetch(API + "/orders");
                     const data = await res.json();
                     let orders = (data.data || []).filter(
@@ -1081,13 +1128,16 @@
                 </div>`,
                         )
                         .join("");
+                    hideLoading();
                 } catch (e) {
+                    hideLoading();
                     showToast("載入訂單失敗");
                 }
             }
 
             async function loadMyOrders() {
                 try {
+                    showLoading();
                     const res = await fetch(API + "/orders");
                     const data = await res.json();
                     const filter =
@@ -1135,7 +1185,9 @@
                             )
                             .join("") ||
                         '<div class="empty-state">尚無任務紀錄</div>';
+                    hideLoading();
                 } catch (e) {
+                    hideLoading();
                     console.error(e);
                 }
             }
@@ -1165,6 +1217,21 @@
                 } catch (e) {
                     showToast("請求失敗");
                 }
+            }
+
+            // 加載動畫控制
+            function showLoading(text = "載入中...") {
+                const overlay = document.getElementById("loadingOverlay");
+                const textEl = overlay.querySelector(".loading-text");
+                textEl.textContent = text;
+                overlay.classList.add("active");
+                document.body.classList.add("no-scroll");
+            }
+
+            function hideLoading() {
+                const overlay = document.getElementById("loadingOverlay");
+                overlay.classList.remove("active");
+                document.body.classList.remove("no-scroll");
             }
 
             function showToast(msg) {

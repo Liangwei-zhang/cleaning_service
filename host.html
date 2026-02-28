@@ -14,6 +14,46 @@
            ======================================== */
             @layer base, components, utilities;
 
+            /* 加載遮罩 */
+            .loading-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+            .loading-overlay.active {
+                display: flex;
+            }
+            body.no-scroll {
+                overflow: hidden !important;
+            }
+            .loading-spinner {
+                width: 48px;
+                height: 48px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #fff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            .loading-text {
+                color: #fff;
+                margin-top: 16px;
+                font-size: 16px;
+                font-weight: 600;
+            }
+
             :root {
                 /* 核心調色板 - OKLCH 高通透感 */
                 --primary: oklch(60% 0.2 250);
@@ -564,6 +604,12 @@
         </style>
     </head>
     <body>
+        <!-- 加載遮罩 -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">載入中...</div>
+        </div>
+
         <header>
             <h1>物业管理</h1>
             <button class="logout-btn" onclick="logout()">登出系统</button>
@@ -733,6 +779,7 @@
 
             async function loadOrders() {
                 try {
+                    showLoading();
                     const res = await fetch(`${API}/orders`);
                     const data = await res.json();
                     const filter = document.getElementById("orderFilter")?.value || "all";
@@ -827,13 +874,16 @@
                             )
                             .join("") ||
                         '<div style="text-align:center; padding:60px; color:gray; font-weight:600;">☕ 暫無訂單，點擊 + 號發布</div>';
+                    hideLoading();
                 } catch (e) {
+                    hideLoading();
                     showToast("加載失敗");
                 }
             }
 
             async function loadProperties() {
                 try {
+                    showLoading();
                     const res = await fetch(API + "/properties");
                     const data = await res.json();
                     // 只顯示當前用戶的房源
@@ -844,6 +894,7 @@
                     if (properties.length === 0) {
                         document.getElementById("myPropertiesList").innerHTML =
                             '<div class="empty-state">尚未添加房源<br>點擊下方+按鈕添加</div>';
+                        hideLoading();
                         return;
                     }
 
@@ -868,7 +919,9 @@
                             )
                             .join("") ||
                         '<div style="text-align:center; padding:60px; color:gray; font-weight:600;">🏡 點擊 + 號新增您的房源</div>';
+                    hideLoading();
                 } catch (e) {
+                    hideLoading();
                     showToast("加載房源失敗");
                 }
             }
@@ -1095,6 +1148,7 @@
                     });
 
                 document.getElementById("modalSubmit").onclick = async () => {
+                    showLoading("發布中...");
                     const body = {
                         property_id: parseInt(
                             document.getElementById("orderPropId").value,
@@ -1114,6 +1168,7 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(body),
                     });
+                    hideLoading();
                     if (res.ok) {
                         showToast("任務已發布！");
                         closeModal();
@@ -1538,6 +1593,21 @@
                 document
                     .getElementById("globalModal")
                     .classList.remove("active");
+            }
+
+            // 加載動畫控制
+            function showLoading(text = "載入中...") {
+                const overlay = document.getElementById("loadingOverlay");
+                const textEl = overlay.querySelector(".loading-text");
+                textEl.textContent = text;
+                overlay.classList.add("active");
+                document.body.classList.add("no-scroll");
+            }
+
+            function hideLoading() {
+                const overlay = document.getElementById("loadingOverlay");
+                overlay.classList.remove("active");
+                document.body.classList.remove("no-scroll");
             }
 
             function showToast(msg) {
