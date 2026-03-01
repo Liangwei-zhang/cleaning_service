@@ -232,6 +232,18 @@
 </div>
 
 <script>
+    // XSS 防護函數
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    const e = escapeHtml;
+    
     const API = 'https://biggish-londyn-unconvolute.ngrok-free.dev/api';
     let currentTab = 'cleaners';
 

@@ -1011,9 +1011,9 @@
         <script>
             // XSS 防護函數
             function escapeHtml(str) {
-                if (!str) return ;
+                if (!str) return '';
                 return String(str)
-                    .replace(/<script>/g, '&amp;')
+                    .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, '&quot;')
