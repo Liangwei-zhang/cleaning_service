@@ -1200,6 +1200,16 @@
                         `
                                 : ""
                         }
+                        ${
+                            o.text_notes
+                                ? `
+                            <div class="info-row" style="background:#E8F5E9;padding:12px;border-radius:10px;margin-top:10px;border-left:3px solid #4CAF50;">
+                                <div style="font-size:12px;color:#2E7D32;font-weight:600;">📝 文字備註：</div>
+                                <div style="font-weight:600;margin-top:6px;color:#333;">${o.text_notes}</div>
+                            </div>
+                        `
+                                : ""
+                        }
                         <div class="info-row">📊 狀態: <span class="badge badge-${o.status === "accepted" ? "accepted" : "completed"}">${o.status === "accepted" ? "進行中" : "已完成"}</span></div>
                         ${o.status === "completed" ? renderCompletionPhotos(o.completion_photos) : ""}
                         <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddr(o))}" class="map-link" target="_blank">↗️ 查看地圖導航</a>
