@@ -865,9 +865,18 @@
                         ${
                             o.text_notes
                                 ? `
-                        <div class="info-row" style="background:#E3F2FD;padding:12px;border-radius:10px;margin-top:10px;border-left:3px solid #2196F3;">
-                            <div style="font-size:12px;color:#1565C0;font-weight:600;">📝 文字備註：</div>
-                            <div style="font-weight:600;margin-top:6px;color:#333;">${o.text_notes}</div>
+                        <div style="background:#E3F2FD;padding:12px;border-radius:10px;margin-top:10px;border-left:3px solid #2196F3;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div style="font-size:12px;color:#1565C0;font-weight:600;">📝 文字備註：</div>
+                                ${o.status === "open" ? `<button onclick="editTextNote(${o.id}, '${encodeURIComponent(o.text_notes)}')" style="font-size:11px;padding:4px 8px;border-radius:4px;border:1px solid #2196F3;background:white;color:#2196F3;cursor:pointer;">✏️ 編輯</button>` : ''}
+                            </div>
+                            <div id="note-display-${o.id}" style="font-weight:600;margin-top:6px;color:#333;">${o.text_notes}</div>
+                        </div>
+                        `
+                                : o.status === "open" ? `
+                        <div style="background:#f5f5f5;padding:12px;border-radius:10px;margin-top:10px;border-left:3px solid #999;">
+                            <div style="font-size:12px;color:#666;font-weight:600;">📝 文字備註：</div>
+                            <button onclick="editTextNote(${o.id}, '')" style="margin-top:6px;font-size:12px;padding:6px 12px;border-radius:6px;border:1px dashed #999;background:white;color:#666;cursor:pointer;">+ 添加文字備註</button>
                         </div>
                         `
                                 : ""
@@ -1637,6 +1646,33 @@
                 const overlay = document.getElementById("loadingOverlay");
                 overlay.classList.remove("active");
                 document.body.classList.remove("no-scroll");
+            }
+
+            // 編輯文字備註
+            function editTextNote(orderId, currentNote) {
+                const displayEl = document.getElementById('note-display-' + orderId);
+                if (!displayEl) return;
+                
+                const newNote = prompt('編輯文字備註：', decodeURIComponent(currentNote));
+                if (newNote === null) return;
+                
+                fetch(API + '/orders/' + orderId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text_notes: newNote })
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.data || d.id) {
+                        showToast('✅ 備註已更新');
+                        loadOrders();
+                    } else {
+                        showToast('❌ 更新失敗');
+                    }
+                })
+                .catch(e => {
+                    showToast('❌ 請求失敗');
+                });
             }
 
             function showToast(msg) {
