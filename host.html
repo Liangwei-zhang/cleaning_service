@@ -882,7 +882,7 @@
                                 <div style="font-size:12px;color:#1565C0;font-weight:600;">📝 文字備註：</div>
                                 ${o.status === "open" ? `<button onclick="editTextNote(${o.id}, '${encodeURIComponent(o.text_notes)}')" style="font-size:11px;padding:4px 8px;border-radius:4px;border:1px solid #2196F3;background:white;color:#2196F3;cursor:pointer;">✏️ 編輯</button>` : ''}
                             </div>
-                            <div id="note-display-${o.id}" style="font-weight:600;margin-top:6px;color:#333;">${o.text_notes}</div>
+                            <div id="note-display-${o.id}" style="font-weight:600;margin-top:6px;color:#333;">${e(o.text_notes)}</div>
                         </div>
                         `
                                 : o.status === "open" ? `
@@ -949,8 +949,8 @@
                             .map(
                                 (p) => `
                     <div class="card">
-                        <div class="card-title">${p.name}</div>
-                        <div class="info-row">📍 ${p.address}</div>
+                        <div class="card-title">${e(p.name)}</div>
+                        <div class="info-row">📍 ${e(p.address)}</div>
                         <div class="property-meta">
                             <span class="meta-tag">🛏️ ${p.bedrooms || 0} 臥室</span>
                             <span class="meta-tag">🚿 ${p.bathrooms || 0} 衛浴</span>
@@ -1190,7 +1190,7 @@
                         document.getElementById("orderPropId").innerHTML = props
                             .map(
                                 (p) =>
-                                    `<option value="${p.id}">${p.name}</option>`,
+                                    `<option value="${p.id}">${e(p.name)}</option>`,
                             )
                             .join("");
                     });
@@ -1454,7 +1454,7 @@
                     propSelect.innerHTML = properties
                         .map(
                             (p) =>
-                                `<option value="${p.id}" ${p.id === order.property_id ? "selected" : ""}>${p.name}</option>`,
+                                `<option value="${p.id}" ${p.id === order.property_id ? "selected" : ""}>${e(p.name)}</option>`,
                         )
                         .join("");
 
