@@ -717,11 +717,14 @@ class CleaningAPI:
             conn.close()
             return {"error": "Property not found", "code": 404}
         
+        print(f"DEBUG: Creating order with text_notes: {data.get('text_notes')}")
+        
         cursor.execute("""
-            INSERT INTO orders (property_id, host_name, host_phone, checkout_time, price, status, voice_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO orders (property_id, host_name, host_phone, checkout_time, price, status, voice_url, text_notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (data.get("property_id"), data.get("host_name", ""), data.get("host_phone", ""),
-              data.get("checkout_time"), data.get("price", 100), "open", data.get("voice_url")))
+              data.get("checkout_time"), data.get("price", 100), "open", 
+              data.get("voice_url"), data.get("text_notes")))
         
         order_id = cursor.lastrowid
         conn.commit()
@@ -888,6 +891,11 @@ class CleaningAPI:
             elif data["voice_url"]:
                 updates.append("voice_url = ?")
                 params.append(data["voice_url"])
+        
+        # text_notes 支持更新
+        if "text_notes" in data:
+            updates.append("text_notes = ?")
+            params.append(data["text_notes"])
         
         # completion_photos 支持更新
         if "completion_photos" in data:
