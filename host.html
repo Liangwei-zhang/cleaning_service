@@ -876,7 +876,7 @@
                                 : o.status === "open" ? `
                         <div style="background:#f5f5f5;padding:12px;border-radius:10px;margin-top:10px;border-left:3px solid #999;">
                             <div style="font-size:12px;color:#666;font-weight:600;">📝 文字備註：</div>
-                            <button onclick="editTextNote(${o.id}, '')" style="margin-top:6px;font-size:12px;padding:6px 12px;border-radius:6px;border:1px dashed #999;background:white;color:#666;cursor:pointer;">+ 添加文字備註</button>
+                            <button onclick="addTextNote(${o.id})" style="margin-top:6px;font-size:12px;padding:6px 12px;border-radius:6px;border:1px dashed #999;background:white;color:#666;cursor:pointer;">+ 添加文字備註</button>
                         </div>
                         `
                                 : ""
@@ -1651,7 +1651,6 @@
             // 編輯文字備註
             function editTextNote(orderId, currentNote) {
                 const displayEl = document.getElementById('note-display-' + orderId);
-                if (!displayEl) return;
                 
                 const newNote = prompt('編輯文字備註：', decodeURIComponent(currentNote));
                 if (newNote === null) return;
@@ -1668,6 +1667,30 @@
                         loadOrders();
                     } else {
                         showToast('❌ 更新失敗');
+                    }
+                })
+                .catch(e => {
+                    showToast('❌ 請求失敗');
+                });
+            }
+
+            // 添加文字備註
+            function addTextNote(orderId) {
+                const newNote = prompt('添加文字備註：', '');
+                if (newNote === null || newNote.trim() === '') return;
+                
+                fetch(API + '/orders/' + orderId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text_notes: newNote })
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.data || d.id) {
+                        showToast('✅ 備註已添加');
+                        loadOrders();
+                    } else {
+                        showToast('❌ 添加失敗');
                     }
                 })
                 .catch(e => {
