@@ -1650,8 +1650,6 @@
 
             // 編輯文字備註
             function editTextNote(orderId, currentNote) {
-                const displayEl = document.getElementById('note-display-' + orderId);
-                
                 const newNote = prompt('編輯文字備註：', decodeURIComponent(currentNote));
                 if (newNote === null) return;
                 
@@ -1662,7 +1660,7 @@
                 })
                 .then(r => r.json())
                 .then(d => {
-                    if (d.data || d.id) {
+                    if (d.data || d.id || d.message) {
                         showToast('✅ 備註已更新');
                         loadOrders();
                     } else {
@@ -1686,7 +1684,7 @@
                 })
                 .then(r => r.json())
                 .then(d => {
-                    if (d.data || d.id) {
+                    if (d.data || d.id || d.message) {
                         showToast('✅ 備註已添加');
                         loadOrders();
                     } else {

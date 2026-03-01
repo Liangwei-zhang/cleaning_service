@@ -291,6 +291,33 @@ class CleaningAPI:
             elif method == "POST":
                 return self._create_order(json.loads(body) if body else {})
         
+        # 獲取單個訂單
+        if path.startswith("/api/orders/") and not any(x in path for x in ["/verify-accept", "/complete", "/cancel"]):
+            parts = path.split("/")
+            if len(parts) >= 4:
+                try:
+                    order_id = int(parts[3])
+                    if method == "GET":
+                        conn = self.db._get_connection()
+                        conn.row_factory = sqlite3.Row
+                        cursor = conn.cursor()
+                        cursor.execute("""
+                            SELECT o.*, p.name as property_name, p.address as property_address,
+                                   p.province as property_province, p.city as property_city,
+                                   p.street as property_street, p.house_number as property_house_number
+                            FROM orders o
+                            LEFT JOIN properties p ON o.property_id = p.id
+                            WHERE o.id = ?
+                        """, (order_id,))
+                        row = cursor.fetchone()
+                        conn.close()
+                        if row:
+                            return {"data": dict(row)}
+                        else:
+                            return {"error": "Order not found", "code": 404}
+                except:
+                    pass
+        
         # 驗證接單 code
         if path.startswith("/api/orders/") and path.endswith("/verify-accept"):
             parts = path.split("/")
