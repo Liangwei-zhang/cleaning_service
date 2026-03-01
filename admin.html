@@ -278,6 +278,20 @@
         loadData();
     }
 
+    // 統一時間格式化
+    function formatTime(isoString) {
+        if (!isoString) return "-";
+        try {
+            const d = new Date(isoString);
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const h = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            return `${y}-${m}-${day} ${h}:${min}`;
+        } catch(e) { return isoString; }
+    }
+
     async function loadData() {
         const container = document.getElementById('listContainer');
 
@@ -316,7 +330,7 @@
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:16px;">
                         <div class="key-row" style="margin:0;">
                             <span class="key-label">退房時間</span>
-                            <span class="key-val">${o.checkout_time || '-'}</span>
+                            <span class="key-val">${formatTime(o.checkout_time) || '-'}</span>
                         </div>
                         <div class="key-row" style="margin:0;">
                             <span class="key-label">價格</span>

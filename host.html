@@ -777,6 +777,20 @@
                 page === "orders" ? loadOrders() : loadProperties();
             }
 
+            // 統一時間格式化
+            function formatTime(isoString) {
+                if (!isoString) return "-";
+                try {
+                    const d = new Date(isoString);
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const h = String(d.getHours()).padStart(2, '0');
+                    const min = String(d.getMinutes()).padStart(2, '0');
+                    return `${y}-${m}-${day} ${h}:${min}`;
+                } catch(e) { return isoString; }
+            }
+
             async function loadOrders() {
                 try {
                     showLoading();
@@ -810,7 +824,7 @@
                         </div>
                         <div class="card-title">${o.property_name || "未命名房源"}</div>
                         <div class="info-row">📍 ${o.property_address || "無地址資訊"}</div>
-                        <div class="info-row">🕐 退房時間: ${o.checkout_time}</div>
+                        <div class="info-row">🕐 退房時間: ${formatTime(o.checkout_time)}</div>
 
                         ${
                             o.status === "open"

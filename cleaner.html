@@ -1063,6 +1063,20 @@
                 }
             }
 
+            // 統一時間格式化
+            function formatTime(isoString) {
+                if (!isoString) return "-";
+                try {
+                    const d = new Date(isoString);
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const h = String(d.getHours()).padStart(2, '0');
+                    const min = String(d.getMinutes()).padStart(2, '0');
+                    return `${y}-${m}-${day} ${h}:${min}`;
+                } catch(e) { return isoString; }
+            }
+
             async function loadOpenOrders() {
                 try {
                     showLoading();
@@ -1111,7 +1125,7 @@
                         <div class="price">$${o.price}</div>
                     </div>
                     <div class="info-row">📍 ${shortAddr(o)}</div>
-                    <div class="info-row">🕐 退房時間: ${o.checkout_time}</div>
+                    <div class="info-row">🕐 退房時間: ${formatTime(o.checkout_time)}</div>
                     ${
                         o.voice_url
                             ? `
@@ -1164,7 +1178,7 @@
                             <div class="price">$${o.price}</div>
                         </div>
                         <div class="info-row">📍 ${fullAddr(o)}</div>
-                        <div class="info-row">🕐 ${o.checkout_time}</div>
+                        <div class="info-row">🕐 ${formatTime(o.checkout_time)}</div>
                         ${
                             o.voice_url
                                 ? `
@@ -1204,6 +1218,7 @@
                         }),
                     });
                     const data = await res.json();
+                    hideLoading();
                     if (res.ok) {
                         showToast("🎉 搶單成功！請準時前往");
                         setTimeout(() => {
@@ -1215,6 +1230,7 @@
                         );
                     }
                 } catch (e) {
+                    hideLoading();
                     showToast("請求失敗");
                 }
             }
