@@ -1124,24 +1124,33 @@
                     <input type="number" class="input-premium" id="orderPrice" placeholder="1200">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">語音備註（可選）</label>
-                    <div class="voice-record">
-                        <button type="button" class="record-btn" id="recordBtn" onmousedown="event.preventDefault();startRecord('new')" onmouseup="event.preventDefault();stopRecord('new')" ontouchstart="event.preventDefault();startRecord('new')" ontouchend="event.preventDefault();stopRecord('new')">🎤</button>
-                        <span class="record-hint" id="recordHint">按住說話</span>
-                        <div class="audio-preview" id="audioPreview" style="display:none">
-                            <audio id="audioPreviewPlayer" controls></audio>
-                            <button type="button" class="del-audio" onclick="deleteAudio()">刪除</button>
-                        </div>
-                        <div class="voice-preview-box" id="preview-new" style="display:none; margin-top:10px;">
-                            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">🔊 預覽錄音：</div>
-                            <audio controls id="previewAudio-new" style="width:100%;"></audio>
-                            <div style="display:flex;gap:8px;margin-top:8px;">
-                                <button class="voice-save-btn" onclick="saveVoice('new')" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">✅ 確認保存</button>
-                                <button class="voice-cancel-btn" onclick="cancelVoice('new')" style="padding:12px;border-radius:10px;border:1px solid #ddd;background:white;color:#666;font-weight:700;cursor:pointer;">✕ 取消</button>
+                    <label class="form-label">備註（可選）</label>
+                    <div style="display:flex;gap:8px;margin-bottom:8px;">
+                        <button type="button" id="btnVoiceMode" class="mode-btn active" onclick="setNoteMode('voice')" style="flex:1;padding:10px;border-radius:20px;border:2px solid var(--primary);background:var(--primary);color:white;font-weight:600;">🎤 語音</button>
+                        <button type="button" id="btnTextMode" class="mode-btn" onclick="setNoteMode('text')" style="flex:1;padding:10px;border-radius:20px;border:2px solid #ddd;background:white;color:#666;font-weight:600;">✏️ 文字</button>
+                    </div>
+                    <div id="voiceInputArea">
+                        <div class="voice-record">
+                            <button type="button" class="record-btn" id="recordBtn" onmousedown="event.preventDefault();startRecord('new')" onmouseup="event.preventDefault();stopRecord('new')" ontouchstart="event.preventDefault();startRecord('new')" ontouchend="event.preventDefault();stopRecord('new')">🎤</button>
+                            <span class="record-hint" id="recordHint">按住說話</span>
+                            <div class="audio-preview" id="audioPreview" style="display:none">
+                                <audio id="audioPreviewPlayer" controls></audio>
+                                <button type="button" class="del-audio" onclick="deleteAudio()">刪除</button>
+                            </div>
+                            <div class="voice-preview-box" id="preview-new" style="display:none; margin-top:10px;">
+                                <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">🔊 預覽錄音：</div>
+                                <audio controls id="previewAudio-new" style="width:100%;"></audio>
+                                <div style="display:flex;gap:8px;margin-top:8px;">
+                                    <button class="voice-save-btn" onclick="saveVoice('new')" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">✅ 確認保存</button>
+                                    <button class="voice-cancel-btn" onclick="cancelVoice('new')" style="padding:12px;border-radius:10px;border:1px solid #ddd;background:white;color:#666;font-weight:700;cursor:pointer;">✕ 取消</button>
+                                </div>
                             </div>
                         </div>
+                        <input type="hidden" id="orderVoice">
                     </div>
-                    <input type="hidden" id="orderVoice">
+                    <div id="textInputArea" style="display:none;">
+                        <textarea class="input-premium" id="orderTextNote" placeholder="輸入文字備註..." rows="3" style="width:100%;resize:none;border-radius:12px;padding:12px;border:2px solid #ddd;font-size:15px;"></textarea>
+                    </div>
                 </div>
             `;
 
@@ -1176,6 +1185,8 @@
                         status: "open",
                         voice_url:
                             document.getElementById("orderVoice").value || null,
+                        text_notes:
+                            document.getElementById("orderTextNote")?.value || null,
                     };
                     const res = await fetch(`${API}/orders`, {
                         method: "POST",
@@ -1690,6 +1701,34 @@
             let currentRecordOrderId = null;
             let recordTimeout = null;
             let isRecording = false;
+
+            // 切換備註模式（語音/文字）
+            function setNoteMode(mode) {
+                const voiceBtn = document.getElementById('btnVoiceMode');
+                const textBtn = document.getElementById('btnTextMode');
+                const voiceArea = document.getElementById('voiceInputArea');
+                const textArea = document.getElementById('textInputArea');
+                
+                if (mode === 'voice') {
+                    voiceBtn.style.background = 'var(--primary)';
+                    voiceBtn.style.color = 'white';
+                    voiceBtn.style.borderColor = 'var(--primary)';
+                    textBtn.style.background = 'white';
+                    textBtn.style.color = '#666';
+                    textBtn.style.borderColor = '#ddd';
+                    voiceArea.style.display = 'block';
+                    textArea.style.display = 'none';
+                } else {
+                    textBtn.style.background = 'var(--primary)';
+                    textBtn.style.color = 'white';
+                    textBtn.style.borderColor = 'var(--primary)';
+                    voiceBtn.style.background = 'white';
+                    voiceBtn.style.color = '#666';
+                    voiceBtn.style.borderColor = '#ddd';
+                    voiceArea.style.display = 'none';
+                    textArea.style.display = 'block';
+                }
+            }
 
             async function initRecorder() {
                 // 如果已經初始化過，直接返回

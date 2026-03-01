@@ -1137,7 +1137,17 @@
                     `
                             : ""
                     }
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.property_address)}" class="map-link" target="_blank">↗️ 查看導航地圖</a>
+                    ${
+                        o.text_notes
+                            ? `
+                        <div class="info-row" style="background:var(--bg-light);padding:10px;border-radius:8px;margin:8px 0;">
+                            <span style="font-size:12px;color:var(--text-muted);">📝 備註：</span>
+                            <div style="font-weight:600;margin-top:4px;">${o.text_notes}</div>
+                        </div>
+                    `
+                            : ""
+                    }
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shortAddr(o))}" class="map-link" target="_blank">↗️ 查看導航地圖</a>
                     <button class="btn-grab" onclick="acceptOrder(${o.id})">✋ 立即搶單</button>
                 </div>`,
                         )
@@ -1207,7 +1217,62 @@
             }
 
             async function acceptOrder(id) {
+                // 先獲取訂單詳情，彈出確認框
+                try {
+                    const res = await fetch(API + "/orders/" + id);
+                    const data = await res.json();
+                    const o = data.data;
+                    
+                    if (!o) {
+                        showToast("訂單不存在");
+                        return;
+                    }
+                    
+                    // 彈出確認視窗
+                    const modal = document.createElement('div');
+                    modal.id = 'acceptConfirmModal';
+                    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+                    modal.innerHTML = `
+                        <div style="background:white;border-radius:20px;padding:24px;max-width:90%;width:340px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                            <h3 style="margin:0 0 16px 0;font-size:18px;color:var(--midnight);">📋 確認接單</h3>
+                            <div style="background:var(--bg-light);padding:16px;border-radius:12px;margin-bottom:16px;">
+                                <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">🏠 房源地址</div>
+                                <div style="font-weight:700;font-size:15px;">${fullAddr(o)}</div>
+                            </div>
+                            <div style="background:var(--bg-light);padding:16px;border-radius:12px;margin-bottom:16px;">
+                                <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">📱 聯繫電話</div>
+                                <a href="tel:${o.host_phone}" style="font-weight:700;font-size:18px;color:var(--primary);text-decoration:none;">${o.host_phone}</a>
+                            </div>
+                            <div style="background:#FFF3E0;padding:12px;border-radius:12px;margin-bottom:20px;border-left:4px solid #FF9800;">
+                                <div style="font-size:13px;color:#E65100;font-weight:600;">⚠️ 提示</div>
+                                <div style="font-size:13px;color:#E65100;margin-top:4px;">請務必聯繫房東確認詳情後再前往</div>
+                            </div>
+                            <div style="display:flex;gap:12px;">
+                                <button onclick="closeAcceptModal()" style="flex:1;padding:14px;border-radius:12px;border:2px solid #ddd;background:white;color:#666;font-weight:700;cursor:pointer;">取消</button>
+                                <button id="confirmAcceptBtn" style="flex:1;padding:14px;border-radius:12px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">✅ 確認接單</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                    
+                    document.getElementById('confirmAcceptBtn').onclick = async () => {
+                        modal.remove();
+                        await doAcceptOrder(id);
+                    };
+                    
+                } catch (e) {
+                    showToast("獲取訂單失敗");
+                }
+            }
+            
+            function closeAcceptModal() {
+                const modal = document.getElementById('acceptConfirmModal');
+                if (modal) modal.remove();
+            }
+            
+            async function doAcceptOrder(id) {
                 haptic();
+                showLoading("接單中...");
                 try {
                     const res = await fetch(API + "/orders/" + id, {
                         method: "PUT",
@@ -1220,10 +1285,10 @@
                     const data = await res.json();
                     hideLoading();
                     if (res.ok) {
-                        showToast("🎉 搶單成功！請準時前往");
+                        showToast("🎉 搶單成功！請聯繫房東");
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1000);
+                        }, 1500);
                     } else {
                         showToast(
                             "❌ " + (data.message || "手速慢了，已被搶走"),
