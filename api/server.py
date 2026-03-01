@@ -870,7 +870,7 @@ class CleaningAPI:
         print(f"DEBUG: voice_url present: {'voice_url' in data}, value: {data.get('voice_url')[:50] if data.get('voice_url') else None}...")
         
         # 驗證 status 值
-        valid_statuses = ["open", "accepted", "completed", "cancelled"]
+        valid_statuses = ["open", "accepted", "arrived", "completed", "cancelled"]
         if data.get("status") and data["status"] not in valid_statuses:
             return {"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}", "code": 400}
         

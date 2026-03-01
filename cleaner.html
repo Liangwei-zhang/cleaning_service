@@ -466,7 +466,8 @@
 
             /* --- 4. 按鈕體系 (搶單/完成) --- */
             .btn-grab,
-            .btn-done {
+            .btn-done,
+            .btn-arrived {
                 width: 100%;
                 margin-top: 20px;
                 padding: 18px;
@@ -475,6 +476,16 @@
                 font-weight: 900;
                 font-size: 17px;
                 cursor: pointer;
+            }
+            
+            .btn-arrived {
+                background: linear-gradient(135deg, #FF9800, #F57C00);
+                color: white;
+                box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+            }
+            .btn-arrived:active {
+                transform: scale(0.98);
+            }
                 transition: 0.3s var(--spring);
             }
             .btn-grab {
@@ -1211,10 +1222,16 @@
                         `
                                 : ""
                         }
-                        <div class="info-row">📊 狀態: <span class="badge badge-${o.status === "accepted" ? "accepted" : "completed"}">${o.status === "accepted" ? "進行中" : "已完成"}</span></div>
+                        <div class="info-row">📊 狀態: <span class="badge badge-${o.status}">${
+                            o.status === "open" ? "待搶單" :
+                            o.status === "accepted" ? "已接單" :
+                            o.status === "arrived" ? "已到達-清潔中" :
+                            "已完成"
+                        }</span></div>
                         ${o.status === "completed" ? renderCompletionPhotos(o.completion_photos) : ""}
                         <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddr(o))}" class="map-link" target="_blank">↗️ 查看地圖導航</a>
-                        ${o.status === "accepted" ? `<button class="btn-done" onclick="completeOrder(${o.id})">✅ 我已完成清潔</button>` : ""}
+                        ${o.status === "accepted" ? `<button class="btn-arrived" onclick="arrivedOrder(${o.id})">📍 我已到達</button>` : ""}
+                        ${o.status === "arrived" ? `<button class="btn-done" onclick="completeOrder(${o.id})">✅ 清潔完成</button>` : ""}
                     </div>
                 `,
                             )
@@ -1332,6 +1349,31 @@
             // 完工照片上傳
             let currentOrderId = null;
             let uploadedPhotos = [];
+
+            // 清潔工到達現場
+            function arrivedOrder(id) {
+                haptic();
+                showLoading("處理中...");
+                fetch(API + "/orders/" + id, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "arrived" })
+                })
+                .then(r => r.json())
+                .then(d => {
+                    hideLoading();
+                    if (d.message || d.data) {
+                        showToast("📍 已記錄到達，開始清潔！");
+                        loadMyOrders();
+                    } else {
+                        showToast("❌ 操作失敗");
+                    }
+                })
+                .catch(e => {
+                    hideLoading();
+                    showToast("❌ 請求失敗");
+                });
+            }
 
             function completeOrder(id) {
                 console.log("completeOrder called with id:", id);
