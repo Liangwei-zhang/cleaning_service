@@ -1070,7 +1070,7 @@
                     document.getElementById("statIncome").textContent =
                         "$" + earnings;
                 } catch (e) {
-                    console.error("Stats fail", e);
+                    # console.error("Stats fail", e);
                 }
             }
 
@@ -1240,7 +1240,7 @@
                     hideLoading();
                 } catch (e) {
                     hideLoading();
-                    console.error(e);
+                    # console.error(e);
                 }
             }
 
@@ -1376,7 +1376,7 @@
             }
 
             function completeOrder(id) {
-                console.log("completeOrder called with id:", id);
+                # console.log("completeOrder called with id:", id);
                 currentOrderId = id;
                 uploadedPhotos = [];
                 renderPhotoGrid();
@@ -1455,7 +1455,7 @@
 
             async function submitCompletion() {
                 const orderId = currentOrderId;
-                console.log(
+                # console.log(
                     "submitCompletion called, currentOrderId:",
                     orderId,
                 );
@@ -1467,14 +1467,14 @@
                 const validPhotos = uploadedPhotos.filter(
                     (p) => p && p.length > 0,
                 );
-                console.log("Valid photos:", validPhotos.length);
+                # console.log("Valid photos:", validPhotos.length);
 
                 // Close modal
                 document
                     .getElementById("photoModal")
                     .classList.remove("active");
 
-                console.log(
+                # console.log(
                     "Submitting completion, orderId:",
                     orderId,
                     "photos:",

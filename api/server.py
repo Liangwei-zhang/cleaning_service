@@ -731,7 +731,7 @@ class CleaningAPI:
             conn.close()
             return {"error": "Property not found", "code": 404}
         
-        print(f"DEBUG: Creating order with text_notes: {data.get('text_notes')}")
+        # DEBUG:  Creating order with text_notes: {data.get('text_notes')}")
         
         cursor.execute("""
             INSERT INTO orders (property_id, host_name, host_phone, checkout_time, price, status, voice_url, text_notes)
@@ -853,8 +853,8 @@ class CleaningAPI:
         return {"message": "Order completed"}
     
     def _update_order(self, order_id, data):
-        print(f"DEBUG: _update_order called with order_id={order_id}, data keys={list(data.keys())}")
-        print(f"DEBUG: voice_url present: {'voice_url' in data}, value: {data.get('voice_url')[:50] if data.get('voice_url') else None}...")
+        # DEBUG:  _update_order called with order_id={order_id}, data keys={list(data.keys())}")
+        # DEBUG:  voice_url present: {'voice_url' in data}, value: {data.get('voice_url')[:50] if data.get('voice_url') else None}...")
         
         # 驗證 status 值
         valid_statuses = ["open", "accepted", "arrived", "completed", "cancelled"]
@@ -890,12 +890,12 @@ class CleaningAPI:
         if data.get("status"):
             updates.append("status = ?")
             params.append(data["status"])
-            print(f"DEBUG: setting status to {data['status']}")
+            # DEBUG:  setting status to {data['status']}")
         
         if data.get("cleaner_id"):
             updates.append("assigned_cleaner_id = ?")
             params.append(data["cleaner_id"])
-            print(f"DEBUG: setting cleaner_id to {data['cleaner_id']}")
+            # DEBUG:  setting cleaner_id to {data['cleaner_id']}")
         
         # voice_url 支持更新和刪除
         if "voice_url" in data:
@@ -914,7 +914,7 @@ class CleaningAPI:
         # completion_photos 支持更新
         if "completion_photos" in data:
             photos_str = data["completion_photos"]
-            print(f"DEBUG: completion_photos received, length: {len(photos_str) if photos_str else 0}")
+            # DEBUG:  completion_photos received, length: {len(photos_str) if photos_str else 0}")
             updates.append("completion_photos = ?")
             params.append(photos_str)
         
@@ -923,7 +923,7 @@ class CleaningAPI:
             updates.append("accepted_by_host = ?")
             params.append(data["accepted_by_host"])
         
-        print(f"DEBUG: updates={updates}, params={params}")
+        # DEBUG:  updates={updates}, params={params}")
         
         if updates:
             params.append(order_id)

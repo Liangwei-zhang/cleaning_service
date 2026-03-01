@@ -1557,7 +1557,7 @@
             let currentViewOrderId = null;
 
             function viewOrderPhotos(orderId, photosJson, acceptedByHost) {
-                console.log(
+                # console.log(
                     "viewOrderPhotos:",
                     orderId,
                     photosJson,
@@ -1583,11 +1583,11 @@
                         photos = Object.values(photosJson);
                     }
                 } catch (e) {
-                    console.error("Parse photos error:", e);
+                    # console.error("Parse photos error:", e);
                     photos = [];
                 }
 
-                console.log("Parsed photos:", photos);
+                # console.log("Parsed photos:", photos);
 
                 // Filter empty
                 if (photos && Array.isArray(photos)) {
@@ -1707,6 +1707,9 @@
                         .replace(/"/g, '&quot;')
                         .replace(/'/g, '&#039;');
                 }
+                
+                // 簡化模板中的轉義
+                function e(str) { return escapeHtml(str); }
                 const t = document.getElementById("toast");
                 t.textContent = msg;
                 t.classList.add("show");
@@ -1820,7 +1823,7 @@
                     };
 
                     mediaRecorder.onstop = () => {
-                        console.log("錄音停止, chunks:", audioChunks.length);
+                        # console.log("錄音停止, chunks:", audioChunks.length);
                         const targetOrderId = currentRecordOrderId;
                         currentRecordOrderId = null;
 
@@ -1842,7 +1845,7 @@
                         const reader = new FileReader();
                         reader.onloadend = () => {
                             const base64 = reader.result;
-                            console.log("音頻長度:", base64.length);
+                            # console.log("音頻長度:", base64.length);
                             if (targetOrderId && base64) {
                                 // 顯示預覽
                                 showVoicePreview(targetOrderId, base64);
@@ -1851,9 +1854,9 @@
                         reader.readAsDataURL(audioBlob);
                     };
 
-                    console.log("麥克風已初始化");
+                    # console.log("麥克風已初始化");
                 } catch (e) {
-                    console.error("麥克風權限被拒絕", e);
+                    # console.error("麥克風權限被拒絕", e);
                     throw e;
                 }
             }
@@ -1864,7 +1867,7 @@
 
                 // 如果還沒初始化麥克風，嘗試初始化
                 if (!mediaRecorder) {
-                    console.log("首次點擊，初始化麥克風...");
+                    # console.log("首次點擊，初始化麥克風...");
                     showToast("正在請求麥克風權限...");
                     initRecorder()
                         .then(() => {
@@ -1873,7 +1876,7 @@
                                 isRecording = false;
                                 return;
                             }
-                            console.log("麥克風初始化成功，開始錄音");
+                            # console.log("麥克風初始化成功，開始錄音");
                             doStartRecord(orderId);
                         })
                         .catch((e) => {
@@ -1902,9 +1905,9 @@
                 try {
                     // 每100ms收集一次數據
                     mediaRecorder.start(100);
-                    console.log("開始錄音");
+                    # console.log("開始錄音");
                 } catch (e) {
-                    console.error("錄音失敗:", e);
+                    # console.error("錄音失敗:", e);
                     showToast("錄音失敗: " + e.message);
                     isRecording = false;
                     btn.textContent = "🎤 按住錄音（最長20秒）";
@@ -1937,7 +1940,7 @@
                     btn.disabled = true;
                 }
 
-                console.log("停止錄音, 當前狀態:", mediaRecorder?.state);
+                # console.log("停止錄音, 當前狀態:", mediaRecorder?.state);
 
                 // 保存orderId供onstop回調使用
                 const targetOrderId = currentRecordOrderId;
@@ -1948,7 +1951,7 @@
                         mediaRecorder.requestData();
                         mediaRecorder.stop();
                     } catch (e) {
-                        console.error("停止錄音失敗:", e);
+                        # console.error("停止錄音失敗:", e);
                         // 如果停止失敗，手動處理
                         if (btn) {
                             btn.textContent = "🎤 按住錄音（最長20秒）";
@@ -1965,7 +1968,7 @@
             }
 
             async function updateOrderVoice(orderId, voiceBase64) {
-                console.log(
+                # console.log(
                     "更新訂單語音, orderId:",
                     orderId,
                     "length:",
@@ -1982,18 +1985,18 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ voice_url: voiceBase64 }),
                     });
-                    console.log("API響應:", res.status);
+                    # console.log("API響應:", res.status);
                     if (res.ok) {
                         showToast("🎤 語音備註已保存");
                         loadOrders();
                     } else {
                         const err = await res.json();
-                        console.error("保存失敗:", err);
+                        # console.error("保存失敗:", err);
                         showToast("保存失敗: " + (err.error || ""));
                         resetButton(orderId);
                     }
                 } catch (e) {
-                    console.error("保存失敗:", e);
+                    # console.error("保存失敗:", e);
                     showToast("保存失敗");
                     resetButton(orderId);
                 }
@@ -2051,7 +2054,7 @@
                     return;
                 }
 
-                console.log("saveVoice called, orderId:", orderId, "base64 length:", base64.length);
+                # console.log("saveVoice called, orderId:", orderId, "base64 length:", base64.length);
 
                 // 新訂單：保存到表單輸入框
                 if (orderId === 'new') {
@@ -2080,9 +2083,9 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ voice_url: base64 }),
                     });
-                    console.log("Response status:", res.status);
+                    # console.log("Response status:", res.status);
                     const result = await res.json();
-                    console.log("Response:", result);
+                    # console.log("Response:", result);
 
                     if (res.ok) {
                         showToast("🎤 語音備註已保存");
@@ -2092,7 +2095,7 @@
                         showToast("保存失敗: " + (result.error || ""));
                     }
                 } catch (e) {
-                    console.error("保存失敗:", e);
+                    # console.error("保存失敗:", e);
                     showToast("保存失敗");
                 }
             }
