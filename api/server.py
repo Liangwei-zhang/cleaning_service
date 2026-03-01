@@ -967,13 +967,6 @@ class APIHandler(BaseHTTPRequestHandler):
     def do_DELETE(self):
         self._handle_request("DELETE")
     
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
-    
     def _handle_request(self, method):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else ""
