@@ -834,8 +834,8 @@
                             <span class="badge ${o.status === 'completed' && o.accepted_by_host ? 'status-completed-accepted' : 'status-' + o.status}">${translateStatus(o.status, o.accepted_by_host)}</span>
                             <div class="price-display">${o.price}</div>
                         </div>
-                        <div class="card-title">${o.property_name || "未命名房源"}</div>
-                        <div class="info-row">📍 ${o.property_address || "無地址資訊"}</div>
+                        <div class="card-title">${e(o.property_name) || "未命名房源"}</div>
+                        <div class="info-row">📍 ${e(o.property_address) || "無地址資訊"}</div>
                         <div class="info-row">🕐 退房時間: ${formatTime(o.checkout_time)}</div>
 
                         ${

@@ -1143,7 +1143,7 @@
                             (o) => `
                 <div class="card">
                     <div class="card-header">
-                        <div class="prop-name">${o.property_name || "未命名房源"}</div>
+                        <div class="prop-name">${e(o.property_name) || "未命名房源"}</div>
                         <div class="price">$${o.price}</div>
                     </div>
                     <div class="info-row">📍 ${shortAddr(o)}</div>
