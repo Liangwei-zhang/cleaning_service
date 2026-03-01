@@ -739,6 +739,18 @@
         <div class="toast" id="toast"></div>
 
         <script>
+            // XSS 防護函數 - 全局作用域
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+            const e = escapeHtml; // 簡化
+            
             const API = "https://biggish-londyn-unconvolute.ngrok-free.dev/api";
             const hostPhone = localStorage.getItem("host_phone");
             let currentPage = "orders";
@@ -1697,19 +1709,6 @@
             }
 
             function showToast(msg) {
-                // XSS 防護 - 簡單的 HTML 轉義
-                function escapeHtml(str) {
-                    if (!str) return '';
-                    return String(str)
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#039;');
-                }
-                
-                // 簡化模板中的轉義
-                function e(str) { return escapeHtml(str); }
                 const t = document.getElementById("toast");
                 t.textContent = msg;
                 t.classList.add("show");
