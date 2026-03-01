@@ -1697,6 +1697,16 @@
             }
 
             function showToast(msg) {
+                // XSS 防護 - 簡單的 HTML 轉義
+                function escapeHtml(str) {
+                    if (!str) return '';
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
                 const t = document.getElementById("toast");
                 t.textContent = msg;
                 t.classList.add("show");

@@ -206,10 +206,6 @@ class CleaningAPI:
             code = path.split("/")[-1]
             return self._host_login_by_code(code)
         
-        if path.startswith("/api/hosts/code/") and method == "GET":
-            code = path.split("/")[-1]
-            return self._host_login_by_code(code)
-        
         if path == "/api/hosts":
             if method == "GET":
                 return self._get_hosts()
@@ -435,15 +431,6 @@ class CleaningAPI:
             "status": cleaner.status, "rating": cleaner.rating, "total_jobs": cleaner.total_jobs,
             "code": getattr(cleaner, 'code', None)
         }
-    
-    def _add_property(self, data):
-        if not data.get("name") or not data.get("address"):
-            return {"error": "name and address required", "code": 400}
-        prop = Property(name=data["name"], address=data["address"],
-                       bedrooms=data.get("bedrooms", 1), bathrooms=data.get("bathrooms", 1),
-                       cleaning_time_minutes=data.get("cleaning_time_minutes", 120))
-        prop_id = self.repo.add_property(prop)
-        return {"data": {"id": prop_id}, "message": "Property added"}
     
     def _add_cleaner(self, data):
         if not data.get("name"):
