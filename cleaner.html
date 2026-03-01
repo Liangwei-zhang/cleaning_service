@@ -1188,6 +1188,7 @@
                             <div class="price">$${o.price}</div>
                         </div>
                         <div class="info-row">📍 ${fullAddr(o)}</div>
+                        <div class="info-row">📱 <a href="tel:${o.host_phone}" style="color:var(--primary);text-decoration:none;">${o.host_phone}</a> (房東)</div>
                         <div class="info-row">🕐 ${formatTime(o.checkout_time)}</div>
                         ${
                             o.voice_url
