@@ -1118,12 +1118,17 @@
                     if (sortType === "distance") {
                         try {
                             const pos = await new Promise((resolve, reject) => {
-                                navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 5000});
+                                navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 5000, enableHighAccuracy: true});
                             });
                             userLat = pos.coords.latitude;
                             userLon = pos.coords.longitude;
+                            console.log("獲取位置成功:", userLat, userLon);
                         } catch (e) {
                             console.log("無法獲取位置:", e);
+                            alert("無法獲取您的位置，請確認已授予位置權限並使用 HTTPS 或 localhost。將改用時間排序。");
+                            // Fall back to time sorting
+                            sortType = "time";
+                            document.getElementById("sortType").value = "time";
                         }
                     }
 
@@ -1150,8 +1155,9 @@
                                 ? priceB - priceA
                                 : priceA - priceB;
                         } else if (sortType === "distance" && userLat && userLon) {
-                            const distA = getDistance(userLat, userLon, a.property_latitude, a.property_longitude);
-                            const distB = getDistance(userLat, userLon, b.property_latitude, b.property_longitude);
+                            const distA = getDistance(userLat, userLon, a.property_latitude, a.property_longitude) || 999999;
+                            const distB = getDistance(userLat, userLon, b.property_latitude, b.property_longitude) || 999999;
+                            console.log("Distance sort:", sortOrder, "distA:", distA, "distB:", distB);
                             return sortOrder === "desc" ? distB - distA : distA - distB;
                         } else {
                             // 時間排序 - created_at
