@@ -945,6 +945,7 @@
                 onchange="loadOpenOrders()"
             >
                 <option value="price">💰 金額</option>
+                <option value="distance">📍 距離</option>
                 <option value="time">🕐 時間</option>
             </select>
             <select
@@ -952,8 +953,8 @@
                 id="sortOrder"
                 onchange="loadOpenOrders()"
             >
-                <option value="desc">從高到低 ↓</option>
-                <option value="asc">從低到高 ↑</option>
+                <option value="asc">從近到遠 ↑</option>
+                <option value="desc">從遠到近 ↓</option>
             </select>
         </div>
 
@@ -1110,10 +1111,37 @@
                             o.assigned_cleaner_id === null,
                     );
 
-                    // 排序
+                    // 獲取用戶位置
+                    let userLat = null, userLon = null;
                     const sortType = document.getElementById("sortType").value;
-                    const sortOrder =
-                        document.getElementById("sortOrder").value;
+                    
+                    if (sortType === "distance") {
+                        try {
+                            const pos = await new Promise((resolve, reject) => {
+                                navigator.geolocation.getCurrentPosition(resolve, reject, {timeout: 5000});
+                            });
+                            userLat = pos.coords.latitude;
+                            userLon = pos.coords.longitude;
+                        } catch (e) {
+                            console.log("無法獲取位置:", e);
+                        }
+                    }
+
+                    // 計算距離 (km)
+                    function getDistance(lat1, lon1, lat2, lon2) {
+                        if (!lat1 || !lon1 || !lat2 || !lon2) return 999999;
+                        const R = 6371;
+                        const dLat = (lat2 - lat1) * Math.PI / 180;
+                        const dLon = (lon2 - lon1) * Math.PI / 180;
+                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                                  Math.sin(dLon/2) * Math.sin(dLon/2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        return R * c;
+                    }
+
+                    // 排序
+                    const sortOrder = document.getElementById("sortOrder").value;
                     orders.sort((a, b) => {
                         if (sortType === "price") {
                             const priceA = Number(a.price) || 0;
@@ -1121,6 +1149,10 @@
                             return sortOrder === "desc"
                                 ? priceB - priceA
                                 : priceA - priceB;
+                        } else if (sortType === "distance" && userLat && userLon) {
+                            const distA = getDistance(userLat, userLon, a.property_latitude, a.property_longitude);
+                            const distB = getDistance(userLat, userLon, b.property_latitude, b.property_longitude);
+                            return sortOrder === "desc" ? distB - distA : distA - distB;
                         } else {
                             // 時間排序 - created_at
                             const timeA = a.created_at || "";
@@ -1130,6 +1162,16 @@
                                 : timeA.localeCompare(timeB);
                         }
                     });
+
+                    // 計算每個訂單的距離並保存
+                    window._userDistance = new Map();
+                    if (userLat && userLon) {
+                        orders.forEach(o => {
+                            if (o.property_latitude && o.property_longitude) {
+                                window._userDistance.set(o.id, getDistance(userLat, userLon, o.property_latitude, o.property_longitude));
+                            }
+                        });
+                    }
 
                     const list = document.getElementById("openOrdersList");
                     if (orders.length === 0) {
@@ -1146,7 +1188,9 @@
                         <div class="prop-name">${e(o.property_name) || "未命名房源"}</div>
                         <div class="price">$${o.price}</div>
                     </div>
-                    <div class="info-row">📍 ${shortAddr(o)}</div>
+                    <div class="info-row">📍 ${shortAddr(o)}
+                        ${window._userDistance && o.property_latitude && o.property_longitude ? `<span style="color:var(--primary);margin-left:8px;font-weight:600;">· ${window._userDistance.get(o.id)?.toFixed(1) || '?'} km</span>` : ''}
+                    </div>
                     <div class="info-row">🕐 退房時間: ${formatTime(o.checkout_time)}</div>
                     ${
                         o.voice_url

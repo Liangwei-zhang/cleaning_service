@@ -21,6 +21,26 @@ from typing import Dict, Any, Optional
 
 from models.cleaning import Database, Property, Cleaner, Job, CleaningRepository
 
+import requests
+
+
+# ========== 地址編碼 ==========
+def geocode_address(address: str) -> tuple:
+    """通過地址獲取經緯度 (lat, lon)"""
+    if not address:
+        return None, None
+    try:
+        url = f"https://nominatim.openstreetmap.org/search"
+        params = {"q": address, "format": "json", "limit": 1}
+        headers = {"User-Agent": "SmartClean/1.0"}
+        resp = requests.get(url, params=params, headers=headers, timeout=5)
+        data = resp.json()
+        if data:
+            return float(data[0]["lat"]), float(data[0]["lon"])
+    except Exception as e:
+        print(f"Geocode error: {e}")
+    return None, None
+
 
 # ========== 緩存機制 ==========
 class Cache:
@@ -640,10 +660,13 @@ class CleaningAPI:
         if not data.get("name") or not data.get("address"):
             return {"error": "name and address required", "code": 400}
         
+        # 獲取經緯度
+        lat, lon = geocode_address(data.get("address", ""))
+        
         conn = self.db._get_connection()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO properties (name, address, bedrooms, bathrooms, cleaning_time_minutes, cleaning_checklist, notes, status, created_at, floor, area, province, city, street, house_number, host_phone, postal_code)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, 'active', datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?)""",
+        cursor.execute("""INSERT INTO properties (name, address, bedrooms, bathrooms, cleaning_time_minutes, cleaning_checklist, notes, status, created_at, floor, area, province, city, street, house_number, host_phone, postal_code, latitude, longitude)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, 'active', datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                      (data.get("name"), data.get("address"),
                       data.get("bedrooms", 1), data.get("bathrooms", 1),
                       data.get("cleaning_time_minutes", 120), 
@@ -652,11 +675,12 @@ class CleaningAPI:
                       data.get("province", ""), data.get("city", ""),
                       data.get("street", ""), data.get("house_number", ""),
                       data.get("host_phone", ""),
-                      data.get("postal_code", "")))
+                      data.get("postal_code", ""),
+                      lat, lon))
         prop_id = cursor.lastrowid
         conn.commit()
         conn.close()
-        return {"data": {"id": prop_id}, "message": "Property added"}
+        return {"data": {"id": prop_id, "latitude": lat, "longitude": lon}, "message": "Property added"}
     
     def _update_property(self, prop_id, data):
         conn = self.db._get_connection()
@@ -670,6 +694,14 @@ class CleaningAPI:
             if data.get(field) is not None:
                 updates.append(f"{field} = ?")
                 params.append(data[field])
+        
+        # 如果地址變更，重新獲取經緯度
+        if data.get("address"):
+            lat, lon = geocode_address(data["address"])
+            updates.append("latitude = ?")
+            params.append(lat)
+            updates.append("longitude = ?")
+            params.append(lon)
         
         if updates:
             params.append(prop_id)
@@ -709,6 +741,7 @@ class CleaningAPI:
             SELECT o.*, p.name as property_name, p.address as property_address,
                    p.province as property_province, p.city as property_city,
                    p.street as property_street, p.house_number as property_house_number,
+                   p.latitude as property_latitude, p.longitude as property_longitude,
                    c.name as cleaner_name
             FROM orders o
             LEFT JOIN properties p ON o.property_id = p.id
